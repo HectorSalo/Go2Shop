@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="units">
+        <item>Seleccione unidad</item>
+        <item>Caja</item>
+        <item>Envase</item>
+        <item>Gramo</item>
+        <item>Kilogramo</item>
+        <item>Litro</item>
+        <item>Libra</item>
+        <item>Mililitro</item>
+        <item>Paquete</item>
+        <item>Unidad</item>
+    </string-array>
+</resources>

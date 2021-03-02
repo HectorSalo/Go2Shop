@@ -5,7 +5,14 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_cerrar_sesion">Cerrar sesión</string>
+    <string name="action_search">Buscar</string>
+
+    <!--Generales-->
+    <string name="texto_vacio">" "</string>
+    <string name="error_field_empty">"Campo vacío"</string>
+    <string name="btn_save">"Guardar"</string>
+    <string name="btn_cancel">"Cancelar"</string>
 
     <!--Fragment Inicio-->
     <string name="nav_inicio">Inicio</string>
@@ -16,8 +23,29 @@
     <string name="btn_new_product">Agregar Producto</string>
     <string name="btn_storage">Inventario</string>
 
+    <!--Fragment Historial-->
+    <string name="nav_history">Historial de compras</string>
+
+    <!--Fragment Listas-->
+    <string name="nav_lists">Listas de compras</string>
+
+    <!--Fragment Products-->
+    <string name="nav_products">Productos</string>
+
+    <!--Dialog Add Products-->
+    <string name="title_add_producto_dialog">Crear producto</string>
+    <string name="text_product">Producto</string>
+    <string name="error_spinner_units_position">Debe seleccionar un tipo de unidad</string>
+
+    <!--Fragment Storage-->
 
 
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="text_price">Precio</string>
+    <string name="text_bolivar">Bolívar</string>
+    <string name="text_dolar">Dolar</string>
+
+    <!--Ajustes-->
+    <string name="nav_ajustes">Ajustes</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

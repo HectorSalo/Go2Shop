@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.go2shop.homeModule.ui.home
+package com.skysam.hchirinos.go2shop.homeModule.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

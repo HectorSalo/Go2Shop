@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.go2shop.homeModule.ui.slideshow
+package com.skysam.hchirinos.go2shop.listsModule.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -7,4 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="width_btn_home">152dp</dimen>
+    <dimen name="height_btn_home">88dp</dimen>
+    <dimen name="text_size_btn_home">16sp</dimen>
 </resources>

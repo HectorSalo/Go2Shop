@@ -61,6 +61,7 @@ dependencies {
     //librerias externas
     implementation 'com.airbnb.android:lottie:3.6.1'
     implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 
     testImplementation 'junit:junit:4.13.2'

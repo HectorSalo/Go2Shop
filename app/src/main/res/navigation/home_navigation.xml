@@ -7,19 +7,37 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.skysam.hchirinos.go2shop.homeModule.ui.home.InicioFragment"
+        android:name="com.skysam.hchirinos.go2shop.homeModule.ui.InicioFragment"
         android:label="@string/nav_inicio"
-        tools:layout="@layout/fragment_inicio" />
+        tools:layout="@layout/fragment_inicio" >
+        <action
+            android:id="@+id/action_nav_home_to_storageFragment"
+            app:destination="@id/storageFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.skysam.hchirinos.go2shop.homeModule.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_history"
+        android:name="com.skysam.hchirinos.go2shop.historyModule.ui.HistoryFragment"
+        android:label="@string/nav_history"
+        tools:layout="@layout/fragment_history" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.skysam.hchirinos.go2shop.homeModule.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_lists"
+        android:name="com.skysam.hchirinos.go2shop.listsModule.ui.ListsFragment"
+        android:label="@string/nav_lists"
+        tools:layout="@layout/fragment_lists" />
+    <fragment
+        android:id="@+id/storageFragment"
+        android:name="com.skysam.hchirinos.go2shop.storageModule.ui.StorageFragment"
+        android:label="fragment_storage"
+        tools:layout="@layout/fragment_storage" >
+        <action
+            android:id="@+id/action_storageFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_products"
+        android:name="com.skysam.hchirinos.go2shop.productsModule.ui.ProductsFragment"
+        android:label="@string/nav_products"
+        tools:layout="@layout/fragment_products" />
 </navigation>

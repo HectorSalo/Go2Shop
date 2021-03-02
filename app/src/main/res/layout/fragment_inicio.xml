@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".homeModule.ui.home.InicioFragment">
+    tools:context=".homeModule.ui.InicioFragment">
 
     <TextView
         android:id="@+id/text_home"
@@ -17,7 +17,7 @@
         android:textAlignment="center"
         android:text="@string/text_last_shopping"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         app:layout_constraintBottom_toTopOf="@+id/guide_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,13 +44,14 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_new_shop"
         android:layout_width="@dimen/width_btn_home"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_btn_home"
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="8dp"
         android:text="@string/btn_new_shop"
         android:textAllCaps="false"
         app:icon="@drawable/ic_add_shopping_24"
+        android:textSize="@dimen/text_size_btn_home"
         app:layout_constraintEnd_toStartOf="@+id/guide_line2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
@@ -58,13 +59,14 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_new_list"
         android:layout_width="@dimen/width_btn_home"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_btn_home"
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="8dp"
         android:text="@string/btn_new_lista"
         android:textAllCaps="false"
         app:icon="@drawable/ic_add_list_24"
+        android:textSize="@dimen/text_size_btn_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guide_line2"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
@@ -72,7 +74,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_new_product"
         android:layout_width="@dimen/width_btn_home"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_btn_home"
         android:layout_marginStart="8dp"
         android:layout_marginTop="168dp"
         android:layout_marginEnd="8dp"
@@ -80,13 +82,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide_line"
         android:text="@string/btn_new_product"
+        android:textSize="@dimen/text_size_btn_home"
         android:textAllCaps="false"
         app:icon="@drawable/ic_add_product_24"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_inventory"
         android:layout_width="@dimen/width_btn_home"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_btn_home"
         android:layout_marginStart="8dp"
         android:layout_marginTop="168dp"
         android:layout_marginEnd="8dp"
@@ -94,6 +97,7 @@
         app:layout_constraintStart_toStartOf="@+id/guide_line2"
         app:layout_constraintTop_toBottomOf="@+id/guide_line"
         android:text="@string/btn_storage"
+        android:textSize="@dimen/text_size_btn_home"
         android:textAllCaps="false"
         app:icon="@drawable/ic_storage_24"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
