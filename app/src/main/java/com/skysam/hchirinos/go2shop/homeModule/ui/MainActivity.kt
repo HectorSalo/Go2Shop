@@ -2,6 +2,7 @@ package com.skysam.hchirinos.go2shop.homeModule.ui
 
 import android.os.Bundle
 import android.view.Menu
+import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -12,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.skysam.hchirinos.go2shop.R
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +28,9 @@ class MainActivity : AppCompatActivity() {
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        val view = navView.getHeaderView(0)
+        val tvNameUser = view.findViewById(R.id.title_nav_header) as TextView
+        val tvEmailUser = view.findViewById(R.id.subtitle_nav_header) as TextView
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         // Passing each menu ID as a set of Ids because each
@@ -35,6 +40,12 @@ class MainActivity : AppCompatActivity() {
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            tvNameUser.text = user.displayName
+            tvEmailUser.text = user.email
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
