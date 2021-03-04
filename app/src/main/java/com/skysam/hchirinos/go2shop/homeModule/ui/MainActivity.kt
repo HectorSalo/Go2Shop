@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val user = FirebaseAuth.getInstance().currentUser
+        val user = AuthAPI.getCurrenUser()
         if (user != null) {
             tvNameUser.text = user.displayName
             tvEmailUser.text = user.email

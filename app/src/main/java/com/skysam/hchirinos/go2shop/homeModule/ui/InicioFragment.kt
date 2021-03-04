@@ -9,7 +9,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.common.classView.AddProductDialog
+import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 
 class InicioFragment : Fragment() {

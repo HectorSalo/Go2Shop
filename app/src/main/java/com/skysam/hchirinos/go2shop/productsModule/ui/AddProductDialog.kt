@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.go2shop.common.classView
+package com.skysam.hchirinos.go2shop.productsModule.ui
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -9,13 +9,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
+import com.skysam.hchirinos.go2shop.common.model.ProductModel
 import com.skysam.hchirinos.go2shop.databinding.DialogAddProductBinding
+import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
+import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenterClass
 
-class AddProductDialog: DialogFragment() {
+class AddProductDialog: DialogFragment(), AddProductView {
     private lateinit var dialogAddProductBinding: DialogAddProductBinding
+    private lateinit var addProductPresenter: AddProductPresenter
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogAddProductBinding = DialogAddProductBinding.inflate(layoutInflater)
+        addProductPresenter = AddProductPresenterClass(this)
 
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
@@ -37,8 +42,8 @@ class AddProductDialog: DialogFragment() {
 
     private fun validateProduct() {
         dialogAddProductBinding.tfName.error = null
-        val product = dialogAddProductBinding.etName.text.toString()
-        if (product.isEmpty()) {
+        val name = dialogAddProductBinding.etName.text.toString()
+        if (name.isEmpty()) {
             dialogAddProductBinding.tfName.error = getString(R.string.error_field_empty)
             return
         }
@@ -47,6 +52,7 @@ class AddProductDialog: DialogFragment() {
             Toast.makeText(requireContext(), getString(R.string.error_spinner_units_position), Toast.LENGTH_SHORT).show()
             return
         }
-        dialog!!.dismiss()
+        val product = ProductModel("test", name, dialogAddProductBinding.spinner.selectedItem.toString())
+        addProductPresenter.addProduct(product)
     }
 }
