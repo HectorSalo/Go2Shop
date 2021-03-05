@@ -7,8 +7,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 
@@ -22,6 +26,13 @@ class InicioFragment : Fragment() {
 
     private var _binding: FragmentInicioBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (AuthAPI.getCurrenUser() == null) {
+            startAuthUI()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,12 +64,29 @@ class InicioFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_cerrar_sesion) {
-            testAuthUI()
+            signOut()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun testAuthUI() {
+    private fun signOut() {
+        val provider = AuthAPI.getCurrenUser()!!.providerId
+        AuthUI.getInstance().signOut(requireContext())
+            .addOnSuccessListener {
+                if (provider == "google.com") {
+                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build()
+
+                    val googleSingInClient : GoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+                    googleSingInClient.signOut()
+                }
+                startAuthUI()
+            }
+    }
+
+    private fun startAuthUI() {
         // Choose authentication providers
         val providers = arrayListOf(
             AuthUI.IdpConfig.EmailBuilder().build(),

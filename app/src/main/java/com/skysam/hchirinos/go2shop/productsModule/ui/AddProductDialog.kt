@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.model.ProductModel
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.databinding.DialogAddProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenterClass
@@ -52,7 +54,17 @@ class AddProductDialog: DialogFragment(), AddProductView {
             Toast.makeText(requireContext(), getString(R.string.error_spinner_units_position), Toast.LENGTH_SHORT).show()
             return
         }
-        val product = ProductModel("test", name, dialogAddProductBinding.spinner.selectedItem.toString())
-        addProductPresenter.addProduct(product)
+        val product = ProductModel(Constants.USER_ID, name, dialogAddProductBinding.spinner.selectedItem.toString(),
+        AuthAPI.getCurrenUser()!!.uid)
+        addProductPresenter.saveProductToFirestore(product)
+    }
+
+    override fun resultSaveProduct(statusOk: Boolean, msg: String) {
+        if (statusOk) {
+            Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+            dialog!!.dismiss()
+        } else {
+            Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+        }
     }
 }

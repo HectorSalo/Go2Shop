@@ -10,9 +10,11 @@
 
     <!--Generales-->
     <string name="texto_vacio">" "</string>
-    <string name="error_field_empty">"Campo vacío"</string>
-    <string name="btn_save">"Guardar"</string>
-    <string name="btn_cancel">"Cancelar"</string>
+    <string name="error_field_empty">Campo vacío</string>
+    <string name="btn_save">Guardar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="save_data_ok">Información guardada</string>
+    <string name="save_data_error">Error al guardar. Intente nuevamente</string>
 
     <!--Fragment Inicio-->
     <string name="nav_inicio">Inicio</string>
