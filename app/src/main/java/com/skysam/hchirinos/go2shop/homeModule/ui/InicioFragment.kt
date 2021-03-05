@@ -15,6 +15,7 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
+import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
 
 class InicioFragment : Fragment() {
 
@@ -46,6 +47,10 @@ class InicioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.btnNewList.setOnClickListener {
+            val addListWishDialog = AddListWishDialog()
+            addListWishDialog.show(requireActivity().supportFragmentManager, tag)
+        }
         binding.btnNewProduct.setOnClickListener {
             val addProductDialog = AddProductDialog()
             addProductDialog.show(requireActivity().supportFragmentManager, tag)
