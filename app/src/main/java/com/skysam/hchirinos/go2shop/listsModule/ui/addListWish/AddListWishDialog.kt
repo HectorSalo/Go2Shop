@@ -13,6 +13,7 @@ import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.ListWishView
+import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 
 class AddListWishDialog : DialogFragment(), ListWishView {
     private lateinit var listWishPresenter: ListWishPresenter
@@ -39,18 +40,23 @@ class AddListWishDialog : DialogFragment(), ListWishView {
         binding.rvList.setHasFixedSize(true)
         binding.tvSarchProduct.addTextChangedListener {
             if (binding.tvSarchProduct.text.toString().isEmpty()) {
-                binding.tfSearchProducts.startIconDrawable = null
+                binding.tfSearchProducts.endIconDrawable = null
                 binding.tfSearchProducts.helperText = null
             } else {
                 if (binding.tvSarchProduct.adapter.isEmpty) {
-                    binding.tfSearchProducts.startIconDrawable = ContextCompat
+                    binding.tfSearchProducts.endIconDrawable = ContextCompat
                         .getDrawable(requireContext(), R.drawable.ic_add_product_24)
                     binding.tfSearchProducts.helperText = getString(R.string.title_add_producto_dialog)
                 } else {
-                    binding.tfSearchProducts.startIconDrawable = null
+                    binding.tfSearchProducts.endIconDrawable = null
                     binding.tfSearchProducts.helperText = null
                 }
             }
+        }
+
+        binding.tfSearchProducts.setEndIconOnClickListener {
+            val addProduct = AddProductDialog()
+            addProduct.show(requireActivity().supportFragmentManager, tag)
         }
     }
 
