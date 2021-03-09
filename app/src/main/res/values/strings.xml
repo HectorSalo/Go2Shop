@@ -33,6 +33,12 @@
 
     <!--Dialog Add List-->
     <string name="btn_add_product">Agregar producto</string>
+    <string name="text_name_list">Nombre de la lista</string>
+    <string name="text_total">Total $%1$.2f</string>
+    <string name="text_quantity">Cantidad</string>
+    <string name="text_unit">Unidad</string>
+    <string name="product_added">Producto ya agregado</string>
+
 
     <!--Fragment Products-->
     <string name="nav_products">Productos</string>

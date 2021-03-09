@@ -1,20 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageButton
+        android:id="@+id/ib_delete_item"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="@dimen/size_btn_item_list"
+        android:layout_height="@dimen/size_btn_item_list"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/btn_cancel"
+        android:src="@drawable/ic_delete_item_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/item_number"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_name_item"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintEnd_toStartOf="@+id/tv_price"
+        app:layout_constraintStart_toEndOf="@+id/ib_delete_item"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/text_name_list" />
 
     <TextView
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_price"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
-</LinearLayout>
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/text_price" />
+
+    <TextView
+        android:id="@+id/tv_unit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintStart_toEndOf="@+id/ib_delete_item"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name_item"
+        tools:text="@string/text_unit" />
+
+    <!--<com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tf_price"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:startIconDrawable="@drawable/ic_dolar_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/text_price"
+            android:inputType="numberDecimal"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tv_unit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="16dp"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintEnd_toStartOf="@+id/ib_rest_quantity"
+        app:layout_constraintStart_toEndOf="@+id/ib_delete_item"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name_item"
+        tools:text="@string/text_unit" />
+
+    <ImageButton
+        android:id="@+id/ib_rest_quantity"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="@dimen/size_btn_item_list"
+        android:layout_height="@dimen/size_btn_item_list"
+        android:contentDescription="@string/btn_cancel"
+        android:src="@drawable/ic_neg_1_24"
+        app:layout_constraintEnd_toStartOf="@+id/tv_quantity"
+        app:layout_constraintTop_toBottomOf="@id/tf_price" />
+
+    <EditText
+        android:id="@+id/tv_quantity"
+        android:layout_width="@dimen/size_btn_item_list"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintEnd_toStartOf="@+id/ib_add_quantity"
+        app:layout_constraintTop_toBottomOf="@+id/tf_price"
+        android:autofillHints="@string/texto_vacio" />
+
+    <ImageButton
+        android:id="@+id/ib_add_quantity"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="@dimen/size_btn_item_list"
+        android:layout_height="@dimen/size_btn_item_list"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/btn_cancel"
+        android:src="@drawable/ic_add_1_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tf_price" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

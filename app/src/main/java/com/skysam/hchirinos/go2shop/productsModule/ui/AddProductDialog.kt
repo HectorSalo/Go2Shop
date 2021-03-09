@@ -16,7 +16,7 @@ import com.skysam.hchirinos.go2shop.databinding.DialogAddProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenterClass
 
-class AddProductDialog: DialogFragment(), AddProductView {
+class AddProductDialog(private val name: String?): DialogFragment(), AddProductView {
     private lateinit var dialogAddProductBinding: DialogAddProductBinding
     private lateinit var addProductPresenter: AddProductPresenter
 
@@ -27,6 +27,8 @@ class AddProductDialog: DialogFragment(), AddProductView {
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
         dialogAddProductBinding.spinner.adapter = adapterUnits
+
+        if (!name.isNullOrEmpty()) dialogAddProductBinding.etName.setText(name)
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.title_add_producto_dialog))

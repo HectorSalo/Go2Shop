@@ -53,10 +53,7 @@ class ListsFragment : Fragment(), ListWishView {
         _binding = null
     }
 
-    override fun resultGetProducts(productsName: MutableList<String>) {
-        if (!productsName.isNullOrEmpty()) {
-            val adapter = ArrayAdapter(requireContext(), R.layout.list_item, productsName)
-            binding.tvSarchProduct.setAdapter(adapter)
-        }
+    override fun resultGetProducts(products: MutableList<Product>) {
+        TODO("Not yet implemented")
     }
 }

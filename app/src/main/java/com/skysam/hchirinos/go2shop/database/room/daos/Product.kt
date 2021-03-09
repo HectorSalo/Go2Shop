@@ -12,7 +12,7 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
 @Dao
 interface Product {
     @Query("SELECT * FROM productos")
-    suspend fun getAll(): List<Product>
+    suspend fun getAll(): MutableList<Product>
 
     @Query("SELECT * FROM productos WHERE name = :name")
     suspend fun getByName(name: String): Product

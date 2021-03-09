@@ -5,5 +5,5 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
 interface ListWishPresenter {
     fun getProducts()
 
-    fun resultGetProducts(products: List<Product>)
+    fun resultGetProducts(products: MutableList<Product>)
 }
