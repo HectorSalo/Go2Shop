@@ -4,14 +4,16 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 
 
 class AddWishListAdapter(
-    private val products: MutableList<Product>
+    private val products: MutableList<Product>, private val listener: OnClickList
 ) : RecyclerView.Adapter<AddWishListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,6 +27,10 @@ class AddWishListAdapter(
         holder.name.text = item.name
         holder.price.text = item.price.toString()
         holder.unit.text = "${item.quantity} ${item.unit}"
+
+        holder.buttonDelete.setOnClickListener {
+            listener.onClick(position)
+        }
     }
 
     override fun getItemCount(): Int = products.size
@@ -33,5 +39,7 @@ class AddWishListAdapter(
         val name: TextView = view.findViewById(R.id.tv_name_item)
         val unit: TextView = view.findViewById(R.id.tv_unit)
         val price: TextView = view.findViewById(R.id.tv_price)
+
+        val buttonDelete: ImageButton = view.findViewById(R.id.ib_delete_item)
     }
 }

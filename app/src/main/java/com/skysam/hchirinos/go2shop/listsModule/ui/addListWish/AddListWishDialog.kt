@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
+import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenter
@@ -21,12 +22,13 @@ import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.ListWishView
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 
-class AddListWishDialog : DialogFragment(), ListWishView {
+class AddListWishDialog : DialogFragment(), ListWishView, OnClickList {
     private lateinit var listWishPresenter: ListWishPresenter
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<Product> = mutableListOf()
+    private lateinit var adapter: AddWishListAdapter
     private var total: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +69,8 @@ class AddListWishDialog : DialogFragment(), ListWishView {
                 }
             }
         }
-        binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { _, view1, position, _ ->
-            Keyboard.close(view1)
+        binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            Keyboard.close(binding.root)
             addProductToList(position)
         }
 
@@ -82,7 +84,7 @@ class AddListWishDialog : DialogFragment(), ListWishView {
             return
         }
         productsToAdd.add(productSelected)
-        val adapter = AddWishListAdapter(productsToAdd)
+        adapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = adapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.etSarchProduct.setText("")
@@ -109,5 +111,9 @@ class AddListWishDialog : DialogFragment(), ListWishView {
         }
         val adapter = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName)
         binding.etSarchProduct.setAdapter(adapter)
+    }
+
+    override fun onClick(position: Int) {
+        adapter.notifyItemRemoved(position)
     }
 }
