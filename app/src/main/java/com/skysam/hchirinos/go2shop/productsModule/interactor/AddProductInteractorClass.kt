@@ -1,7 +1,6 @@
 package com.skysam.hchirinos.go2shop.productsModule.interactor
 
 import com.skysam.hchirinos.go2shop.common.Constants
-import com.skysam.hchirinos.go2shop.common.model.ProductModel
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
@@ -20,7 +19,7 @@ class AddProductInteractorClass(private val addProductPresenter: AddProductPrese
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun saveProductToFirestore(product: ProductModel) {
+    override fun saveProductToFirestore(product: Product) {
         val data = hashMapOf(
             Constants.NAME to product.name,
             Constants.UNIT to product.unit,
@@ -37,11 +36,12 @@ class AddProductInteractorClass(private val addProductPresenter: AddProductPrese
             }
     }
 
-    override fun saveProductToRoom(id: String, product: ProductModel) {
+    override fun saveProductToRoom(id: String, product: Product) {
         val productDB = Product(
             id,
             product.name,
-            product.unit
+            product.unit,
+            product.userId
         )
         launch {
             RoomDB.getInstance().product().insert(productDB)

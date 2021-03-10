@@ -12,6 +12,8 @@
     <string name="texto_vacio">" "</string>
     <string name="error_field_empty">Campo vacío</string>
     <string name="btn_save">Guardar</string>
+    <string name="btn_edit">Editar</string>
+    <string name="btn_exit">Salir</string>
     <string name="btn_cancel">Cancelar</string>
     <string name="save_data_ok">Información guardada</string>
     <string name="save_data_error">Error al guardar. Intente nuevamente</string>
@@ -34,7 +36,9 @@
     <!--Dialog Add List-->
     <string name="btn_add_product">Agregar producto</string>
     <string name="text_name_list">Nombre de la lista</string>
-    <string name="text_total">Total $%1$.2f</string>
+    <string name="text_total_list">Total $%1$.2f</string>
+    <string name="text_total_price_item">$%1$.2f</string>
+    <string name="text_quantity_total">%1$.1f %2$s</string>
     <string name="text_quantity">Cantidad</string>
     <string name="text_unit">Unidad</string>
     <string name="product_added">Producto ya agregado</string>
@@ -50,10 +54,17 @@
 
     <!--Fragment Storage-->
 
-
+    <!--Dialog Edit Products from Lists-->
+    <string name="title_edit_producto_dialog">Editar producto</string>
+    <string name="symbol_bolivar">Bs.</string>
+    <string name="symbol_dolar">$</string>
     <string name="text_price">Precio</string>
     <string name="text_bolivar">Bolívar</string>
     <string name="text_dolar">Dolar</string>
+
+    <!--Dialog Exit-->
+    <string name="title_exit_dialog">Confirmar</string>
+    <string name="msg_exit_dialog">Se perderá toda la información.\n¿Desea salir?</string>
 
     <!--Ajustes-->
     <string name="nav_ajustes">Ajustes</string>

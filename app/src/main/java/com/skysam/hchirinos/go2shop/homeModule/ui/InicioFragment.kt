@@ -52,7 +52,7 @@ class InicioFragment : Fragment() {
             addListWishDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnNewProduct.setOnClickListener {
-            val addProductDialog = AddProductDialog(null)
+            val addProductDialog = AddProductDialog(null, null)
             addProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnInventory.setOnClickListener {

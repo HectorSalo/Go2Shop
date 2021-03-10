@@ -24,49 +24,6 @@
             android:inputType="textCapSentences" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <!--<com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tf_precio"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/rg_moneda"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_name">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_precio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/text_price"
-            android:inputType="numberDecimal" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <RadioGroup
-        android:id="@+id/rg_moneda"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_name">
-
-        <RadioButton
-            android:id="@+id/rb_dolar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_dolar" />
-
-        <RadioButton
-            android:id="@+id/rb_bolivar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_bolivar" />
-    </RadioGroup>-->
-
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="0dp"
@@ -77,6 +34,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tf_name" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner"
+        android:indeterminate="true"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

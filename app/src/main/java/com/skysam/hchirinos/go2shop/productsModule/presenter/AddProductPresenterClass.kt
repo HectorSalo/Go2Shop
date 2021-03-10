@@ -1,6 +1,6 @@
 package com.skysam.hchirinos.go2shop.productsModule.presenter
 
-import com.skysam.hchirinos.go2shop.common.model.ProductModel
+import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.productsModule.interactor.AddProductInteractor
 import com.skysam.hchirinos.go2shop.productsModule.interactor.AddProductInteractorClass
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductView
@@ -10,11 +10,11 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductView
  */
 class AddProductPresenterClass(private val addProductView: AddProductView): AddProductPresenter {
     private val addProductInteractor: AddProductInteractor = AddProductInteractorClass(this)
-    override fun saveProductToFirestore(product: ProductModel) {
+    override fun saveProductToFirestore(product: Product) {
         addProductInteractor.saveProductToFirestore(product)
     }
 
-    override fun resultSaveProductFirestore(statusOk: Boolean, msg: String, product: ProductModel?) {
+    override fun resultSaveProductFirestore(statusOk: Boolean, msg: String, product: Product?) {
         if (statusOk) {
             addProductInteractor.saveProductToRoom(msg, product!!)
         } else {

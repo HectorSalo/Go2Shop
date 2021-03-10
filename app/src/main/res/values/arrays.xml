@@ -2,14 +2,14 @@
 <resources>
     <string-array name="units">
         <item>Seleccione unidad</item>
-        <item>Caja</item>
-        <item>Envase</item>
-        <item>Gramo</item>
-        <item>Kilogramo</item>
-        <item>Litro</item>
-        <item>Libra</item>
-        <item>Mililitro</item>
-        <item>Paquete</item>
-        <item>Unidad</item>
+        <item>Caja(s)</item>
+        <item>Envase(s)</item>
+        <item>Gramo(s)</item>
+        <item>Kilogramo(s)</item>
+        <item>Litro(s)</item>
+        <item>Libra(s)</item>
+        <item>Mililitro(s)</item>
+        <item>Paquete(s)</item>
+        <item>Unidad(es)</item>
     </string-array>
 </resources>

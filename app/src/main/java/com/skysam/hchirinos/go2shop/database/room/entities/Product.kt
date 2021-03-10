@@ -12,6 +12,7 @@ data class Product(
     @PrimaryKey val id: String,
     val name: String,
     val unit: String,
+    val userId: String,
     val price: Double = 1.0,
     val quantity: Double = 1.0
 )
