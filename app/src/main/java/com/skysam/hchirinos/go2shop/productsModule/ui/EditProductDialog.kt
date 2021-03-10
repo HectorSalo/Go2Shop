@@ -11,13 +11,15 @@ import androidx.fragment.app.DialogFragment
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.EditProductFromList
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 
 /**
  * Created by Hector Chirinos (Home) on 9/3/2021.
  */
-class EditProductDialog(var product: Product, val position: Int, val fromList: Boolean,
+class EditProductDialog(var product: Product, private val position: Int, val fromList: Boolean,
                         private val editProductFromList: EditProductFromList): DialogFragment() {
     private lateinit var dialogEditProductBinding: DialogEditProductBinding
     private lateinit var buttonPositive: Button
@@ -90,6 +92,10 @@ class EditProductDialog(var product: Product, val position: Int, val fromList: B
     private fun validateEdit() {
         if (dialogEditProductBinding.spinner.selectedItemPosition > 0) {
             unit = dialogEditProductBinding.spinner.selectedItem.toString()
+        }
+        if (dialogEditProductBinding.rbBolivar.isChecked) {
+            val valueWeb = SharedPreferenceBD.getValue(AuthAPI.getCurrenUser()!!.uid)
+            priceTotal /= valueWeb
         }
         val productResult = Product(
         product.id,

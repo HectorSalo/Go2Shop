@@ -23,7 +23,8 @@ import com.skysam.hchirinos.go2shop.listsModule.ui.ListWishView
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 
-class AddListWishDialog : DialogFragment(), ListWishView, OnClickList, ProductSaveFromList, OnClickExit, EditProductFromList {
+class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
+    ProductSaveFromList, OnClickExit, EditProductFromList, AddWishListView {
     private lateinit var listWishPresenter: ListWishPresenter
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
@@ -77,11 +78,26 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList, ProductSa
             Keyboard.close(binding.root)
             addProductToList(position)
         }
-
+        binding.fabSave.setOnClickListener { validateToSave() }
         binding.fabCancel.setOnClickListener {
             val exitDialog = ExitDialog(this)
             exitDialog.show(requireActivity().supportFragmentManager, tag)
         }
+    }
+
+    private fun validateToSave() {
+        binding.tfNameList.error = null
+        val nameList = binding.etNameList.text.toString()
+        if (nameList.isEmpty()) {
+            binding.tfNameList.error = getString(R.string.error_field_empty)
+            binding.etNameList.requestFocus()
+            return
+        }
+        if (productsToAdd.isEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.msg_list_empty), Toast.LENGTH_SHORT).show()
+            return
+        }
+
     }
 
     private fun addProductToList(position: Int) {
