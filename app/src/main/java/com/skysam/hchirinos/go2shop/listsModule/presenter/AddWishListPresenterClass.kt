@@ -11,6 +11,18 @@ import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListView
 class AddWishListPresenterClass(private val addWishListView: AddWishListView): AddListWishPresenter {
     private val addWishListInteractor: AddWishListInteractor = AddWishListInteractorClass(this)
     override fun saveListWish(list: ListWish) {
-        addWishListInteractor.saveListWish(list)
+        addWishListInteractor.saveListWishFirestore(list)
+    }
+
+    override fun resultSaveListWishFirestore(statusOk: Boolean, msg: String, list: ListWish?) {
+        if (statusOk){
+            addWishListInteractor.saveListWishRoom(msg, list!!)
+        } else {
+            addWishListView.resultSaveListWish(false, msg)
+        }
+    }
+
+    override fun resultSaveListWishRoom() {
+        addWishListView.resultSaveListWish(true, "")
     }
 }

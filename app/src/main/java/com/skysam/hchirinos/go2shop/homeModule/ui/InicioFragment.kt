@@ -63,8 +63,10 @@ class InicioFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         requireActivity().menuInflater.inflate(R.menu.main, menu)
-        val item = menu.findItem(R.id.action_search)
-        item.isVisible = false
+        val itemSearch = menu.findItem(R.id.action_search)
+        val itemDelete = menu.findItem(R.id.action_delete)
+        itemSearch.isVisible = false
+        itemDelete.isVisible = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -18,4 +18,6 @@ object Constants {
     const val USER_ID = "userId"
     const val PRICE = "price"
     const val QUANTITY = "quantity"
+
+    const val TOTAL_LIST_WISH = "totalListWish"
 }

@@ -43,7 +43,7 @@ class EditProductDialog(var product: Product, private val position: Int, val fro
         dialogEditProductBinding.spinner.setSelection(listUnits.indexOf(product.unit))
 
         val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle(getString(R.string.title_edit_producto_dialog))
+        builder.setTitle(getString(R.string.title_edit_producto_dialog, product.name))
             .setView(dialogEditProductBinding.root)
             .setPositiveButton(R.string.btn_edit, null)
             .setNegativeButton(R.string.btn_cancel, null)

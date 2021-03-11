@@ -9,5 +9,5 @@ interface AddProductPresenter {
     fun saveProductToFirestore(product: Product)
 
     fun resultSaveProductFirestore(statusOk: Boolean, msg: String, product: Product?)
-    fun resultSaveProductFirestore()
+    fun resultSaveProductRoom()
 }

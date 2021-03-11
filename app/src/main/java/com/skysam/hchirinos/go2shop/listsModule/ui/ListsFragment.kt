@@ -54,6 +54,6 @@ class ListsFragment : Fragment(), ListWishView {
     }
 
     override fun resultGetProducts(products: MutableList<Product>) {
-        TODO("Not yet implemented")
+
     }
 }

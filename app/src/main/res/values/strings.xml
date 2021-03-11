@@ -18,6 +18,8 @@
     <string name="save_data_ok">Información guardada</string>
     <string name="save_data_error">Error al guardar. Intente nuevamente</string>
     <string name="msg_list_empty">Lista vacía</string>
+    <string name="text_list_empty">No hay ítems en esta lista</string>
+    <string name="btn_delete">Eliminar</string>
 
     <!--Fragment Inicio-->
     <string name="nav_inicio">Inicio</string>
@@ -36,7 +38,7 @@
 
     <!--Dialog Add List-->
     <string name="btn_add_product">Agregar producto</string>
-    <string name="text_name_list">Nombre de la lista</string>
+    <string name="text_name_list">Nombre de la Lista</string>
     <string name="text_total_list">Total $%1$.2f</string>
     <string name="text_total_price_item">$%1$.2f</string>
     <string name="text_quantity_total">%1$.1f %2$s</string>
@@ -56,7 +58,7 @@
     <!--Fragment Storage-->
 
     <!--Dialog Edit Products from Lists-->
-    <string name="title_edit_producto_dialog">Editar producto</string>
+    <string name="title_edit_producto_dialog">Editar %1$s</string>
     <string name="symbol_bolivar">Bs.</string>
     <string name="symbol_dolar">$</string>
     <string name="text_price">Precio</string>

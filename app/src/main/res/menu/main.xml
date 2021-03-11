@@ -6,10 +6,14 @@
         android:orderInCategory="100"
         android:title="@string/action_cerrar_sesion"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/action_search"
         android:title="@string/action_search"
         app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/action_delete"
+        android:title="@string/btn_delete"
+        android:icon="@drawable/ic_delete_24"
+        app:showAsAction="always"/>
 </menu>

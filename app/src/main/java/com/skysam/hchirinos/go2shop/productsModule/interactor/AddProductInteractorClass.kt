@@ -45,7 +45,7 @@ class AddProductInteractorClass(private val addProductPresenter: AddProductPrese
         )
         launch {
             RoomDB.getInstance().product().insert(productDB)
-            addProductPresenter.resultSaveProductFirestore()
+            addProductPresenter.resultSaveProductRoom()
         }
     }
 }

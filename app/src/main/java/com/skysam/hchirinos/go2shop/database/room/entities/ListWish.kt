@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.skysam.hchirinos.go2shop.common.Constants
-import com.skysam.hchirinos.go2shop.database.room.ListProducts
 import com.skysam.hchirinos.go2shop.database.room.ProductsConverter
 
 /**
@@ -16,6 +15,6 @@ data class ListWish(
     val name: String,
     val userId: String,
     @TypeConverters(ProductsConverter::class)
-    val listProducts: ListProducts,
+    val listProducts: MutableList<Product>,
     val total: Double
 )

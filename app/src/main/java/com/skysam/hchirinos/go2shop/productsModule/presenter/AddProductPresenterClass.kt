@@ -22,7 +22,7 @@ class AddProductPresenterClass(private val addProductView: AddProductView): AddP
         }
     }
 
-    override fun resultSaveProductFirestore() {
+    override fun resultSaveProductRoom() {
         addProductView.resultSaveProduct(true, "")
     }
 }

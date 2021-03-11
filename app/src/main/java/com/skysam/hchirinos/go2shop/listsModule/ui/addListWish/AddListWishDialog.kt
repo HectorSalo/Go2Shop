@@ -13,10 +13,15 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
+import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
+import com.skysam.hchirinos.go2shop.listsModule.presenter.AddWishListPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.ListWishView
@@ -26,6 +31,7 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
     ProductSaveFromList, OnClickExit, EditProductFromList, AddWishListView {
     private lateinit var listWishPresenter: ListWishPresenter
+    private lateinit var addListWishPresenter: AddListWishPresenter
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
@@ -44,6 +50,7 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
     ): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
         listWishPresenter = ListWishPresenterClass(this)
+        addListWishPresenter = AddWishListPresenterClass(this)
         return binding.root
     }
 
@@ -86,6 +93,7 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
     }
 
     private fun validateToSave() {
+        Keyboard.close(binding.root)
         binding.tfNameList.error = null
         val nameList = binding.etNameList.text.toString()
         if (nameList.isEmpty()) {
@@ -97,7 +105,19 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
             Toast.makeText(requireContext(), getString(R.string.msg_list_empty), Toast.LENGTH_SHORT).show()
             return
         }
-
+        binding.progressBar.visibility = View.VISIBLE
+        binding.fabSave.isEnabled = false
+        binding.fabCancel.isEnabled = false
+        binding.tfNameList.isEnabled = false
+        binding.tfSearchProducts.isEnabled = false
+        val listToSend = ListWish(
+            Constants.USERS,
+            nameList,
+            AuthAPI.getCurrenUser()!!.uid,
+            productsToAdd,
+            total
+        )
+        addListWishPresenter.saveListWish(listToSend)
     }
 
     private fun addProductToList(position: Int) {
@@ -168,5 +188,19 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
         val subtotal = (product.quantity * product.price) - oldPrice
         sumTotal(subtotal)
         addWishListAdapter.updateList(productsToAdd)
+    }
+
+    override fun resultSaveListWish(statusOk: Boolean, msg: String) {
+        if (statusOk) {
+            Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+            dialog!!.dismiss()
+        } else {
+            binding.progressBar.visibility = View.GONE
+            binding.fabSave.isEnabled = true
+            binding.fabCancel.isEnabled = true
+            binding.tfNameList.isEnabled = true
+            binding.tfSearchProducts.isEnabled = true
+            Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+        }
     }
 }

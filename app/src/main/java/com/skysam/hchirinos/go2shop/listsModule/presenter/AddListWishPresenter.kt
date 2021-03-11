@@ -7,4 +7,7 @@ import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
  */
 interface AddListWishPresenter {
     fun saveListWish(list: ListWish)
+
+    fun resultSaveListWishFirestore(statusOk: Boolean, msg: String, list: ListWish?)
+    fun resultSaveListWishRoom()
 }
