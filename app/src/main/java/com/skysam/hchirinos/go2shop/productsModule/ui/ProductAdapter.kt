@@ -43,6 +43,8 @@ class ProductAdapter(private var products: MutableList<Product>, private val onC
                 holder.card.isChecked = !holder.card.isChecked
                 onClickList.onClickDelete(position)
                 fillListToDelete(position)
+            } else {
+                onClickList.onClickEdit(position)
             }
         }
     }

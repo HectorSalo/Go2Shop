@@ -29,7 +29,7 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 
 class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
-    ProductSaveFromList, OnClickExit, EditProductFromList, AddWishListView {
+    ProductSaveFromList, OnClickExit, EditProduct, AddWishListView {
     private lateinit var listWishPresenter: ListWishPresenter
     private lateinit var addListWishPresenter: AddListWishPresenter
     private var _binding: DialogAddWishListBinding? = null

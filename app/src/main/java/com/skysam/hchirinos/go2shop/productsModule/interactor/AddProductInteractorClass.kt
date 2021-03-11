@@ -1,23 +1,15 @@
 package com.skysam.hchirinos.go2shop.productsModule.interactor
 
+import com.google.firebase.firestore.MetadataChanges
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
-import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by Hector Chirinos on 04/03/2021.
  */
-class AddProductInteractorClass(private val addProductPresenter: AddProductPresenter): AddProductInteractor, CoroutineScope {
-    private var job: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+class AddProductInteractorClass(private val addProductPresenter: AddProductPresenter): AddProductInteractor {
 
     override fun saveProductToFirestore(product: Product) {
         val data = hashMapOf(
@@ -29,23 +21,11 @@ class AddProductInteractorClass(private val addProductPresenter: AddProductPrese
         )
         FirestoreAPI.getProducts().add(data)
             .addOnSuccessListener { doc->
-                addProductPresenter.resultSaveProductFirestore(true, doc.id, product)
+                addProductPresenter.resultSaveProductFirestore(true, doc.id)
             }
             .addOnFailureListener { e->
-                addProductPresenter.resultSaveProductFirestore(false, e.toString(), null)
+                addProductPresenter.resultSaveProductFirestore(false, e.toString())
             }
-    }
-
-    override fun saveProductToRoom(id: String, product: Product) {
-        val productDB = Product(
-            id,
-            product.name,
-            product.unit,
-            product.userId
-        )
-        launch {
-            RoomDB.getInstance().product().insert(productDB)
-            addProductPresenter.resultSaveProductRoom()
-        }
+            .continueWith { addProductPresenter.resultSaveProductFirestore(true, "") }
     }
 }

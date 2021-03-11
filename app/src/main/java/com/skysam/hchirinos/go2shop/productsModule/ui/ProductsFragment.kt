@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.classView.EditProduct
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentProductsBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductPresenterClass
 
-class ProductsFragment : Fragment(), ProductView, OnClickList {
+class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private lateinit var productPresenter: ProductPresenter
@@ -53,12 +54,13 @@ class ProductsFragment : Fragment(), ProductView, OnClickList {
     }
 
     override fun resultGetProducts(products: MutableList<Product>) {
+        binding.progressBar.visibility = View.GONE
         if (products.isNullOrEmpty()) {
             binding.tvListEmpty.visibility = View.VISIBLE
         } else {
-            binding.tvListEmpty.visibility = View.GONE
             productsList = products
             adapterProduct.updateList(products)
+            binding.rvProducts.visibility = View.VISIBLE
         }
     }
 
@@ -74,6 +76,13 @@ class ProductsFragment : Fragment(), ProductView, OnClickList {
     }
 
     override fun onClickEdit(position: Int) {
+        val productSelected = productsList[position]
+        val editProductDialog = EditProductDialog(productSelected, position, false, this)
+        editProductDialog.show(requireActivity().supportFragmentManager, tag)
+    }
 
+    override fun editProduct(position: Int, product: Product) {
+        productsList[position] = product
+        adapterProduct.updateList(productsList)
     }
 }

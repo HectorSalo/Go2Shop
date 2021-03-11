@@ -21,7 +21,7 @@ object FirestoreAPI {
         return getInstance().collection(Constants.PRODUCTOS)
     }
 
-    fun getProduct(id: String): DocumentReference {
+    fun getProductById(id: String): DocumentReference {
         return getInstance().collection(Constants.PRODUCTOS).document(id)
     }
 

@@ -11,4 +11,8 @@ class InicioPresenterClass: InicioPresenter {
     override fun getValueWeb() {
         inicioInteractor.getValueWeb()
     }
+
+    override fun getDataFromFirestore() {
+        inicioInteractor.getDataFromFirestore()
+    }
 }

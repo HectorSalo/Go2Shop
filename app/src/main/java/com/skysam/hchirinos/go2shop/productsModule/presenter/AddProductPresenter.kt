@@ -8,6 +8,5 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
 interface AddProductPresenter {
     fun saveProductToFirestore(product: Product)
 
-    fun resultSaveProductFirestore(statusOk: Boolean, msg: String, product: Product?)
-    fun resultSaveProductRoom()
+    fun resultSaveProductFirestore(statusOk: Boolean, msg: String)
 }

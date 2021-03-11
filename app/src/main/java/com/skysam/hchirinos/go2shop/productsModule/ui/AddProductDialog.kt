@@ -66,6 +66,9 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
         }
         product = Product(Constants.USER_ID, name, dialogAddProductBinding.spinner.selectedItem.toString(),
         AuthAPI.getCurrenUser()!!.uid)
+        dialog!!.setCanceledOnTouchOutside(false)
+        dialogAddProductBinding.tfName.isEnabled = false
+        dialogAddProductBinding.spinner.isEnabled = false
         buttonPositive.isEnabled = false
         buttonNegative.isEnabled = false
         dialogAddProductBinding.progressBar.visibility = View.VISIBLE
@@ -79,6 +82,9 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
             productSaveFromList?.productSave(product)
             dialog!!.dismiss()
         } else {
+            dialog!!.setCanceledOnTouchOutside(true)
+            dialogAddProductBinding.tfName.isEnabled = true
+            dialogAddProductBinding.spinner.isEnabled = true
             buttonPositive.isEnabled = true
             buttonNegative.isEnabled = true
             dialogAddProductBinding.progressBar.visibility = View.GONE

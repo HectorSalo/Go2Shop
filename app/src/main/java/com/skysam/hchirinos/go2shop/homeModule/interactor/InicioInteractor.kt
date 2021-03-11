@@ -5,4 +5,5 @@ package com.skysam.hchirinos.go2shop.homeModule.interactor
  */
 interface InicioInteractor {
     fun getValueWeb()
+    fun getDataFromFirestore()
 }

@@ -1,9 +1,6 @@
 package com.skysam.hchirinos.go2shop.database.room.daos
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 
 /**
@@ -22,4 +19,7 @@ interface Product {
 
     @Insert
     suspend fun insert(product: Product)
+
+    @Delete
+    suspend fun delete(product: Product)
 }

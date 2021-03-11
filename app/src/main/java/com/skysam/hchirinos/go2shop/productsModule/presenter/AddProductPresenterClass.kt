@@ -14,15 +14,7 @@ class AddProductPresenterClass(private val addProductView: AddProductView): AddP
         addProductInteractor.saveProductToFirestore(product)
     }
 
-    override fun resultSaveProductFirestore(statusOk: Boolean, msg: String, product: Product?) {
-        if (statusOk) {
-            addProductInteractor.saveProductToRoom(msg, product!!)
-        } else {
-            addProductView.resultSaveProduct(false, msg)
-        }
-    }
-
-    override fun resultSaveProductRoom() {
-        addProductView.resultSaveProduct(true, "")
+    override fun resultSaveProductFirestore(statusOk: Boolean, msg: String) {
+        addProductView.resultSaveProduct(statusOk, msg)
     }
 }

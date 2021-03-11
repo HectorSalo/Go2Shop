@@ -1,7 +1,6 @@
 package com.skysam.hchirinos.go2shop.homeModule.ui
 
 import android.os.Bundle
-import android.view.Menu
 import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,7 +12,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
-import com.google.firebase.auth.FirebaseAuth
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
@@ -50,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         val user = AuthAPI.getCurrenUser()
         if (user != null) {
             inicioPresenter.getValueWeb()
+            inicioPresenter.getDataFromFirestore()
             tvNameUser.text = user.displayName
             tvEmailUser.text = user.email
         }
