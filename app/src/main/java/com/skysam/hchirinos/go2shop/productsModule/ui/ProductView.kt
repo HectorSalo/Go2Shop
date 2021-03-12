@@ -7,4 +7,5 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
  */
 interface ProductView {
     fun resultGetProducts(products: MutableList<Product>)
+    fun resultDeleteProducts(statusOk: Boolean, msg: String)
 }

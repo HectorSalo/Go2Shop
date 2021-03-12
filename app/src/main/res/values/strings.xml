@@ -20,6 +20,8 @@
     <string name="msg_list_empty">Lista vacía</string>
     <string name="text_list_empty">No hay ítems en esta lista</string>
     <string name="btn_delete">Eliminar</string>
+    <string name="btn_undo">Deshacer</string>
+    <string name="text_deleting">Eliminando&#8230;</string>
 
     <!--Fragment Inicio-->
     <string name="nav_inicio">Inicio</string>

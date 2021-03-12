@@ -14,7 +14,15 @@ class ProductPresenterClass(private val productView: ProductView): ProductPresen
         productInteractor.getProducts()
     }
 
+    override fun deleteProducts(products: MutableList<Product>) {
+        productInteractor.deleteProducts(products)
+    }
+
     override fun resultGetProducts(products: MutableList<Product>) {
         productView.resultGetProducts(products)
+    }
+
+    override fun resultDeleteProducts(statusOk: Boolean, msg: String) {
+        productView.resultDeleteProducts(statusOk, msg)
     }
 }

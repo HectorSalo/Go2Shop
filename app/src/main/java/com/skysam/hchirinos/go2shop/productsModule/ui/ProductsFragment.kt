@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.EditProduct
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
@@ -19,8 +20,11 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
     private lateinit var adapterProduct: ProductAdapter
     private var productsList: MutableList<Product> = mutableListOf()
     private var productsToDelete: MutableList<Product> = mutableListOf()
+    private var productsToRestored: MutableList<Product> = mutableListOf()
+    private var listPositionsToDelete: MutableList<Int> = mutableListOf()
     var actionModeActived = false
     var actionMode: androidx.appcompat.view.ActionMode? = null
+    var firstPositionToDelete = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,16 +66,33 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
         }
     }
 
+    override fun resultDeleteProducts(statusOk: Boolean, msg: String) {
+        if (_binding != null) {
+            if (!statusOk) {
+                for (i in productsToRestored.indices) {
+                    productsList.add(listPositionsToDelete[i], productsToRestored[i])
+                }
+                adapterProduct.updateList(productsList)
+                binding.rvProducts.scrollToPosition(firstPositionToDelete)
+            }
+            productsToRestored.clear()
+            listPositionsToDelete.clear()
+        }
+    }
+
     override fun onClickDelete(position: Int) {
         val product = productsList[position]
         if (productsToDelete.contains(product)) {
             productsToDelete.remove(product)
+            listPositionsToDelete.remove(position)
         } else {
             productsToDelete.add(product)
+            listPositionsToDelete.add(position)
         }
         if (productsToDelete.size == 1 && !actionModeActived) {
             actionMode = (activity as AppCompatActivity).startSupportActionMode(callback)
             actionModeActived = true
+            firstPositionToDelete = position
         }
         if (productsToDelete.isEmpty()) {
             adapterProduct.clearListToDelete()
@@ -115,7 +136,21 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
         ): Boolean {
             return when (item?.itemId) {
                 R.id.action_delete -> {
-                    // Handle delete icon press
+                    productsToRestored.addAll(productsToDelete)
+                    productsList.removeAll(productsToDelete)
+                    Snackbar.make(binding.root, getString(R.string.text_deleting), Snackbar.LENGTH_INDEFINITE)
+                        .setDuration(3500)
+                        .setAction(getString(R.string.btn_undo)) {
+                            for (i in productsToRestored.indices) {
+                                productsList.add(listPositionsToDelete[i], productsToRestored[i])
+                            }
+                            productsToRestored.clear()
+                            listPositionsToDelete.clear()
+                            adapterProduct.updateList(productsList)
+                            binding.rvProducts.scrollToPosition(firstPositionToDelete)
+                        }
+                        .show()
+                    actionMode?.finish()
                     true
                 }
                 else -> false
@@ -126,7 +161,7 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
             actionModeActived = false
             productsToDelete.clear()
             adapterProduct.clearListToDelete()
-            binding.rvProducts.adapter = adapterProduct
+            adapterProduct.updateList(productsList)
         }
     }
 }

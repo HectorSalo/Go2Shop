@@ -1,6 +1,9 @@
 package com.skysam.hchirinos.go2shop.productsModule.interactor
 
+import com.skysam.hchirinos.go2shop.common.Network
+import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
+import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductPresenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +23,22 @@ class ProductInteractorClass(private val productPresenter: ProductPresenter): Pr
             val products = RoomDB.getInstance().product()
                 .getAll()
             productPresenter.resultGetProducts(products)
+        }
+    }
+
+    override fun deleteProducts(products: MutableList<Product>) {
+        for (i in products.indices) {
+            FirestoreAPI.getProductById(products[i].id).delete()
+                .addOnSuccessListener {
+                    if (i == products.lastIndex) {
+                        productPresenter.resultDeleteProducts(true, "")
+                    }
+                }
+                .addOnFailureListener { e-> productPresenter.resultDeleteProducts(false, e.toString()) }
+        }
+
+        if (!Network.isAvailable()) {
+            productPresenter.resultDeleteProducts(true, "")
         }
     }
 }
