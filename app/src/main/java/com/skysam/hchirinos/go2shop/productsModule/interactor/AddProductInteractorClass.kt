@@ -1,7 +1,7 @@
 package com.skysam.hchirinos.go2shop.productsModule.interactor
 
-import com.google.firebase.firestore.MetadataChanges
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.Network
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
@@ -26,6 +26,9 @@ class AddProductInteractorClass(private val addProductPresenter: AddProductPrese
             .addOnFailureListener { e->
                 addProductPresenter.resultSaveProductFirestore(false, e.toString())
             }
-            .continueWith { addProductPresenter.resultSaveProductFirestore(true, "") }
+
+        if (!Network.isAvailable()) {
+            addProductPresenter.resultSaveProductFirestore(true, "")
+        }
     }
 }

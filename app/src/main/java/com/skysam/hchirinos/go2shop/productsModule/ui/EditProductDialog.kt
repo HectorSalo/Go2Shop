@@ -25,7 +25,8 @@ import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresente
  */
 class EditProductDialog(var product: Product, private val position: Int, private val fromList: Boolean,
                         private val editProduct: EditProduct): DialogFragment(), EditProductView {
-    private lateinit var dialogEditProductBinding: DialogEditProductBinding
+    private var _binding: DialogEditProductBinding? = null
+    private val binding get() = _binding!!
     private lateinit var editProductPresenter: EditProductPresenter
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
@@ -36,39 +37,39 @@ class EditProductDialog(var product: Product, private val position: Int, private
     private lateinit var name: String
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogEditProductBinding = DialogEditProductBinding.inflate(layoutInflater)
+        _binding = DialogEditProductBinding.inflate(layoutInflater)
 
         editProductPresenter = EditProductPresenterClass(this)
 
         if (!fromList) {
-            dialogEditProductBinding.tfName.visibility = View.VISIBLE
-            dialogEditProductBinding.tfQuantity.visibility = View.GONE
-            dialogEditProductBinding.ibAddQuantity.visibility = View.GONE
-            dialogEditProductBinding.ibRestQuantity.visibility = View.GONE
+            binding.tfName.visibility = View.VISIBLE
+            binding.tfQuantity.visibility = View.GONE
+            binding.ibAddQuantity.visibility = View.GONE
+            binding.ibRestQuantity.visibility = View.GONE
         }
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.title_edit_producto_dialog, product.name))
-            .setView(dialogEditProductBinding.root)
+            .setView(binding.root)
             .setPositiveButton(R.string.btn_edit, null)
             .setNegativeButton(R.string.btn_cancel, null)
 
         val dialog = builder.create()
         dialog.show()
 
-        dialogEditProductBinding.etName.doAfterTextChanged { text->
+        binding.etName.doAfterTextChanged { text->
             if (!text.isNullOrEmpty()) {
                 name = text.toString()
             }
         }
-        dialogEditProductBinding.etQuantity.doAfterTextChanged {text ->
+        binding.etQuantity.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty()) {
                 if (text.toString().toDouble() > 0) {
                     quantityTotal = text.toString().toDouble()
                 }
             }
         }
-        dialogEditProductBinding.etPrice.doAfterTextChanged { text ->
+        binding.etPrice.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty()) {
                 if (text.toString().toDouble() > 0) {
                     priceTotal = text.toString().toDouble()
@@ -76,8 +77,8 @@ class EditProductDialog(var product: Product, private val position: Int, private
             }
         }
 
-        dialogEditProductBinding.ibAddQuantity.setOnClickListener { addQuantity() }
-        dialogEditProductBinding.ibRestQuantity.setOnClickListener { restQuantity() }
+        binding.ibAddQuantity.setOnClickListener { addQuantity() }
+        binding.ibRestQuantity.setOnClickListener { restQuantity() }
 
         buttonNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
         buttonNegative.setOnClickListener { dialog.dismiss() }
@@ -89,38 +90,43 @@ class EditProductDialog(var product: Product, private val position: Int, private
         return dialog
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun loadData() {
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
-        dialogEditProductBinding.spinner.adapter = adapterUnits
+        binding.spinner.adapter = adapterUnits
         name = product.name
         quantityTotal = product.quantity
         priceTotal = product.price
         unit = product.unit
 
-        dialogEditProductBinding.etName.setText(product.name)
-        dialogEditProductBinding.etPrice.setText(product.price.toString())
-        dialogEditProductBinding.etQuantity.setText(product.quantity.toString())
-        dialogEditProductBinding.spinner.setSelection(listUnits.indexOf(product.unit))
+        binding.etName.setText(product.name)
+        binding.etPrice.setText(product.price.toString())
+        binding.etQuantity.setText(product.quantity.toString())
+        binding.spinner.setSelection(listUnits.indexOf(product.unit))
     }
 
     private fun restQuantity() {
         if (quantityTotal > 1) {
             quantityTotal -= 1
-            dialogEditProductBinding.etQuantity.setText(quantityTotal.toString())
+            binding.etQuantity.setText(quantityTotal.toString())
         }
     }
 
     private fun addQuantity() {
         quantityTotal += 1
-        dialogEditProductBinding.etQuantity.setText(quantityTotal.toString())
+        binding.etQuantity.setText(quantityTotal.toString())
     }
 
     private fun validateEdit() {
-        if (dialogEditProductBinding.spinner.selectedItemPosition > 0) {
-            unit = dialogEditProductBinding.spinner.selectedItem.toString()
+        if (binding.spinner.selectedItemPosition > 0) {
+            unit = binding.spinner.selectedItem.toString()
         }
-        if (dialogEditProductBinding.rbBolivar.isChecked) {
+        if (binding.rbBolivar.isChecked) {
             val valueWeb = SharedPreferenceBD.getValue(AuthAPI.getCurrenUser()!!.uid)
             priceTotal /= valueWeb
         }
@@ -131,15 +137,15 @@ class EditProductDialog(var product: Product, private val position: Int, private
         product.userId,
         priceTotal,
         quantityTotal)
-        Keyboard.close(dialogEditProductBinding.root)
+        Keyboard.close(binding.root)
         if (fromList) {
             editProduct.editProduct(position, productResult)
             dismiss()
         } else {
             dialog!!.setCanceledOnTouchOutside(false)
-            dialogEditProductBinding.progressBar.visibility = View.VISIBLE
-            dialogEditProductBinding.tfName.isEnabled = false
-            dialogEditProductBinding.tfPrice.isEnabled = false
+            binding.progressBar.visibility = View.VISIBLE
+            binding.tfName.isEnabled = false
+            binding.tfPrice.isEnabled = false
             buttonNegative.isEnabled = false
             buttonPositive.isEnabled = false
             editProductPresenter.editToFirestore(productResult)
@@ -147,17 +153,19 @@ class EditProductDialog(var product: Product, private val position: Int, private
     }
 
     override fun resultEditToFirestore(statusOk: Boolean, msg: String) {
-        if (statusOk) {
-            editProduct.editProduct(position, productResult)
-            dismiss()
-        } else {
-            dialog!!.setCanceledOnTouchOutside(true)
-            dialogEditProductBinding.progressBar.visibility = View.GONE
-            dialogEditProductBinding.tfName.isEnabled = true
-            dialogEditProductBinding.tfPrice.isEnabled = true
-            buttonNegative.isEnabled = true
-            buttonPositive.isEnabled = true
-            Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+        if (_binding != null) {
+            if (statusOk) {
+                editProduct.editProduct(position, productResult)
+                dismiss()
+            } else {
+                dialog!!.setCanceledOnTouchOutside(true)
+                binding.progressBar.visibility = View.GONE
+                binding.tfName.isEnabled = true
+                binding.tfPrice.isEnabled = true
+                buttonNegative.isEnabled = true
+                buttonPositive.isEnabled = true
+                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

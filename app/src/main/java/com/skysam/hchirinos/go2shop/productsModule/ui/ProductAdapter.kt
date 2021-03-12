@@ -32,6 +32,8 @@ class ProductAdapter(private var products: MutableList<Product>, private val onC
         holder.price.text = context.getString(R.string.text_total_price_item,item.price)
         holder.unit.text = item.unit
 
+        holder.card.isChecked = listToDeleted.contains(position)
+
         holder.card.setOnLongClickListener {
             holder.card.isChecked = !holder.card.isChecked
             onClickList.onClickDelete(position)
@@ -40,9 +42,9 @@ class ProductAdapter(private var products: MutableList<Product>, private val onC
         }
         holder.card.setOnClickListener {
             if (listToDeleted.isNotEmpty()) {
+                fillListToDelete(position)
                 holder.card.isChecked = !holder.card.isChecked
                 onClickList.onClickDelete(position)
-                fillListToDelete(position)
             } else {
                 onClickList.onClickEdit(position)
             }
@@ -69,5 +71,9 @@ class ProductAdapter(private var products: MutableList<Product>, private val onC
     fun updateList(newList: MutableList<Product>) {
         products = newList
         notifyDataSetChanged()
+    }
+
+    fun clearListToDelete() {
+        listToDeleted.clear()
     }
 }

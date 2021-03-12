@@ -20,25 +20,26 @@ import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenterClass
 
 class AddProductDialog(private val name: String?, private val productSaveFromList: ProductSaveFromList?): DialogFragment(), AddProductView {
-    private lateinit var dialogAddProductBinding: DialogAddProductBinding
+    private var _binding: DialogAddProductBinding? = null
+    private val binding get() = _binding!!
     private lateinit var addProductPresenter: AddProductPresenter
     private lateinit var product: Product
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogAddProductBinding = DialogAddProductBinding.inflate(layoutInflater)
+        _binding = DialogAddProductBinding.inflate(layoutInflater)
         addProductPresenter = AddProductPresenterClass(this)
 
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
-        dialogAddProductBinding.spinner.adapter = adapterUnits
+        binding.spinner.adapter = adapterUnits
 
-        if (!name.isNullOrEmpty()) dialogAddProductBinding.etName.setText(name)
+        if (!name.isNullOrEmpty()) binding.etName.setText(name)
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.title_add_producto_dialog))
-            .setView(dialogAddProductBinding.root)
+            .setView(binding.root)
             .setPositiveButton(R.string.btn_save, null)
             .setNegativeButton(R.string.btn_cancel, null)
 
@@ -52,43 +53,50 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
         return dialog
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun validateProduct() {
-        dialogAddProductBinding.tfName.error = null
-        val name = dialogAddProductBinding.etName.text.toString()
+        binding.tfName.error = null
+        val name = binding.etName.text.toString()
         if (name.isEmpty()) {
-            dialogAddProductBinding.tfName.error = getString(R.string.error_field_empty)
+            binding.tfName.error = getString(R.string.error_field_empty)
             return
         }
-        Keyboard.close(dialogAddProductBinding.root)
-        if (dialogAddProductBinding.spinner.selectedItemPosition == 0) {
+        Keyboard.close(binding.root)
+        if (binding.spinner.selectedItemPosition == 0) {
             Toast.makeText(requireContext(), getString(R.string.error_spinner_units_position), Toast.LENGTH_SHORT).show()
             return
         }
-        product = Product(Constants.USER_ID, name, dialogAddProductBinding.spinner.selectedItem.toString(),
+        product = Product(Constants.USER_ID, name, binding.spinner.selectedItem.toString(),
         AuthAPI.getCurrenUser()!!.uid)
         dialog!!.setCanceledOnTouchOutside(false)
-        dialogAddProductBinding.tfName.isEnabled = false
-        dialogAddProductBinding.spinner.isEnabled = false
+        binding.tfName.isEnabled = false
+        binding.spinner.isEnabled = false
         buttonPositive.isEnabled = false
         buttonNegative.isEnabled = false
-        dialogAddProductBinding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         addProductPresenter.saveProductToFirestore(product)
     }
 
     override fun resultSaveProduct(statusOk: Boolean, msg: String) {
-        dialogAddProductBinding.progressBar.visibility = View.GONE
-        if (statusOk) {
-            Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
-            productSaveFromList?.productSave(product)
-            dialog!!.dismiss()
-        } else {
-            dialog!!.setCanceledOnTouchOutside(true)
-            dialogAddProductBinding.tfName.isEnabled = true
-            dialogAddProductBinding.spinner.isEnabled = true
-            buttonPositive.isEnabled = true
-            buttonNegative.isEnabled = true
-            dialogAddProductBinding.progressBar.visibility = View.GONE
-            Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+        if (_binding != null) {
+            binding.progressBar.visibility = View.GONE
+            if (statusOk) {
+                Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+                productSaveFromList?.productSave(product)
+                dialog!!.dismiss()
+            } else {
+                dialog!!.setCanceledOnTouchOutside(true)
+                binding.tfName.isEnabled = true
+                binding.spinner.isEnabled = true
+                buttonPositive.isEnabled = true
+                buttonNegative.isEnabled = true
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

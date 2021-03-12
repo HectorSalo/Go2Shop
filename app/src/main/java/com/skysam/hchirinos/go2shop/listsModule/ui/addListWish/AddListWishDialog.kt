@@ -191,16 +191,18 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
     }
 
     override fun resultSaveListWish(statusOk: Boolean, msg: String) {
-        if (statusOk) {
-            Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
-            dialog!!.dismiss()
-        } else {
-            binding.progressBar.visibility = View.GONE
-            binding.fabSave.isEnabled = true
-            binding.fabCancel.isEnabled = true
-            binding.tfNameList.isEnabled = true
-            binding.tfSearchProducts.isEnabled = true
-            Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+        if (_binding != null) {
+            if (statusOk) {
+                Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+                dialog!!.dismiss()
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.fabSave.isEnabled = true
+                binding.fabCancel.isEnabled = true
+                binding.tfNameList.isEnabled = true
+                binding.tfSearchProducts.isEnabled = true
+                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.skysam.hchirinos.go2shop.listsModule.interactor
 
 import com.skysam.hchirinos.go2shop.common.Constants
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish

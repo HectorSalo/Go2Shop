@@ -2,6 +2,7 @@ package com.skysam.hchirinos.go2shop.productsModule.ui
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.EditProduct
@@ -18,8 +19,8 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
     private lateinit var adapterProduct: ProductAdapter
     private var productsList: MutableList<Product> = mutableListOf()
     private var productsToDelete: MutableList<Product> = mutableListOf()
-    private lateinit var itemDelete: MenuItem
-    private lateinit var itemSearch: MenuItem
+    var actionModeActived = false
+    var actionMode: androidx.appcompat.view.ActionMode? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,10 +43,7 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         requireActivity().menuInflater.inflate(R.menu.main, menu)
         val item = menu.findItem(R.id.action_cerrar_sesion)
-        itemDelete = menu.findItem(R.id.action_delete)
-        itemSearch = menu.findItem(R.id.action_search)
         item.isVisible = false
-        itemDelete.isVisible = false
     }
 
     override fun onDestroyView() {
@@ -71,8 +69,16 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
         } else {
             productsToDelete.add(product)
         }
-        itemDelete.isVisible = productsToDelete.isNotEmpty()
-        itemSearch.isVisible = productsToDelete.isEmpty()
+        if (productsToDelete.size == 1 && !actionModeActived) {
+            actionMode = (activity as AppCompatActivity).startSupportActionMode(callback)
+            actionModeActived = true
+        }
+        if (productsToDelete.isEmpty()) {
+            adapterProduct.clearListToDelete()
+            actionModeActived = false
+            (activity as AppCompatActivity).startSupportActionMode(callback)!!.finish()
+        }
+        actionMode?.title = "Seleccionado ${productsToDelete.size}"
     }
 
     override fun onClickEdit(position: Int) {
@@ -84,5 +90,43 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
     override fun editProduct(position: Int, product: Product) {
         productsList[position] = product
         adapterProduct.updateList(productsList)
+    }
+
+    private val callback = object : androidx.appcompat.view.ActionMode.Callback {
+
+        override fun onCreateActionMode(
+            mode: androidx.appcompat.view.ActionMode?,
+            menu: Menu?
+        ): Boolean {
+            requireActivity().menuInflater.inflate(R.menu.contextual_action_bar_products, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(
+            mode: androidx.appcompat.view.ActionMode?,
+            menu: Menu?
+        ): Boolean {
+            return false
+        }
+
+        override fun onActionItemClicked(
+            mode: androidx.appcompat.view.ActionMode?,
+            item: MenuItem?
+        ): Boolean {
+            return when (item?.itemId) {
+                R.id.action_delete -> {
+                    // Handle delete icon press
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode?) {
+            actionModeActived = false
+            productsToDelete.clear()
+            adapterProduct.clearListToDelete()
+            binding.rvProducts.adapter = adapterProduct
+        }
     }
 }
