@@ -1,6 +1,8 @@
 package com.skysam.hchirinos.go2shop.productsModule.ui
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -10,13 +12,16 @@ import com.skysam.hchirinos.go2shop.common.classView.EditProduct
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentProductsBinding
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductPresenterClass
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPresenter
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPresenterClass
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
 
-class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
+class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickList, EditProduct {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var productPresenter: ProductPresenter
+    private lateinit var productsPresenter: ProductsPresenter
+    private lateinit var productFragmentPresenter: ProductFragmentPresenter
     private lateinit var adapterProduct: ProductAdapter
     private var productsList: MutableList<Product> = mutableListOf()
     private var productsToDelete: MutableList<Product> = mutableListOf()
@@ -26,19 +31,21 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
     var actionMode: androidx.appcompat.view.ActionMode? = null
     var firstPositionToDelete = 0
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProductsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        productPresenter = ProductPresenterClass(this)
+        productFragmentPresenter = ProductFragmentPresenterClass(this)
+        productsPresenter = ProductsPresenterClass(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        productPresenter.getProducts()
+        productsPresenter.getProducts()
         binding.rvProducts.setHasFixedSize(true)
         adapterProduct = ProductAdapter(productsList, this)
         binding.rvProducts.adapter = adapterProduct
@@ -75,8 +82,6 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
                 adapterProduct.updateList(productsList)
                 binding.rvProducts.scrollToPosition(firstPositionToDelete)
             }
-            productsToRestored.clear()
-            listPositionsToDelete.clear()
         }
     }
 
@@ -138,7 +143,7 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
                 R.id.action_delete -> {
                     productsToRestored.addAll(productsToDelete)
                     productsList.removeAll(productsToDelete)
-                    Snackbar.make(binding.root, getString(R.string.text_deleting), Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(binding.rvProducts, getString(R.string.text_deleting), Snackbar.LENGTH_INDEFINITE)
                         .setDuration(3500)
                         .setAction(getString(R.string.btn_undo)) {
                             for (i in productsToRestored.indices) {
@@ -151,6 +156,14 @@ class ProductsFragment : Fragment(), ProductView, OnClickList, EditProduct {
                         }
                         .show()
                     actionMode?.finish()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if (productsToRestored.isNotEmpty()) {
+                            productFragmentPresenter.deleteProducts(productsToRestored)
+                            productsToRestored.clear()
+                            listPositionsToDelete.clear()
+                        }
+                    }, 4500)
                     true
                 }
                 else -> false

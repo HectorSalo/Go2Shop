@@ -1,8 +1,8 @@
-package com.skysam.hchirinos.go2shop.listsModule.presenter
+package com.skysam.hchirinos.go2shop.productsModule.presenter
 
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 
-interface ListWishPresenter {
+interface ProductsPresenter {
     fun getProducts()
 
     fun resultGetProducts(products: MutableList<Product>)

@@ -2,22 +2,20 @@ package com.skysam.hchirinos.go2shop.listsModule.ui
 
 import android.os.Bundle
 import android.view.*
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
-import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenter
-import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenterClass
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
+import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
 
-class ListsFragment : Fragment(), ListWishView {
+class ListsFragment : Fragment(), ProductsView {
 
     private lateinit var slideshowViewModel: SlideshowViewModel
-    private lateinit var listWishPresenter: ListWishPresenter
+    private lateinit var productsPresenter: ProductsPresenter
     private var _binding: FragmentListsBinding? = null
     private val binding get() = _binding!!
 
@@ -30,7 +28,7 @@ class ListsFragment : Fragment(), ListWishView {
                 ViewModelProvider(this).get(SlideshowViewModel::class.java)
         _binding = FragmentListsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        listWishPresenter = ListWishPresenterClass(this)
+        productsPresenter = ProductsPresenterClass(this)
         slideshowViewModel.text.observe(viewLifecycleOwner, Observer {
             //binding.tvSarchProduct.text = it
         })
@@ -39,7 +37,7 @@ class ListsFragment : Fragment(), ListWishView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listWishPresenter.getProducts()
+        productsPresenter.getProducts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

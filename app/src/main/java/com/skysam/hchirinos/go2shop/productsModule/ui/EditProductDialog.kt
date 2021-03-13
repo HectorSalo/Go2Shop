@@ -3,13 +3,17 @@ package com.skysam.hchirinos.go2shop.productsModule.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.textfield.TextInputEditText
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.EditProduct
@@ -19,12 +23,15 @@ import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenterClass
+import java.util.*
 
 /**
  * Created by Hector Chirinos (Home) on 9/3/2021.
  */
-class EditProductDialog(var product: Product, private val position: Int, private val fromList: Boolean,
-                        private val editProduct: EditProduct): DialogFragment(), EditProductView {
+class EditProductDialog(
+    var product: Product, private val position: Int, private val fromList: Boolean,
+    private val editProduct: EditProduct
+): DialogFragment(), EditProductView {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var editProductPresenter: EditProductPresenter
@@ -71,12 +78,30 @@ class EditProductDialog(var product: Product, private val position: Int, private
         }
         binding.etPrice.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty()) {
-                if (text.toString().toDouble() > 0) {
+                if (text.toString().toDouble() >= 0) {
                     priceTotal = text.toString().toDouble()
                 }
             }
         }
+        binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                if (!binding.etPrice.text.isNullOrEmpty()) {
+                    var char = binding.etPrice.text.toString().trim()
+                    if (char.contains(",")) {
 
+                    } else {
+                        binding.etPrice.setText(String.format("%.2f", char.toDouble()))
+                    }
+                }
+            }
+        }
+
+        binding.spinner.setOnTouchListener { v, _ ->
+            v.performClick()
+            binding.etPrice.clearFocus()
+            false
+        }
+        binding.rgMoneda.setOnCheckedChangeListener { _, _ -> binding.etPrice.clearFocus() }
         binding.ibAddQuantity.setOnClickListener { addQuantity() }
         binding.ibRestQuantity.setOnClickListener { restQuantity() }
 
@@ -105,12 +130,13 @@ class EditProductDialog(var product: Product, private val position: Int, private
         unit = product.unit
 
         binding.etName.setText(product.name)
-        binding.etPrice.setText(product.price.toString())
+        binding.etPrice.setText(String.format("%.2f", product.price))
         binding.etQuantity.setText(product.quantity.toString())
         binding.spinner.setSelection(listUnits.indexOf(product.unit))
     }
 
     private fun restQuantity() {
+        binding.etPrice.clearFocus()
         if (quantityTotal > 1) {
             quantityTotal -= 1
             binding.etQuantity.setText(quantityTotal.toString())
@@ -118,11 +144,13 @@ class EditProductDialog(var product: Product, private val position: Int, private
     }
 
     private fun addQuantity() {
+        binding.etPrice.clearFocus()
         quantityTotal += 1
         binding.etQuantity.setText(quantityTotal.toString())
     }
 
     private fun validateEdit() {
+        binding.etPrice.clearFocus()
         if (binding.spinner.selectedItemPosition > 0) {
             unit = binding.spinner.selectedItem.toString()
         }
@@ -131,12 +159,13 @@ class EditProductDialog(var product: Product, private val position: Int, private
             priceTotal /= valueWeb
         }
         productResult = Product(
-        product.id,
-        name,
-        unit,
-        product.userId,
-        priceTotal,
-        quantityTotal)
+            product.id,
+            name,
+            unit,
+            product.userId,
+            priceTotal,
+            quantityTotal
+        )
         Keyboard.close(binding.root)
         if (fromList) {
             editProduct.editProduct(position, productResult)
@@ -164,7 +193,11 @@ class EditProductDialog(var product: Product, private val position: Int, private
                 binding.tfPrice.isEnabled = true
                 buttonNegative.isEnabled = true
                 buttonPositive.isEnabled = true
-                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.save_data_error),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

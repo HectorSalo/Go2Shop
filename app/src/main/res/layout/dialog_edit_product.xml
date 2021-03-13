@@ -42,7 +42,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/text_price"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:clickable="true"
+            android:focusableInTouchMode="true"
+            android:focusable="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <RadioGroup
@@ -96,11 +99,12 @@
             android:layout_height="wrap_content"
             android:hint="@string/text_quantity"
             android:inputType="numberDecimal"
+            android:maxLength="6"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageButton

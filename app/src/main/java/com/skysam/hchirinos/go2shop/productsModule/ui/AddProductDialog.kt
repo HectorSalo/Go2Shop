@@ -18,18 +18,25 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenterClass
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
 
-class AddProductDialog(private val name: String?, private val productSaveFromList: ProductSaveFromList?): DialogFragment(), AddProductView {
+class AddProductDialog(private val name: String?, private val productSaveFromList: ProductSaveFromList?):
+    DialogFragment(), ProductsView, AddProductView {
     private var _binding: DialogAddProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var addProductPresenter: AddProductPresenter
+    private lateinit var productsPresenter: ProductsPresenter
     private lateinit var product: Product
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
+    private var listProductsSaved: MutableList<Product> = mutableListOf()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogAddProductBinding.inflate(layoutInflater)
         addProductPresenter = AddProductPresenterClass(this)
+        productsPresenter = ProductsPresenterClass(this)
+        productsPresenter.getProducts()
 
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
@@ -60,10 +67,16 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
 
     private fun validateProduct() {
         binding.tfName.error = null
-        val name = binding.etName.text.toString()
+        val name = binding.etName.text.toString().trim()
         if (name.isEmpty()) {
             binding.tfName.error = getString(R.string.error_field_empty)
             return
+        }
+        for (i in listProductsSaved.indices) {
+            if (listProductsSaved[i].name.equals(name, true)) {
+                binding.tfName.error = getString(R.string.error_name_exists)
+                return
+            }
         }
         Keyboard.close(binding.root)
         if (binding.spinner.selectedItemPosition == 0) {
@@ -98,5 +111,9 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
                 Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun resultGetProducts(products: MutableList<Product>) {
+        listProductsSaved.addAll(products)
     }
 }

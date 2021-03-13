@@ -56,6 +56,7 @@
     <string name="title_add_producto_dialog">Crear producto</string>
     <string name="text_product">Producto</string>
     <string name="error_spinner_units_position">Debe seleccionar un tipo de unidad</string>
+    <string name="error_name_exists">Nombre existente</string>
 
     <!--Fragment Storage-->
 

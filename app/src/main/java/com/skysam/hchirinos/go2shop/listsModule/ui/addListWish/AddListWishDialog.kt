@@ -22,20 +22,21 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.AddWishListPresenterClass
-import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenter
-import com.skysam.hchirinos.go2shop.listsModule.presenter.ListWishPresenterClass
-import com.skysam.hchirinos.go2shop.listsModule.ui.ListWishView
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
+import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
+import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 
-class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
+class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
     ProductSaveFromList, OnClickExit, EditProduct, AddWishListView {
-    private lateinit var listWishPresenter: ListWishPresenter
+    private lateinit var productsPresenter: ProductsPresenter
     private lateinit var addListWishPresenter: AddListWishPresenter
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<Product> = mutableListOf()
+    private var productsName = mutableListOf<String>()
     private lateinit var addWishListAdapter: AddWishListAdapter
     private var total: Double = 0.0
 
@@ -49,14 +50,14 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
-        listWishPresenter = ListWishPresenterClass(this)
+        productsPresenter = ProductsPresenterClass(this)
         addListWishPresenter = AddWishListPresenterClass(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listWishPresenter.getProducts()
+        productsPresenter.getProducts()
         binding.rvList.setHasFixedSize(true)
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = addWishListAdapter
@@ -81,9 +82,14 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
                 }
             }
         }
-        binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+        binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)
-            addProductToList(position)
+            var positionSelected = 0
+            val nameSelected = parent.getItemAtPosition(position)
+            for (i in productsName.indices) {
+                positionSelected = productsName.indexOf(nameSelected)
+            }
+            addProductToList(positionSelected)
         }
         binding.fabSave.setOnClickListener { validateToSave() }
         binding.fabCancel.setOnClickListener {
@@ -135,12 +141,11 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
     }
 
     private fun fillListProductsDB(list: MutableList<Product>){
-        val productsName = mutableListOf<String>()
         for (i in list.indices) {
             productsName.add(i, list[i].name)
         }
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName)
-        binding.etSarchProduct.setAdapter(adapter)
+        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName)
+        binding.etSarchProduct.setAdapter(adapterSearchProduct)
     }
 
     private fun sumTotal(subtotal: Double) {
@@ -154,7 +159,7 @@ class AddListWishDialog : DialogFragment(), ListWishView, OnClickList,
     }
 
     override fun resultGetProducts(products: MutableList<Product>) {
-        productsFromDB = products
+        productsFromDB.addAll(products)
         fillListProductsDB(products)
     }
 
