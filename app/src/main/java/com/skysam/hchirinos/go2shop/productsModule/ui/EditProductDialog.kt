@@ -23,6 +23,8 @@ import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenterClass
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.*
 
 /**
@@ -83,18 +85,14 @@ class EditProductDialog(
                 }
             }
         }
-        binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
+
+        /*binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 if (!binding.etPrice.text.isNullOrEmpty()) {
-                    var char = binding.etPrice.text.toString().trim()
-                    if (char.contains(",")) {
-
-                    } else {
-                        binding.etPrice.setText(String.format("%.2f", char.toDouble()))
-                    }
+                    priceTotal = binding.etPrice.text.toString().toDouble()
                 }
             }
-        }
+        }*/
 
         binding.spinner.setOnTouchListener { v, _ ->
             v.performClick()

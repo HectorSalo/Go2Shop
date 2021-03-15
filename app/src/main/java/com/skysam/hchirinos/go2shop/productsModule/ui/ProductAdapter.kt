@@ -10,6 +10,7 @@ import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import java.text.NumberFormat
 
 /**
  * Created by Hector Chirinos (Home) on 10/3/2021.
@@ -29,7 +30,7 @@ class ProductAdapter(private var products: MutableList<Product>, private val onC
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = products[position]
         holder.name.text = item.name
-        holder.price.text = context.getString(R.string.text_total_price_item,item.price)
+        holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.price))
         holder.unit.text = item.unit
 
         holder.card.isChecked = listToDeleted.contains(position)

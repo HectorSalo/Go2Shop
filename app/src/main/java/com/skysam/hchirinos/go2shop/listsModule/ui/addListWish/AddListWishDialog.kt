@@ -27,6 +27,7 @@ import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterCl
 import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
+import java.text.NumberFormat
 
 class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
     ProductSaveFromList, OnClickExit, EditProduct, AddWishListView {
@@ -150,7 +151,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
 
     private fun sumTotal(subtotal: Double) {
         total += subtotal
-        binding.tvTotal.text = getString(R.string.text_total_list, total)
+        binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
     }
 
     override fun onDestroyView() {

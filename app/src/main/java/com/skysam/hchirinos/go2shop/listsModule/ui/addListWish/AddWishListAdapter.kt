@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import java.text.NumberFormat
 
 
 class AddWishListAdapter(
@@ -29,7 +30,7 @@ class AddWishListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = products[position]
         holder.name.text = item.name
-        holder.price.text = context.getString(R.string.text_total_price_item, item.price)
+        holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.price))
         holder.unit.text = context.getString(R.string.text_quantity_total, item.quantity, item.unit)
         holder.buttonDelete.setOnClickListener { listener.onClickDelete(position) }
         holder.buttonEdit.setOnClickListener { listener.onClickEdit(position) }
