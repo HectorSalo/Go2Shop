@@ -24,6 +24,7 @@ import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenterClass
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.*
 
@@ -49,6 +50,9 @@ class EditProductDialog(
         _binding = DialogEditProductBinding.inflate(layoutInflater)
 
         editProductPresenter = EditProductPresenterClass(this)
+
+        val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
+        NumberFormat.getInstance().isGroupingUsed = true
 
         if (!fromList) {
             binding.tfName.visibility = View.VISIBLE
@@ -78,21 +82,27 @@ class EditProductDialog(
                 }
             }
         }
-        binding.etPrice.doAfterTextChanged { text ->
+        /*binding.etPrice.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty()) {
                 if (text.toString().toDouble() >= 0) {
-                    priceTotal = text.toString().toDouble()
-                }
-            }
-        }
-
-        /*binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                if (!binding.etPrice.text.isNullOrEmpty()) {
-                    priceTotal = binding.etPrice.text.toString().toDouble()
+                    //priceTotal = text.toString().toDouble()
                 }
             }
         }*/
+
+        binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                if (!binding.etPrice.text.isNullOrEmpty()) {
+                    if (decimalSeparator == ",") {
+                        binding.etPrice.setText(priceTotal.toString())
+                        val priceString = binding.etPrice.text.toString()
+                        priceString.replace(".", "").replace(",", ".")
+                        priceTotal = priceString.toDouble()
+                    }
+                    //priceTotal = binding.etPrice.text.toString().toDouble()
+                }
+            }
+        }
 
         binding.spinner.setOnTouchListener { v, _ ->
             v.performClick()
@@ -128,7 +138,7 @@ class EditProductDialog(
         unit = product.unit
 
         binding.etName.setText(product.name)
-        binding.etPrice.setText(String.format("%.2f", product.price))
+        binding.etPrice.setText(String.format("#.##", product.price))
         binding.etQuantity.setText(product.quantity.toString())
         binding.spinner.setSelection(listUnits.indexOf(product.unit))
     }
