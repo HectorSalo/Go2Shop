@@ -93,11 +93,23 @@ class EditProductDialog(
         binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 if (!binding.etPrice.text.isNullOrEmpty()) {
+                    var priceString = binding.etPrice.text.toString()
                     if (decimalSeparator == ",") {
-                        binding.etPrice.setText(priceTotal.toString())
-                        val priceString = binding.etPrice.text.toString()
-                        priceString.replace(".", "").replace(",", ".")
-                        priceTotal = priceString.toDouble()
+                        try {
+                            priceString.replace(".", "").replace(",", ".")
+                            priceTotal = priceString.toDouble()
+                            binding.etPrice.setText(NumberFormat.getInstance().format(priceTotal))
+                        } catch (e: Exception) {
+                            Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        try {
+                            priceString = priceString.replace(",", "")
+                            priceTotal = priceString.toDouble()
+                            binding.etPrice.setText(NumberFormat.getInstance().format(priceTotal))
+                        } catch (e: Exception) {
+                            Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     //priceTotal = binding.etPrice.text.toString().toDouble()
                 }
@@ -138,7 +150,7 @@ class EditProductDialog(
         unit = product.unit
 
         binding.etName.setText(product.name)
-        binding.etPrice.setText(String.format("#.##", product.price))
+        binding.etPrice.setText(NumberFormat.getInstance().format(product.price))
         binding.etQuantity.setText(product.quantity.toString())
         binding.spinner.setSelection(listUnits.indexOf(product.unit))
     }
