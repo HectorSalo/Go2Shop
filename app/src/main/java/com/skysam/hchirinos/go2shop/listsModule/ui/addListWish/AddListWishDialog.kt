@@ -16,6 +16,7 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
+import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
@@ -63,7 +64,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        binding.tvTotal.text = getString(R.string.text_total_list, total)
+        binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.etSarchProduct.addTextChangedListener {
             if (binding.etSarchProduct.text.toString().isEmpty()) {
                 binding.tfSearchProducts.startIconDrawable = null
@@ -117,11 +118,24 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
         binding.fabCancel.isEnabled = false
         binding.tfNameList.isEnabled = false
         binding.tfSearchProducts.isEnabled = false
+        val listFinal: MutableList<ProductsToListModel> = mutableListOf()
+        for (i in productsToAdd.indices) {
+            val prod = ProductsToListModel(
+                productsToAdd[i].id,
+                productsToAdd[i].name,
+                productsToAdd[i].unit,
+                productsToAdd[i].userId,
+                Constants.USERS,
+                productsToAdd[i].price,
+                productsToAdd[i].quantity
+            )
+            listFinal.add(prod)
+        }
         val listToSend = ListWish(
             Constants.USERS,
             nameList,
             AuthAPI.getCurrenUser()!!.uid,
-            productsToAdd,
+            listFinal,
             total
         )
         addListWishPresenter.saveListWish(listToSend)

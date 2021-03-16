@@ -14,15 +14,7 @@ class AddWishListPresenterClass(private val addWishListView: AddWishListView): A
         addWishListInteractor.saveListWishFirestore(list)
     }
 
-    override fun resultSaveListWishFirestore(statusOk: Boolean, msg: String, list: ListWish?) {
-        if (statusOk){
-            addWishListInteractor.saveListWishRoom(msg, list!!)
-        } else {
-            addWishListView.resultSaveListWish(false, msg)
-        }
-    }
-
-    override fun resultSaveListWishRoom() {
-        addWishListView.resultSaveListWish(true, "")
+    override fun resultSaveListWishFirestore(statusOk: Boolean, msg: String) {
+        addWishListView.resultSaveListWish(statusOk, msg)
     }
 }

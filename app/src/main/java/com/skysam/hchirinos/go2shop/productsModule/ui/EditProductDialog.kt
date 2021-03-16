@@ -82,13 +82,6 @@ class EditProductDialog(
                 }
             }
         }
-        /*binding.etPrice.doAfterTextChanged { text ->
-            if (!text.isNullOrEmpty()) {
-                if (text.toString().toDouble() >= 0) {
-                    //priceTotal = text.toString().toDouble()
-                }
-            }
-        }*/
 
         binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -96,7 +89,7 @@ class EditProductDialog(
                     var priceString = binding.etPrice.text.toString()
                     if (decimalSeparator == ",") {
                         try {
-                            priceString.replace(".", "").replace(",", ".")
+                            priceString = priceString.replace(".", "").replace(",", ".")
                             priceTotal = priceString.toDouble()
                             binding.etPrice.setText(NumberFormat.getInstance().format(priceTotal))
                         } catch (e: Exception) {
@@ -111,7 +104,6 @@ class EditProductDialog(
                             Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    //priceTotal = binding.etPrice.text.toString().toDouble()
                 }
             }
         }

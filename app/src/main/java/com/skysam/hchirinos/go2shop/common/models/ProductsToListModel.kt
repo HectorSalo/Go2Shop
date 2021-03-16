@@ -1,0 +1,16 @@
+package com.skysam.hchirinos.go2shop.common.models
+
+import androidx.room.PrimaryKey
+
+/**
+ * Created by Hector Chirinos on 16/03/2021.
+ */
+data class ProductsToListModel(
+    val id: String,
+    val name: String,
+    val unit: String,
+    val userId: String,
+    val listId: String,
+    val price: Double = 0.0,
+    val quantity: Double = 1.0
+)

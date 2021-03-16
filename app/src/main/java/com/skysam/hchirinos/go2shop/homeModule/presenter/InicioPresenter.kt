@@ -5,5 +5,7 @@ package com.skysam.hchirinos.go2shop.homeModule.presenter
  */
 interface InicioPresenter {
     fun getValueWeb()
-    fun getDataFromFirestore()
+    fun getProductsFromFirestore()
+    fun getListsWishFromFirestore()
+    fun getListsShopFromFirestore()
 }

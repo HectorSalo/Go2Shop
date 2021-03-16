@@ -48,7 +48,8 @@ class MainActivity : AppCompatActivity() {
         val user = AuthAPI.getCurrenUser()
         if (user != null) {
             inicioPresenter.getValueWeb()
-            inicioPresenter.getDataFromFirestore()
+            inicioPresenter.getProductsFromFirestore()
+            inicioPresenter.getListsWishFromFirestore()
             tvNameUser.text = user.displayName
             tvEmailUser.text = user.email
         }

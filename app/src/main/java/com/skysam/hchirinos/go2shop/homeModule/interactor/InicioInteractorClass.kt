@@ -5,9 +5,11 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.MetadataChanges
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
+import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import kotlinx.coroutines.*
@@ -60,7 +62,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
         SharedPreferenceBD.saveValue(AuthAPI.getCurrenUser()!!.uid, valorFloat)
     }
 
-    override fun getDataFromFirestore() {
+    override fun getProductsFromFirestore() {
         launch {
             val productsInRoom = RoomDB.getInstance().product().getAll()
 
@@ -85,7 +87,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                                     dc.document.getDouble(Constants.QUANTITY)!!
                                 )
                                 if (!productsInRoom.contains(product)) {
-                                    saveToRoom(product)
+                                    saveProductToRoom(product)
                                 }
                             }
                             DocumentChange.Type.MODIFIED -> {
@@ -98,7 +100,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                                     dc.document.getDouble(Constants.PRICE)!!,
                                     dc.document.getDouble(Constants.QUANTITY)!!
                                 )
-                                updateToRoom(product)
+                                updateProductToRoom(product)
                             }
                             DocumentChange.Type.REMOVED -> {
                                 Log.d(TAG, "Removed city: ${dc.document.data}")
@@ -110,7 +112,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                                     dc.document.getDouble(Constants.PRICE)!!,
                                     dc.document.getDouble(Constants.QUANTITY)!!
                                 )
-                                deleteToRoom(product)
+                                deleteProductToRoom(product)
                             }
                         }
                     }
@@ -118,24 +120,151 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
         }
     }
 
-    private fun deleteToRoom(product: Product) {
+    override fun getListsWishFromFirestore() {
+        launch {
+            val listsWishInRoom = RoomDB.getInstance().listWish().getAll()
+
+            FirestoreAPI.getListWish()
+                .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+                .addSnapshotListener(MetadataChanges.INCLUDE) { snapshots, e ->
+                    if (e != null) {
+                        Log.w(TAG, "listen:error", e)
+                        return@addSnapshotListener
+                    }
+
+                    for (dc in snapshots!!.documentChanges) {
+                        when (dc.type) {
+                            DocumentChange.Type.ADDED -> {
+                                val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
+                                val list = ListWish(
+                                    dc.document.id,
+                                    dc.document.getString(Constants.NAME)!!,
+                                    dc.document.getString(Constants.USER_ID)!!,
+                                    productsFromList,
+                                    dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!
+                                )
+                                if (!listsWishInRoom.contains(list)) {
+                                    saveListToRoom(list)
+                                }
+                            }
+                            DocumentChange.Type.MODIFIED -> {
+                                /*FirestoreAPI.getProductsFromListWish(dc.document.id).get()
+                                    .addOnSuccessListener { result ->
+                                        val productsFromList: MutableList<Product> = mutableListOf()
+                                        for (doc in result) {
+                                            val product = Product(
+                                                doc.id,
+                                                doc.getString(Constants.NAME)!!,
+                                                doc.getString(Constants.UNIT)!!,
+                                                doc.getString(Constants.USER_ID)!!,
+                                                doc.getDouble(Constants.PRICE)!!,
+                                                doc.getDouble(Constants.QUANTITY)!!
+                                            )
+                                            productsFromList.add(product)
+                                        }
+                                        val list = ListWish(
+                                            dc.document.id,
+                                            dc.document.getString(Constants.NAME)!!,
+                                            dc.document.getString(Constants.USER_ID)!!,
+                                            productsFromList,
+                                            dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!
+                                        )
+                                       updateListWishToRoom(list)
+                                    }*/
+                            }
+                            DocumentChange.Type.REMOVED -> {
+                                deleteListWishToRoom(dc.document.id)
+                            }
+                        }
+                    }
+                    getProductsToListWishFromFirestore()
+                }
+        }
+    }
+
+    private fun getProductsToListWishFromFirestore() {
+        val listProducts: MutableList<ProductsToListModel> = mutableListOf()
+        FirestoreAPI.getProductsFromListWish()
+            .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+            .addSnapshotListener (MetadataChanges.INCLUDE){ snapshots, e ->
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e)
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when(dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            launch {
+                                val list = RoomDB.getInstance().listWish()
+                                    .getById(dc.document.getString(Constants.LIST_ID)!!)
+                                val product = ProductsToListModel(
+                                    dc.document.id,
+                                    dc.document.getString(Constants.NAME)!!,
+                                    dc.document.getString(Constants.UNIT)!!,
+                                    dc.document.getString(Constants.USER_ID)!!,
+                                    dc.document.getString(Constants.LIST_ID)!!,
+                                    dc.document.getDouble(Constants.PRICE)!!,
+                                    dc.document.getDouble(Constants.QUANTITY)!!
+                                )
+                                listProducts.addAll(list.listProducts)
+                                listProducts.add(product)
+                                RoomDB.getInstance().listWish()
+                                    .updateListProducts(dc.document.getString(Constants.LIST_ID)!!,
+                                    listProducts)
+                            }
+                        }
+                        DocumentChange.Type.MODIFIED -> {}
+                        DocumentChange.Type.REMOVED -> {}
+                    }
+                }
+            }
+    }
+
+    override fun getListsShopFromFirestore() {
+
+    }
+
+    private fun deleteListWishToRoom(id: String) {
+        launch {
+            RoomDB.getInstance().listWish()
+                .delete(id)
+        }
+    }
+
+    private fun updateListWishToRoom(list: ListWish) {
+        launch {
+            RoomDB.getInstance().listWish()
+                .update(list)
+        }
+    }
+
+    private fun saveListToRoom(list: ListWish) {
+        launch {
+            RoomDB.getInstance().listWish()
+                .insert(list)
+        }
+    }
+
+    private fun deleteProductToRoom(product: Product) {
         launch {
             RoomDB.getInstance().product()
                 .delete(product)
         }
     }
 
-    private fun updateToRoom(product: Product) {
+    private fun updateProductToRoom(product: Product) {
         launch {
             RoomDB.getInstance().product()
                 .update(product)
         }
     }
 
-    private fun saveToRoom(product: Product) {
+    private fun saveProductToRoom(product: Product) {
         launch {
             RoomDB.getInstance().product()
                 .insert(product)
         }
     }
+
 }

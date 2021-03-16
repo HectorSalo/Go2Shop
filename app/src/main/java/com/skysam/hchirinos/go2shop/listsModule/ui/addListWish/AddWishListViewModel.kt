@@ -1,10 +1,10 @@
-package com.skysam.hchirinos.go2shop.listsModule.ui
+package com.skysam.hchirinos.go2shop.listsModule.ui.addListWish
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SlideshowViewModel : ViewModel() {
+class AddWishListViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is slideshow Fragment"

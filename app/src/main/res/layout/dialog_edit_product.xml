@@ -45,7 +45,8 @@
             android:inputType="numberDecimal"
             android:clickable="true"
             android:focusableInTouchMode="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:digits="0123456789.,"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <RadioGroup

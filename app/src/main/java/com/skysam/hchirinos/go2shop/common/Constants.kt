@@ -16,6 +16,7 @@ object Constants {
     const val NAME = "name"
     const val UNIT = "unit"
     const val USER_ID = "userId"
+    const val LIST_ID = "listId"
     const val PRICE = "price"
     const val QUANTITY = "quantity"
 
