@@ -28,7 +28,7 @@ class ListsWishAdapter(private var lists: MutableList<ListWish>, private val onC
         val item = lists[position]
         holder.name.text = item.name
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.total))
-        holder.listItems.text = item.listProducts.size.toString()
+        holder.listItems.text = context.getString(R.string.text_item_in_list, item.listProducts.size.toString())
         holder.card.setOnClickListener { onClickList.onClickEdit(position) }
     }
 

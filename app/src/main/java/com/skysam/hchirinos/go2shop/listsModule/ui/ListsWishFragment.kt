@@ -61,7 +61,7 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList {
     }
 
     override fun onClickEdit(position: Int) {
-        val editListWishDialog = EditListWishDialog()
+        val editListWishDialog = EditListWishDialog(listsWish[position])
         editListWishDialog.show(requireActivity().supportFragmentManager, tag)
     }
 

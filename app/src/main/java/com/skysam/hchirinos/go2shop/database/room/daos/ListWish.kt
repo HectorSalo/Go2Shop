@@ -13,7 +13,7 @@ interface ListWish {
     suspend fun getAll(): MutableList<ListWish>
 
     @Query("SELECT * FROM listasPendientes WHERE id = :id")
-    suspend fun getById(id: String): ListWish
+    suspend fun getById(id: String): ListWish?
 
     @Query("UPDATE listasPendientes SET listProducts= :list WHERE id = :id")
     suspend fun updateListProducts(id: String, list: MutableList<ProductsToListModel>)

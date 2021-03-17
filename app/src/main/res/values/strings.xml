@@ -37,6 +37,7 @@
 
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>
+    <string name="text_item_in_list">Ítem(s): %1$s</string>
 
     <!--Dialog Add List-->
     <string name="btn_add_product">Agregar producto</string>

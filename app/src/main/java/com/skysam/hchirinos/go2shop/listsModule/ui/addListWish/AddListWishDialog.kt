@@ -41,6 +41,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
     private var productsName = mutableListOf<String>()
     private lateinit var addWishListAdapter: AddWishListAdapter
     private var total: Double = 0.0
+    private var actived = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +119,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
         binding.fabCancel.isEnabled = false
         binding.tfNameList.isEnabled = false
         binding.tfSearchProducts.isEnabled = false
+        actived = false
         val listFinal: MutableList<ProductsToListModel> = mutableListOf()
         for (i in productsToAdd.indices) {
             val prod = ProductsToListModel(
@@ -179,17 +181,21 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
     }
 
     override fun onClickDelete(position: Int) {
-        val productSelected = productsToAdd[position]
-        productsToAdd.removeAt(position)
-        val subtotal = productSelected.quantity * productSelected.price * (-1)
-        sumTotal(subtotal)
-        addWishListAdapter.updateList(productsToAdd)
+        if (actived) {
+            val productSelected = productsToAdd[position]
+            productsToAdd.removeAt(position)
+            val subtotal = productSelected.quantity * productSelected.price * (-1)
+            sumTotal(subtotal)
+            addWishListAdapter.updateList(productsToAdd)
+        }
     }
 
     override fun onClickEdit(position: Int) {
-        val productSelected = productsToAdd[position]
-        val editProductDialog = EditProductDialog(productSelected, position, true, this)
-        editProductDialog.show(requireActivity().supportFragmentManager, tag)
+        if (actived) {
+            val productSelected = productsToAdd[position]
+            val editProductDialog = EditProductDialog(productSelected, position, true, this)
+            editProductDialog.show(requireActivity().supportFragmentManager, tag)
+        }
     }
 
     override fun productSave(product: Product) {
@@ -221,6 +227,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
                 binding.fabCancel.isEnabled = true
                 binding.tfNameList.isEnabled = true
                 binding.tfSearchProducts.isEnabled = true
+                actived = true
                 Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
             }
         }
