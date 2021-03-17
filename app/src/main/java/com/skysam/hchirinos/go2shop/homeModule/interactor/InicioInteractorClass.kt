@@ -121,7 +121,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
     }
 
     override fun getListsWishFromFirestore() {
-        launch { RoomDB.getInstance().listWish().deleteAll() }
+        //launch { RoomDB.getInstance().listWish().deleteAll() }
         FirestoreAPI.getListWish()
             .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
             .addSnapshotListener(MetadataChanges.INCLUDE) { snapshots, e ->
@@ -146,7 +146,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                                         dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!
                                     )
                                     saveListToRoom(listFinal)
-                                    getProductsToListWishFromFirestore(dc.document.id)
+                                    //getProductsToListWishFromFirestore(dc.document.id)
                                 }
                             }
                         }
@@ -180,6 +180,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                         }
                     }
                 }
+                getProductsToListWishFromFirestoreTest()
             }
     }
 
@@ -206,6 +207,55 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                     RoomDB.getInstance().listWish()
                         .updateListProducts(id,
                             listProducts)
+                }
+            }
+    }
+
+    private fun getProductsToListWishFromFirestoreTest() {
+        FirestoreAPI.getProductsFromListWish()
+            .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+            .addSnapshotListener(MetadataChanges.INCLUDE) { value, e ->
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e)
+                    return@addSnapshotListener
+                }
+
+                for (dc in value!!.documentChanges) {
+                    when(dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            launch {
+                                val idList = dc.document.getString(Constants.LIST_ID)
+                                val listOld = RoomDB.getInstance().listWish()
+                                    .getById(idList!!)
+                                if (listOld != null) {
+                                    val products = listOld!!.listProducts
+                                    var add = true
+                                    for (i in products.indices) {
+                                        if (products[i].id == dc.document.id) {
+                                            add = false
+                                        }
+                                    }
+                                    if (add) {
+                                        val product = ProductsToListModel(
+                                            dc.document.id,
+                                            dc.document.getString(Constants.NAME)!!,
+                                            dc.document.getString(Constants.UNIT)!!,
+                                            dc.document.getString(Constants.USER_ID)!!,
+                                            dc.document.getString(Constants.LIST_ID)!!,
+                                            dc.document.getDouble(Constants.PRICE)!!,
+                                            dc.document.getDouble(Constants.QUANTITY)!!
+                                        )
+                                        products.add(product)
+                                    }
+                                    RoomDB.getInstance().listWish()
+                                        .updateListProducts(idList,
+                                            products)
+                                }
+                            }
+                        }
+                        DocumentChange.Type.MODIFIED -> {}
+                        DocumentChange.Type.REMOVED -> {}
+                    }
                 }
             }
     }

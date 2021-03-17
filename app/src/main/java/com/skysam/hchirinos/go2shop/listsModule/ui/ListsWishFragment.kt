@@ -10,7 +10,6 @@ import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListsWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListsWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
-import com.skysam.hchirinos.go2shop.productsModule.ui.ProductAdapter
 
 class ListsWishFragment : Fragment(), ListsWishView, OnClickList {
 

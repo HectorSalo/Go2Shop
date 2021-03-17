@@ -13,14 +13,14 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
+import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenter
+import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
@@ -33,12 +33,14 @@ import java.text.NumberFormat
  * Created by Hector Chirinos on 16/03/2021.
  */
 class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnClickExit, ProductsView,
-        OnClickList, EditProduct, ProductSaveFromList {
+        OnClickList, EditProduct, ProductSaveFromList, EditListWishView {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private lateinit var productsPresenter: ProductsPresenter
+    private lateinit var editListWishPresenter: EditListWishPresenter
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<Product> = mutableListOf()
+    private var productsOriginal: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
     private lateinit var addWishListAdapter: AddWishListAdapter
     private var total: Double = 0.0
@@ -55,6 +57,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
     ): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
         productsPresenter = ProductsPresenterClass(this)
+        editListWishPresenter = EditListWishPresenterClass(this)
         return binding.root
     }
 
@@ -123,27 +126,54 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
         binding.tfNameList.isEnabled = false
         binding.tfSearchProducts.isEnabled = false
         actived = false
-        /*val listFinal: MutableList<ProductsToListModel> = mutableListOf()
+        val listFinal: MutableList<ProductsToListModel> = mutableListOf()
+        val listToSave: MutableList<ProductsToListModel> = mutableListOf()
+        val listToDelete: MutableList<ProductsToListModel> = mutableListOf()
+        val listToUpdate: MutableList<ProductsToListModel> = mutableListOf()
         for (i in productsToAdd.indices) {
             val prod = ProductsToListModel(
                 productsToAdd[i].id,
                 productsToAdd[i].name,
                 productsToAdd[i].unit,
-                productsToAdd[i].userId,
-                Constants.USERS,
+                listWish.listProducts[0].userId,
+                listWish.listProducts[0].listId,
                 productsToAdd[i].price,
                 productsToAdd[i].quantity
             )
             listFinal.add(prod)
         }
+        for (i in listFinal.indices) {
+            var update = false
+            for (j in productsOriginal.indices) {
+                if (listFinal[i].id == productsOriginal[j].id) {
+                    update = true
+                }
+            }
+            if (update) {
+                listToUpdate.add(listFinal[i])
+            } else {
+                listToSave.add(listFinal[i])
+            }
+        }
+        for (i in productsOriginal.indices) {
+            var delete = true
+            for (j in listFinal.indices) {
+                if (productsOriginal[i].id == listFinal[j].id) {
+                    delete = false
+                }
+            }
+            if (delete) {
+                listToDelete.add(productsOriginal[i])
+            }
+        }
         val listToSend = ListWish(
-            Constants.USERS,
+            listWish.id,
             nameList,
-            AuthAPI.getCurrenUser()!!.uid,
+            listWish.userId,
             listFinal,
             total
         )
-        addListWishPresenter.saveListWish(listToSend)*/
+        editListWishPresenter.editListWish(listToSend, listToSave, listToUpdate, listToDelete)
     }
 
     private fun addProductToList(position: Int) {
@@ -176,6 +206,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
     }
 
     private fun loadProducts() {
+        productsOriginal.addAll(listWish.listProducts)
         for (i in listWish.listProducts.indices) {
             val product = Product(
                 listWish.listProducts[i].id,
@@ -242,5 +273,22 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
         productsFromDB.add(product)
         fillListProductsDB(productsFromDB)
         addProductToList(productsFromDB.size - 1)
+    }
+
+    override fun resultEditListWishFirestore(statusOk: Boolean, msg: String) {
+        if (_binding != null) {
+            if (statusOk) {
+                Toast.makeText(requireContext(), getString(R.string.update_data_ok), Toast.LENGTH_SHORT).show()
+                dialog!!.dismiss()
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.fabSave.isEnabled = true
+                binding.fabCancel.isEnabled = true
+                binding.tfNameList.isEnabled = true
+                binding.tfSearchProducts.isEnabled = true
+                actived = true
+                Toast.makeText(requireContext(), getString(R.string.update_data_error), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

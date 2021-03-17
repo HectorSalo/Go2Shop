@@ -17,6 +17,10 @@
     <string name="btn_cancel">Cancelar</string>
     <string name="save_data_ok">Información guardada</string>
     <string name="save_data_error">Error al guardar. Intente nuevamente</string>
+    <string name="update_data_ok">Información actualizada</string>
+    <string name="update_data_error">Error al actualizar. Intente nuevamente</string>
+    <string name="delete_data_ok">Información eliminada</string>
+    <string name="delete_data_error">Error al borrar. Intente nuevamente</string>
     <string name="msg_list_empty">Lista vacía</string>
     <string name="text_list_empty">No hay ítems en esta lista</string>
     <string name="btn_delete">Eliminar</string>
