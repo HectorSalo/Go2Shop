@@ -1,7 +1,9 @@
 package com.skysam.hchirinos.go2shop.listsModule.interactor
 
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.classView.ProductsSavedToList
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
+import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
 import java.util.*
@@ -9,7 +11,7 @@ import java.util.*
 /**
  * Created by Hector Chirinos on 10/03/2021.
  */
-class AddWishListInteractorClass(private val addListWishPresenter: AddListWishPresenter): AddWishListInteractor {
+class AddWishListInteractorClass(private val addListWishPresenter: AddListWishPresenter): AddWishListInteractor, ProductsSavedToList {
 
     override fun saveListWishFirestore(list: ListWish) {
         val date = Date(list.dateCreated)
@@ -43,12 +45,17 @@ class AddWishListInteractorClass(private val addListWishPresenter: AddListWishPr
                 .add(data)
                 .addOnSuccessListener {
                     if (i == list.listProducts.indices.last) {
-                        addListWishPresenter.resultSaveListWishFirestore(true, id)
+                        FirestoreAPI.getProductsToListWishFromFirestore(id, list, this)
                     }
                 }
                 .addOnFailureListener { e->
                     addListWishPresenter.resultSaveListWishFirestore(false, e.toString())
                 }
         }
+    }
+
+    override fun saved(listToAdd: ListWish) {
+        RoomDB.saveListToRoom(listToAdd)
+        addListWishPresenter.resultSaveListWishFirestore(true, "")
     }
 }

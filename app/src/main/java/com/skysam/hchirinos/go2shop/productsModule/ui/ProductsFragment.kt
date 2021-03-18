@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.common.classView.EditProduct
+import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentProductsBinding
@@ -17,7 +17,7 @@ import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPres
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
 
-class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickList, EditProduct {
+class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickList, UpdatedProduct {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private lateinit var productsPresenter: ProductsPresenter
@@ -113,7 +113,7 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         editProductDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
-    override fun editProduct(position: Int, product: Product) {
+    override fun updatedProduct(position: Int, product: Product) {
         productsList[position] = product
         adapterProduct.updateList(productsList)
     }

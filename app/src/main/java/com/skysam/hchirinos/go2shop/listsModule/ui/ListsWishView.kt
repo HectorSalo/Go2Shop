@@ -7,4 +7,5 @@ import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
  */
 interface ListsWishView {
     fun resultGetLists(lists: MutableList<ListWish>)
+    fun resultDeleteLists(statusOk: Boolean, msg: String)
 }

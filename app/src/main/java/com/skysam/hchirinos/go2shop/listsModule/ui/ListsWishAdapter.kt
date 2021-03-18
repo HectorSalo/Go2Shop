@@ -17,6 +17,7 @@ import java.text.NumberFormat
  */
 class ListsWishAdapter(private var lists: MutableList<ListWish>, private val onClickList: OnClickList): RecyclerView.Adapter<ListsWishAdapter.ViewHolder>() {
     private lateinit var context: Context
+    private var listToDeleted: MutableList<Int> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListsWishAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_list_item, parent, false)
@@ -29,7 +30,24 @@ class ListsWishAdapter(private var lists: MutableList<ListWish>, private val onC
         holder.name.text = item.name
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.total))
         holder.listItems.text = context.getString(R.string.text_item_in_list, item.listProducts.size.toString())
-        holder.card.setOnClickListener { onClickList.onClickEdit(position) }
+
+        holder.card.isChecked = listToDeleted.contains(position)
+
+        holder.card.setOnLongClickListener {
+            holder.card.isChecked = !holder.card.isChecked
+            onClickList.onClickDelete(position)
+            fillListToDelete(position)
+            true
+        }
+        holder.card.setOnClickListener {
+            if (listToDeleted.isNotEmpty()) {
+                fillListToDelete(position)
+                holder.card.isChecked = !holder.card.isChecked
+                onClickList.onClickDelete(position)
+            } else {
+                onClickList.onClickEdit(position)
+            }
+        }
     }
 
     override fun getItemCount(): Int = lists.size
@@ -41,8 +59,20 @@ class ListsWishAdapter(private var lists: MutableList<ListWish>, private val onC
         val card: MaterialCardView = view.findViewById(R.id.card)
     }
 
+    private fun fillListToDelete(position: Int) {
+        if (listToDeleted.contains(position)) {
+            listToDeleted.remove(position)
+        } else {
+            listToDeleted.add(position)
+        }
+    }
+
     fun updateList(newList: MutableList<ListWish>) {
         lists = newList
         notifyDataSetChanged()
+    }
+
+    fun clearListToDelete() {
+        listToDeleted.clear()
     }
 }

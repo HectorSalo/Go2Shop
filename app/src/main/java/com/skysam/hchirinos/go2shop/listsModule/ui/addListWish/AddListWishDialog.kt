@@ -32,7 +32,7 @@ import java.text.NumberFormat
 import java.util.*
 
 class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
-    ProductSaveFromList, OnClickExit, EditProduct, AddWishListView {
+    ProductSaveFromList, OnClickExit, UpdatedProduct, AddWishListView {
     private lateinit var productsPresenter: ProductsPresenter
     private lateinit var addListWishPresenter: AddListWishPresenter
     private var _binding: DialogAddWishListBinding? = null
@@ -212,7 +212,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
         dialog!!.dismiss()
     }
 
-    override fun editProduct(position: Int, product: Product) {
+    override fun updatedProduct(position: Int, product: Product) {
         val oldPrice = productsToAdd[position].price
         productsToAdd[position] = product
         val subtotal = (product.quantity * product.price) - oldPrice

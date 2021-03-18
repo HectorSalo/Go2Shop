@@ -1,8 +1,10 @@
 package com.skysam.hchirinos.go2shop.listsModule.interactor
 
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.classView.ProductsSavedToList
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
+import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenter
 import java.util.*
@@ -10,7 +12,9 @@ import java.util.*
 /**
  * Created by Hector Chirinos on 17/03/2021.
  */
-class EditListWishInteractorClass(private val editListWishPresenter: EditListWishPresenter): EditListWishInteractor {
+class EditListWishInteractorClass(private val editListWishPresenter: EditListWishPresenter): EditListWishInteractor, ProductsSavedToList {
+
+    private lateinit var listToUpdate: ListWish
 
     override fun editListWish(
         list: ListWish,
@@ -18,6 +22,7 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
         productsToUpdate: MutableList<ProductsToListModel>,
         productsToDelete: MutableList<ProductsToListModel>
     ) {
+        listToUpdate = list
         val dateCreated = Date(list.dateCreated)
         val dateEdited = Date(list.lastEdited)
         val data = hashMapOf(
@@ -40,8 +45,10 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
                     return@addOnSuccessListener
                 }
                 if (productsToDelete.isNotEmpty()) {
-                    deleteProducts(productsToDelete)
+                    deleteProducts(list.id, productsToDelete)
                 }
+                FirestoreAPI.getProductsToListWishFromFirestore(list.id, list, this)
+                editListWishPresenter.resultEditListWishFirestore(true, "")
             }
             .addOnFailureListener { e -> editListWishPresenter.resultEditListWishFirestore(false, e.toString()) }
     }
@@ -68,9 +75,10 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
                             return@addOnSuccessListener
                         }
                         if (productsToDelete.isNotEmpty()) {
-                            deleteProducts(productsToDelete)
+                            deleteProducts(id, productsToDelete)
                             return@addOnSuccessListener
                         }
+                        FirestoreAPI.getProductsToListWishFromFirestore(id, listToUpdate, this)
                         editListWishPresenter.resultEditListWishFirestore(true, "")
                     }
                 }
@@ -98,9 +106,10 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
                 .addOnSuccessListener {
                     if (i == productsToUpdate.lastIndex) {
                         if (productsToDelete.isNotEmpty()) {
-                            deleteProducts(productsToDelete)
+                            deleteProducts(id, productsToDelete)
                             return@addOnSuccessListener
                         }
+                        FirestoreAPI.getProductsToListWishFromFirestore(id, listToUpdate, this)
                         editListWishPresenter.resultEditListWishFirestore(true, "")
                     }
                 }
@@ -108,17 +117,22 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
         }
     }
 
-    private fun deleteProducts(productsToDelete: MutableList<ProductsToListModel>) {
+    private fun deleteProducts(id:String, productsToDelete: MutableList<ProductsToListModel>) {
         for (i in productsToDelete.indices) {
             FirestoreAPI.getProductsFromListWish()
                 .document(productsToDelete[i].id)
                 .delete()
                 .addOnSuccessListener {
                     if (i == productsToDelete.lastIndex) {
-                        editListWishPresenter.resultEditListWishFirestore(true, "")
+                        FirestoreAPI.getProductsToListWishFromFirestore(id, listToUpdate, this)
                     }
                 }
                 .addOnFailureListener { e -> editListWishPresenter.resultEditListWishFirestore(false, e.toString()) }
         }
+    }
+
+    override fun saved(listToAdd: ListWish) {
+        RoomDB.updateListToRoom(listToAdd)
+        editListWishPresenter.resultEditListWishFirestore(true, "")
     }
 }

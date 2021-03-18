@@ -33,8 +33,9 @@ import java.util.*
 /**
  * Created by Hector Chirinos on 16/03/2021.
  */
-class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnClickExit, ProductsView,
-        OnClickList, EditProduct, ProductSaveFromList, EditListWishView {
+class EditListWishDialog(private val listWish: ListWish, private val position: Int, private val updatedListWish: UpdatedListWish):
+        DialogFragment(), OnClickExit, ProductsView,
+        OnClickList, UpdatedProduct, ProductSaveFromList, EditListWishView {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private lateinit var productsPresenter: ProductsPresenter
@@ -43,6 +44,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
     private var productsToAdd: MutableList<Product> = mutableListOf()
     private var productsOriginal: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
+    private lateinit var listToSend: ListWish
     private lateinit var addWishListAdapter: AddWishListAdapter
     private var total: Double = 0.0
     private var actived = true
@@ -168,7 +170,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
                 listToDelete.add(productsOriginal[i])
             }
         }
-        val listToSend = ListWish(
+        listToSend = ListWish(
             listWish.id,
             nameList,
             listWish.userId,
@@ -265,7 +267,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
         }
     }
 
-    override fun editProduct(position: Int, product: Product) {
+    override fun updatedProduct(position: Int, product: Product) {
         val oldPrice = productsToAdd[position].price
         productsToAdd[position] = product
         val subtotal = (product.quantity * product.price) - oldPrice
@@ -282,6 +284,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
     override fun resultEditListWishFirestore(statusOk: Boolean, msg: String) {
         if (_binding != null) {
             if (statusOk) {
+                updatedListWish.updatedListWish(position, listToSend)
                 Toast.makeText(requireContext(), getString(R.string.update_data_ok), Toast.LENGTH_SHORT).show()
                 dialog!!.dismiss()
             } else {

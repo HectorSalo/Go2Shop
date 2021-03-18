@@ -14,6 +14,14 @@ class ListsWishPresenterClass(private val listsWishView: ListsWishView): ListsWi
         listsWishInteractor.getLists()
     }
 
+    override fun deleteLists(lists: MutableList<ListWish>) {
+        listsWishInteractor.deleteLists(lists)
+    }
+
+    override fun resultDeleteLists(statusOk: Boolean, msg: String) {
+        listsWishView.resultDeleteLists(statusOk, msg)
+    }
+
     override fun resultGetLists(lists: MutableList<ListWish>) {
         listsWishView.resultGetLists(lists)
     }

@@ -3,38 +3,31 @@ package com.skysam.hchirinos.go2shop.productsModule.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.TextWatcher
-import android.view.MotionEvent
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
-import com.google.android.material.textfield.TextInputEditText
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
-import com.skysam.hchirinos.go2shop.common.classView.EditProduct
+import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenterClass
-import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
-import java.util.*
 
 /**
  * Created by Hector Chirinos (Home) on 9/3/2021.
  */
 class EditProductDialog(
     var product: Product, private val position: Int, private val fromList: Boolean,
-    private val editProduct: EditProduct
-): DialogFragment(), EditProductView {
+    private val updatedProduct: UpdatedProduct): DialogFragment(), EditProductView {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var editProductPresenter: EditProductPresenter
@@ -180,7 +173,7 @@ class EditProductDialog(
         )
         Keyboard.close(binding.root)
         if (fromList) {
-            editProduct.editProduct(position, productResult)
+            updatedProduct.updatedProduct(position, productResult)
             dismiss()
         } else {
             dialog!!.setCanceledOnTouchOutside(false)
@@ -196,7 +189,7 @@ class EditProductDialog(
     override fun resultEditToFirestore(statusOk: Boolean, msg: String) {
         if (_binding != null) {
             if (statusOk) {
-                editProduct.editProduct(position, productResult)
+                updatedProduct.updatedProduct(position, productResult)
                 dismiss()
             } else {
                 dialog!!.setCanceledOnTouchOutside(true)
