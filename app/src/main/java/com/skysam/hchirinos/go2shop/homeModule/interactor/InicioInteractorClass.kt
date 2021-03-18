@@ -136,58 +136,52 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                             launch {
                                 val list = RoomDB.getInstance().listWish()
                                     .getById(dc.document.id)
+                                val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
+                                val dateCreated = dc.document.getDate(Constants.DATE_CREATED)!!.time
+                                val dateEdited = dc.document.getDate(Constants.DATE_LAST_EDITED)!!.time
+                                val listToAdd = ListWish(
+                                    dc.document.id,
+                                    dc.document.getString(Constants.NAME)!!,
+                                    dc.document.getString(Constants.USER_ID)!!,
+                                    productsFromList,
+                                    dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!,
+                                    dateCreated,
+                                    dateEdited
+                                )
                                 if (list == null) {
-                                    val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
-                                    val listFinal = ListWish(
-                                        dc.document.id,
-                                        dc.document.getString(Constants.NAME)!!,
-                                        dc.document.getString(Constants.USER_ID)!!,
-                                        productsFromList,
-                                        dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!
-                                    )
-                                    saveListToRoom(listFinal)
-                                    //getProductsToListWishFromFirestore(dc.document.id)
+                                    getProductsToListWishFromFirestore(true, listToAdd)
+                                } else {
+                                    getProductsToListWishFromFirestore(false, listToAdd)
                                 }
                             }
                         }
                         DocumentChange.Type.MODIFIED -> {
-                            /*FirestoreAPI.getProductsFromListWish(dc.document.id).get()
-                                .addOnSuccessListener { result ->
-                                    val productsFromList: MutableList<Product> = mutableListOf()
-                                    for (doc in result) {
-                                        val product = Product(
-                                            doc.id,
-                                            doc.getString(Constants.NAME)!!,
-                                            doc.getString(Constants.UNIT)!!,
-                                            doc.getString(Constants.USER_ID)!!,
-                                            doc.getDouble(Constants.PRICE)!!,
-                                            doc.getDouble(Constants.QUANTITY)!!
-                                        )
-                                        productsFromList.add(product)
-                                    }
-                                    val list = ListWish(
-                                        dc.document.id,
-                                        dc.document.getString(Constants.NAME)!!,
-                                        dc.document.getString(Constants.USER_ID)!!,
-                                        productsFromList,
-                                        dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!
-                                    )
-                                   updateListWishToRoom(list)
-                                }*/
+                            val dateCreated = dc.document.getDate(Constants.DATE_CREATED)!!.time
+                            val dateEdited = dc.document.getDate(Constants.DATE_LAST_EDITED)!!.time
+                            val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
+                            val listUpdated = ListWish(
+                                dc.document.id,
+                                dc.document.getString(Constants.NAME)!!,
+                                dc.document.getString(Constants.USER_ID)!!,
+                                productsFromList,
+                                dc.document.getDouble(Constants.TOTAL_LIST_WISH)!!,
+                                dateCreated,
+                                dateEdited
+                            )
+                            getProductsToListWishFromFirestore(false, listUpdated)
                         }
                         DocumentChange.Type.REMOVED -> {
                             deleteListWishToRoom(dc.document.id)
                         }
                     }
                 }
-                getProductsToListWishFromFirestoreTest()
             }
     }
 
-    private fun getProductsToListWishFromFirestore(id: String) {
+    private fun getProductsToListWishFromFirestore(listNew: Boolean, list: ListWish) {
         FirestoreAPI.getProductsFromListWish()
             .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
-            .whereEqualTo(Constants.LIST_ID, id)
+            .whereEqualTo(Constants.LIST_ID, list.id)
             .get()
             .addOnSuccessListener { result ->
                 val listProducts: MutableList<ProductsToListModel> = mutableListOf()
@@ -203,59 +197,19 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
                     )
                     listProducts.add(product)
                 }
-                launch {
-                    RoomDB.getInstance().listWish()
-                        .updateListProducts(id,
-                            listProducts)
-                }
-            }
-    }
-
-    private fun getProductsToListWishFromFirestoreTest() {
-        FirestoreAPI.getProductsFromListWish()
-            .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
-            .addSnapshotListener(MetadataChanges.INCLUDE) { value, e ->
-                if (e != null) {
-                    Log.w(TAG, "listen:error", e)
-                    return@addSnapshotListener
-                }
-
-                for (dc in value!!.documentChanges) {
-                    when(dc.type) {
-                        DocumentChange.Type.ADDED -> {
-                            launch {
-                                val idList = dc.document.getString(Constants.LIST_ID)
-                                val listOld = RoomDB.getInstance().listWish()
-                                    .getById(idList!!)
-                                if (listOld != null) {
-                                    val products = listOld!!.listProducts
-                                    var add = true
-                                    for (i in products.indices) {
-                                        if (products[i].id == dc.document.id) {
-                                            add = false
-                                        }
-                                    }
-                                    if (add) {
-                                        val product = ProductsToListModel(
-                                            dc.document.id,
-                                            dc.document.getString(Constants.NAME)!!,
-                                            dc.document.getString(Constants.UNIT)!!,
-                                            dc.document.getString(Constants.USER_ID)!!,
-                                            dc.document.getString(Constants.LIST_ID)!!,
-                                            dc.document.getDouble(Constants.PRICE)!!,
-                                            dc.document.getDouble(Constants.QUANTITY)!!
-                                        )
-                                        products.add(product)
-                                    }
-                                    RoomDB.getInstance().listWish()
-                                        .updateListProducts(idList,
-                                            products)
-                                }
-                            }
-                        }
-                        DocumentChange.Type.MODIFIED -> {}
-                        DocumentChange.Type.REMOVED -> {}
-                    }
+                val listWishToAdd = ListWish(
+                    list.id,
+                    list.name,
+                    list.userId,
+                    listProducts,
+                    list.total,
+                    list.dateCreated,
+                    list.lastEdited
+                )
+                if (listNew) {
+                    saveListToRoom(listWishToAdd)
+                } else {
+                    updateListToRoom(listWishToAdd)
                 }
             }
     }
@@ -268,6 +222,13 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope {
         launch {
             RoomDB.getInstance().listWish()
                 .delete(id)
+        }
+    }
+
+    private fun updateListToRoom(list: ListWish) {
+        launch {
+            RoomDB.getInstance().listWish()
+                .update(list)
         }
     }
 

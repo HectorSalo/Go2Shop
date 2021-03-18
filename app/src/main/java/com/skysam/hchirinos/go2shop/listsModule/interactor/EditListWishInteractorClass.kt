@@ -5,6 +5,7 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenter
+import java.util.*
 
 /**
  * Created by Hector Chirinos on 17/03/2021.
@@ -17,14 +18,18 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
         productsToUpdate: MutableList<ProductsToListModel>,
         productsToDelete: MutableList<ProductsToListModel>
     ) {
-        val data = hashMapOf<String, Any>(
+        val dateCreated = Date(list.dateCreated)
+        val dateEdited = Date(list.lastEdited)
+        val data = hashMapOf(
             Constants.NAME to list.name,
             Constants.USER_ID to list.userId,
-            Constants.TOTAL_LIST_WISH to list.total
+            Constants.TOTAL_LIST_WISH to list.total,
+            Constants.DATE_CREATED to dateCreated,
+            Constants.DATE_LAST_EDITED to dateEdited
         )
 
         FirestoreAPI.getListWish().document(list.id)
-            .update(data)
+            .set(data)
             .addOnSuccessListener {
                 if (productsToSave.isNotEmpty()) {
                     saveProducts(list.id, productsToSave, productsToUpdate, productsToDelete)

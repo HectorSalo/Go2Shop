@@ -28,6 +28,7 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
 import java.text.NumberFormat
+import java.util.*
 
 /**
  * Created by Hector Chirinos on 16/03/2021.
@@ -126,6 +127,7 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
         binding.tfNameList.isEnabled = false
         binding.tfSearchProducts.isEnabled = false
         actived = false
+        val dateCurrent = Calendar.getInstance().timeInMillis
         val listFinal: MutableList<ProductsToListModel> = mutableListOf()
         val listToSave: MutableList<ProductsToListModel> = mutableListOf()
         val listToDelete: MutableList<ProductsToListModel> = mutableListOf()
@@ -171,7 +173,9 @@ class EditListWishDialog(private val listWish: ListWish): DialogFragment(), OnCl
             nameList,
             listWish.userId,
             listFinal,
-            total
+            total,
+            listWish.dateCreated,
+            dateCurrent
         )
         editListWishPresenter.editListWish(listToSend, listToSave, listToUpdate, listToDelete)
     }

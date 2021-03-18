@@ -19,6 +19,8 @@ object Constants {
     const val LIST_ID = "listId"
     const val PRICE = "price"
     const val QUANTITY = "quantity"
+    const val DATE_CREATED = "dateCreated"
+    const val DATE_LAST_EDITED = "dateLastEdited"
 
     const val TOTAL_LIST_WISH = "totalListWish"
 }

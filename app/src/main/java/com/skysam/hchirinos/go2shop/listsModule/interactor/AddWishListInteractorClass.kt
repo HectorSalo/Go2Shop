@@ -4,6 +4,7 @@ import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
+import java.util.*
 
 /**
  * Created by Hector Chirinos on 10/03/2021.
@@ -11,10 +12,13 @@ import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
 class AddWishListInteractorClass(private val addListWishPresenter: AddListWishPresenter): AddWishListInteractor {
 
     override fun saveListWishFirestore(list: ListWish) {
+        val date = Date(list.dateCreated)
         val data = hashMapOf(
             Constants.NAME to list.name,
             Constants.USER_ID to list.userId,
-            Constants.TOTAL_LIST_WISH to list.total
+            Constants.TOTAL_LIST_WISH to list.total,
+            Constants.DATE_CREATED to date,
+            Constants.DATE_LAST_EDITED to date
         )
         FirestoreAPI.getListWish().add(data)
             .addOnSuccessListener { doc ->

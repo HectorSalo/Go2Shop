@@ -17,5 +17,7 @@ data class ListWish(
     val userId: String,
     @TypeConverters(ProductsConverter::class)
     val listProducts: MutableList<ProductsToListModel>,
-    val total: Double
+    val total: Double,
+    val dateCreated: Long,
+    val lastEdited: Long
 )
