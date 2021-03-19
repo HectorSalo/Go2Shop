@@ -4,28 +4,33 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
+import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentProductsBinding
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPresenterClass
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
 import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
+import java.util.*
 
-class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickList, UpdatedProduct {
+class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickList, UpdatedProduct, SearchView.OnQueryTextListener {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private lateinit var productsPresenter: ProductsPresenter
     private lateinit var productFragmentPresenter: ProductFragmentPresenter
     private lateinit var adapterProduct: ProductAdapter
+    private lateinit var search: SearchView
     private var productsList: MutableList<Product> = mutableListOf()
     private var productsToDelete: MutableList<Product> = mutableListOf()
     private var productsToRestored: MutableList<Product> = mutableListOf()
+    private var listSearch: MutableList<Product> = mutableListOf()
     private var listPositionsToDelete: MutableList<Int> = mutableListOf()
     var actionModeActived = false
     var actionMode: androidx.appcompat.view.ActionMode? = null
@@ -55,6 +60,10 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         requireActivity().menuInflater.inflate(R.menu.main, menu)
         val item = menu.findItem(R.id.action_cerrar_sesion)
         item.isVisible = false
+        val itemSearch = menu.findItem(R.id.action_search)
+        search = itemSearch.actionView as SearchView
+        search.setOnQueryTextListener(this)
+
     }
 
     override fun onDestroyView() {
@@ -86,18 +95,30 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
     }
 
     override fun onClickDelete(position: Int) {
-        val product = productsList[position]
+        var positionOriginal = -1
+        val product: Product
+        if (listSearch.isEmpty() || (listSearch.size == productsList.size)) {
+            product = productsList[position]
+            positionOriginal = position
+        } else {
+            product = listSearch[position]
+            for (i in productsList.indices) {
+                if (productsList[i].id == product.id) {
+                    positionOriginal = i
+                }
+            }
+        }
         if (productsToDelete.contains(product)) {
             productsToDelete.remove(product)
-            listPositionsToDelete.remove(position)
+            listPositionsToDelete.remove(positionOriginal)
         } else {
             productsToDelete.add(product)
-            listPositionsToDelete.add(position)
+            listPositionsToDelete.add(positionOriginal)
         }
         if (productsToDelete.size == 1 && !actionModeActived) {
             actionMode = (activity as AppCompatActivity).startSupportActionMode(callback)
             actionModeActived = true
-            firstPositionToDelete = position
+            firstPositionToDelete = positionOriginal
         }
         if (productsToDelete.isEmpty()) {
             adapterProduct.clearListToDelete()
@@ -108,14 +129,31 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
     }
 
     override fun onClickEdit(position: Int) {
-        val productSelected = productsList[position]
+        val productSelected: Product = if (listSearch.isEmpty() || (listSearch.size == productsList.size)) {
+            productsList[position]
+        } else {
+            listSearch[position]
+        }
         val editProductDialog = EditProductDialog(productSelected, position, false, this)
         editProductDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
     override fun updatedProduct(position: Int, product: Product) {
-        productsList[position] = product
-        adapterProduct.updateList(productsList)
+        if (listSearch.isEmpty()) {
+            productsList[position] = product
+            adapterProduct.updateList(productsList)
+        } else {
+            var positionOriginal = -1
+            for (i in productsList.indices) {
+                if (productsList[i].id == product.id) {
+                    positionOriginal = i
+                }
+            }
+            productsList[positionOriginal] = product
+            listSearch[position] = product
+            adapterProduct.updateList(listSearch)
+        }
+        binding.rvProducts.scrollToPosition(position)
     }
 
     private val callback = object : androidx.appcompat.view.ActionMode.Callback {
@@ -143,12 +181,17 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
                 R.id.action_delete -> {
                     productsToRestored.addAll(productsToDelete)
                     productsList.removeAll(productsToDelete)
-                    Snackbar.make(binding.rvProducts, getString(R.string.text_deleting), Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(
+                        binding.rvProducts,
+                        getString(R.string.text_deleting),
+                        Snackbar.LENGTH_INDEFINITE
+                    )
                         .setDuration(3500)
                         .setAction(getString(R.string.btn_undo)) {
                             for (i in productsToRestored.indices) {
                                 productsList.add(listPositionsToDelete[i], productsToRestored[i])
                             }
+                            listSearch.clear()
                             productsToRestored.clear()
                             listPositionsToDelete.clear()
                             adapterProduct.updateList(productsList)
@@ -172,9 +215,32 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
 
         override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode?) {
             actionModeActived = false
+            listSearch.clear()
+            search.onActionViewCollapsed()
             productsToDelete.clear()
             adapterProduct.clearListToDelete()
             adapterProduct.updateList(productsList)
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if (productsList.isEmpty()) {
+            Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
+        } else {
+            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            listSearch.clear()
+
+            for (product in productsList) {
+                if (product.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                    listSearch.add(product)
+                }
+            }
+            adapterProduct.updateList(listSearch)
+        }
+        return false
     }
 }

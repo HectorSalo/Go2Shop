@@ -183,6 +183,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
     }
 
     private fun addProductToList(position: Int) {
+        var positionInList = -1
         var add = true
         val productSelected = productsFromDB[position]
         if (productsToAdd.contains(productSelected)) {
@@ -192,6 +193,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         for (i in productsToAdd.indices) {
             if (productsToAdd[i].name == productSelected.name) {
                 add = false
+                positionInList = i
             }
         }
         if (add) {
@@ -203,6 +205,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
             sumTotal(subtotal)
         } else {
             Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
+            binding.rvList.scrollToPosition(positionInList)
         }
     }
 

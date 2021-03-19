@@ -27,8 +27,9 @@ class ListsWishInteractorClass(private val listsWishPresenter: ListsWishPresente
     }
 
     override fun deleteLists(lists: MutableList<ListWish>) {
-        val tt = lists.size
+        val listsId = mutableListOf<String>()
         for (i in lists.indices) {
+            listsId.add(lists[i].id)
             val lastIndexFromList = lists.lastIndex
             for (j in lists[i].listProducts.indices) {
                 val lastIndexFromProducts = lists[i].listProducts.lastIndex
@@ -37,8 +38,7 @@ class ListsWishInteractorClass(private val listsWishPresenter: ListsWishPresente
                     .delete()
                     .addOnSuccessListener {
                         if ((i == lastIndexFromList) && (j == lastIndexFromProducts)) {
-                            val t = lists.size
-                            deleteData(lists)
+                            deleteData(listsId)
                         }
                     }
                     .addOnFailureListener { e -> listsWishPresenter.resultDeleteLists(false, e.toString()) }
@@ -46,12 +46,13 @@ class ListsWishInteractorClass(private val listsWishPresenter: ListsWishPresente
         }
     }
 
-    private fun deleteData(lists: MutableList<ListWish>) {
+    private fun deleteData(lists: MutableList<String>) {
         for (i in lists.indices) {
             FirestoreAPI.getListWish()
-                .document(lists[i].id)
+                .document(lists[i])
                 .delete()
                 .addOnSuccessListener {
+                    RoomDB.deleteListWishToRoom(lists[i])
                     if (i == lists.lastIndex) {
                         listsWishPresenter.resultDeleteLists(true, "")
                     }

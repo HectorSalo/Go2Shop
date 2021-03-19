@@ -151,6 +151,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
         val productSelected = productsFromDB[position]
         if (productsToAdd.contains(productSelected)) {
             Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
+            binding.rvList.scrollToPosition(position)
             return
         }
         productsToAdd.add(productSelected)

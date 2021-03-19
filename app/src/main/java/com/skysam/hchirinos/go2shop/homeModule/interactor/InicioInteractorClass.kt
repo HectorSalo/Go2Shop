@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.MetadataChanges
+import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.classView.ProductsSavedToList
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
@@ -124,9 +125,10 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope, ProductsSavedToLi
     }
 
     override fun getListsWishFromFirestore() {
-        launch { RoomDB.getInstance().listWish().deleteAll() }
+        //launch { RoomDB.getInstance().listWish().deleteAll() }
         FirestoreAPI.getListWish()
             .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+            .orderBy(Constants.DATE_CREATED, Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents->
                 for (doc in documents) {
