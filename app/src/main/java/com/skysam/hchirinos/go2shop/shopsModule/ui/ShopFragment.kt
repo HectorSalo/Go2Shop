@@ -1,17 +1,17 @@
-package com.skysam.hchirinos.go2shop.historyModule.ui
+package com.skysam.hchirinos.go2shop.shopsModule.ui
 
 import android.os.Bundle
 import android.view.*
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.databinding.FragmentHistoryBinding
+import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopViewModel
 
-class HistoryFragment : Fragment() {
+class ShopFragment : Fragment() {
 
-    private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var addListShopViewModel: AddListShopViewModel
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
 
@@ -20,11 +20,11 @@ class HistoryFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        galleryViewModel =
-                ViewModelProvider(this).get(GalleryViewModel::class.java)
+        addListShopViewModel =
+                ViewModelProvider(this).get(AddListShopViewModel::class.java)
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        galleryViewModel.text.observe(viewLifecycleOwner, Observer {
+        addListShopViewModel.text.observe(viewLifecycleOwner, Observer {
             binding.textGallery.text = it
         })
         return binding.root
