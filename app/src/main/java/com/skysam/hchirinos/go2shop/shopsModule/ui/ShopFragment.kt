@@ -11,7 +11,6 @@ import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopViewMo
 
 class ShopFragment : Fragment() {
 
-    private lateinit var addListShopViewModel: AddListShopViewModel
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
 
@@ -20,13 +19,8 @@ class ShopFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        addListShopViewModel =
-                ViewModelProvider(this).get(AddListShopViewModel::class.java)
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        addListShopViewModel.text.observe(viewLifecycleOwner, Observer {
-            binding.textGallery.text = it
-        })
         return binding.root
     }
 

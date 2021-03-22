@@ -34,7 +34,7 @@
             android:id="@+id/et_name_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/text_name_list"
+            android:hint="@string/text_name_listWish"
             android:textSize="20sp"
             android:inputType="textCapSentences"
             app:layout_constraintBottom_toBottomOf="parent"

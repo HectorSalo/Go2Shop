@@ -36,16 +36,19 @@
     <string name="btn_new_product">Agregar Producto</string>
     <string name="btn_storage">Inventario</string>
 
-    <!--Fragment Historial-->
+    <!--Fragment Shop-->
     <string name="nav_history">Historial de compras</string>
+
+    <!--Dialog Add ListShop-->
+    <string name="text_name_listShop">Nombre de la compra</string>
 
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>
     <string name="text_item_in_list">Ítem(s): %1$s</string>
 
-    <!--Dialog Add List-->
+    <!--Dialog Add ListWish-->
     <string name="btn_add_product">Agregar producto</string>
-    <string name="text_name_list">Nombre de la Lista</string>
+    <string name="text_name_listWish">Nombre de la Lista</string>
     <string name="text_total_list">Total $%1$s</string>
     <string name="text_total_price_item">$%1$s</string>
     <string name="text_quantity_total">%1$.1f %2$s</string>
