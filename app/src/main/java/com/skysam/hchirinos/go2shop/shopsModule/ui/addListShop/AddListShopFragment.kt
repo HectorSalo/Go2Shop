@@ -57,7 +57,14 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
             fillListProductsDB(it)
         })
         addListShopViewModel.getProductsSelected().observe(viewLifecycleOwner, {
+            productsToAdd.addAll(it)
             addWishListAdapter.updateList(it)
+        })
+        addListShopViewModel.productInList.observe(this, {
+            if (it) {
+                Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
+                //binding.rvList.scrollToPosition(position)
+            }
         })
         binding.tfNameList.hint = getString(R.string.text_name_listShop)
         binding.rvList.setHasFixedSize(true)
@@ -108,14 +115,7 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
 
     private fun addProductToList(position: Int) {
         val productSelected = productsFromDB[position]
-        if (productsToAdd.contains(productSelected)) {
-            Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
-            binding.rvList.scrollToPosition(position)
-            return
-        }
         addListShopViewModel.addProductToList(productSelected)
-        //productsToAdd.add(productSelected)
-        //addWishListAdapter.updateList(productsToAdd)
         binding.etSarchProduct.setText("")
 
         val subtotal = productSelected.quantity * productSelected.price
