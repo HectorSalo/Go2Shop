@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,20 +51,7 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addListShopViewModel.getProducts().observe(viewLifecycleOwner, {
-            productsFromDB.addAll(it)
-            fillListProductsDB(it)
-        })
-        addListShopViewModel.getProductsSelected().observe(viewLifecycleOwner, {
-            productsToAdd.addAll(it)
-            addWishListAdapter.updateList(it)
-        })
-        addListShopViewModel.productInList.observe(this, {
-            if (it) {
-                Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
-                //binding.rvList.scrollToPosition(position)
-            }
-        })
+        loadViewModels()
         binding.tfNameList.hint = getString(R.string.text_name_listShop)
         binding.rvList.setHasFixedSize(true)
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
@@ -108,6 +94,30 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
         }
     }
 
+    private fun loadViewModels() {
+        addListShopViewModel.getProducts().observe(this, {
+            productsFromDB.addAll(it)
+            fillListProductsDB(it)
+        })
+        addListShopViewModel.productsSelected.observe(this, {
+            val test = it.size
+            productsToAdd.addAll(it)
+            addWishListAdapter.updateList(it)
+        })
+        addListShopViewModel.productInList.observe(this, {
+            if (it) {
+                Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
+            }
+        })
+        addListShopViewModel.positionProductInList.observe(this, {
+            binding.rvList.scrollToPosition(it)
+        })
+        addListShopViewModel.totalPrice.observe(this, {
+            total = it
+            binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
+        })
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -117,14 +127,6 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
         val productSelected = productsFromDB[position]
         addListShopViewModel.addProductToList(productSelected)
         binding.etSarchProduct.setText("")
-
-        val subtotal = productSelected.quantity * productSelected.price
-        sumTotal(subtotal)
-    }
-
-    private fun sumTotal(subtotal: Double) {
-        total += subtotal
-        binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
     }
 
     private fun fillListProductsDB(list: MutableList<Product>){
@@ -136,7 +138,9 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
     }
 
     override fun onClickDelete(position: Int) {
-
+        if (actived) {
+            addListShopViewModel.removeProductFromList(position)
+        }
     }
 
     override fun onClickEdit(position: Int) {
