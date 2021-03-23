@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_nav_home_to_storageFragment"
             app:destination="@id/storageFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_configNewShopFragment"
+            app:destination="@id/configNewShopFragment" />
     </fragment>
 
     <fragment
@@ -40,4 +43,24 @@
         android:name="com.skysam.hchirinos.go2shop.productsModule.ui.ProductsFragment"
         android:label="@string/nav_products"
         tools:layout="@layout/fragment_products" />
+    <fragment
+        android:id="@+id/configNewShopFragment"
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.ConfigNewShopFragment"
+        android:label="fragment_config_new_shop"
+        tools:layout="@layout/fragment_config_new_shop" >
+        <action
+            android:id="@+id/action_configNewShopFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_configNewShopFragment_to_addListShopFragment"
+            app:destination="@id/addListShopFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addListShopFragment"
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment"
+        android:label="AddListShopFragment" >
+        <action
+            android:id="@+id/action_addListShopFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 </navigation>

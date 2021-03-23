@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +26,7 @@ import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapte
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import java.text.NumberFormat
 
-class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
+class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         OnClickExit {
     private lateinit var addListShopViewModel: AddListShopViewModel
     private var _binding: DialogAddWishListBinding? = null
@@ -37,11 +38,6 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
     private var total: Double = 0.0
     private var actived = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.ShapeAppearanceOverlay_MaterialComponents_MaterialCalendar_Window_Fullscreen)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
@@ -52,7 +48,6 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadViewModels()
-        binding.tfNameList.hint = getString(R.string.text_name_listShop)
         binding.rvList.setHasFixedSize(true)
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = addWishListAdapter
@@ -95,24 +90,24 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
     }
 
     private fun loadViewModels() {
-        addListShopViewModel.getProducts().observe(this, {
+        addListShopViewModel.getProducts().observe(viewLifecycleOwner, {
             productsFromDB.addAll(it)
             fillListProductsDB(it)
         })
-        addListShopViewModel.productsSelected.observe(this, {
+        addListShopViewModel.productsSelected.observe(viewLifecycleOwner, {
             val test = it.size
             productsToAdd.addAll(it)
             addWishListAdapter.updateList(it)
         })
-        addListShopViewModel.productInList.observe(this, {
+        addListShopViewModel.productInList.observe(viewLifecycleOwner, {
             if (it) {
                 Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
             }
         })
-        addListShopViewModel.positionProductInList.observe(this, {
+        addListShopViewModel.positionProductInList.observe(viewLifecycleOwner, {
             binding.rvList.scrollToPosition(it)
         })
-        addListShopViewModel.totalPrice.observe(this, {
+        addListShopViewModel.totalPrice.observe(viewLifecycleOwner, {
             total = it
             binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
         })
@@ -152,6 +147,6 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
     }
 
     override fun onClickExit() {
-        dialog!!.dismiss()
+
     }
 }

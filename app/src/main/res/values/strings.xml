@@ -41,6 +41,9 @@
 
     <!--Dialog Add ListShop-->
     <string name="text_name_listShop">Nombre de la compra</string>
+    <string name="text_cotizacion">Cotización (Bs./$)</string>
+    <string name="text_agregar_lista">¿Desea agregar una Lista?</string>
+    <string name="text_switch_shop">Incluir a la compra</string>
 
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>

@@ -49,8 +49,8 @@ class InicioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNewShop.setOnClickListener {
-            val addListShopFragment = AddListShopFragment()
-            addListShopFragment.show(requireActivity().supportFragmentManager, tag)
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.action_nav_home_to_configNewShopFragment)
         }
         binding.btnNewList.setOnClickListener {
             val addListWishDialog = AddListWishDialog()

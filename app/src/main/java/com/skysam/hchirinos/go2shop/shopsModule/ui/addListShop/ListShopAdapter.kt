@@ -4,7 +4,9 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.skysam.hchirinos.go2shop.R
 
 
@@ -25,6 +27,5 @@ class ListShopAdapter(
     override fun getItemCount(): Int = values.size
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
     }
 }
