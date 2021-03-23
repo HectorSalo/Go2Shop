@@ -52,9 +52,12 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addListShopViewModel.getProducts().observe(viewLifecycleOwner, Observer {
+        addListShopViewModel.getProducts().observe(viewLifecycleOwner, {
             productsFromDB.addAll(it)
             fillListProductsDB(it)
+        })
+        addListShopViewModel.getProductsSelected().observe(viewLifecycleOwner, {
+            addWishListAdapter.updateList(it)
         })
         binding.tfNameList.hint = getString(R.string.text_name_listShop)
         binding.rvList.setHasFixedSize(true)
@@ -110,8 +113,9 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
             binding.rvList.scrollToPosition(position)
             return
         }
-        productsToAdd.add(productSelected)
-        addWishListAdapter.updateList(productsToAdd)
+        addListShopViewModel.addProductToList(productSelected)
+        //productsToAdd.add(productSelected)
+        //addWishListAdapter.updateList(productsToAdd)
         binding.etSarchProduct.setText("")
 
         val subtotal = productSelected.quantity * productSelected.price
@@ -144,6 +148,6 @@ class AddListShopFragment : DialogFragment(), OnClickList, ProductSaveFromList,
     }
 
     override fun onClickExit() {
-
+        dialog!!.dismiss()
     }
 }

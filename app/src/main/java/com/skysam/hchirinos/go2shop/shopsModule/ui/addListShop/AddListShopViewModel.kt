@@ -12,6 +12,11 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
 import kotlinx.coroutines.launch
 
 class AddListShopViewModel : ViewModel() {
+    private val productsSelectd: MutableList<Product> = mutableListOf()
+
+    private var productsToAdd = MutableLiveData<MutableList<Product>>().apply {
+        value = productsSelectd
+    }
 
     private val listProducts = MutableLiveData<MutableList<Product>>().apply {
         viewModelScope.launch {
@@ -21,5 +26,13 @@ class AddListShopViewModel : ViewModel() {
 
     fun getProducts(): LiveData<MutableList<Product>> {
         return listProducts
+    }
+
+    fun getProductsSelected(): LiveData<MutableList<Product>> {
+        return productsToAdd
+    }
+
+    fun addProductToList(product: Product) {
+        productsSelectd.add(product)
     }
 }
