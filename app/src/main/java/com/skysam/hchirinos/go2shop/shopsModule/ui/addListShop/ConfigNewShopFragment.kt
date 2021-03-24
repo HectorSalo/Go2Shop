@@ -1,40 +1,72 @@
 package com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop
 
 import android.os.Bundle
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.NavHostFragment
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.Keyboard
+import com.skysam.hchirinos.go2shop.common.classView.ExitDialog
+import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
+import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
+import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentConfigNewShopBinding
+import com.skysam.hchirinos.go2shop.shopsModule.viewModel.ConfigNewShopViewModel
+import com.skysam.hchirinos.go2shop.shopsModule.viewModel.SharedViewModel
+import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
 
 
-class ConfigNewShopFragment : Fragment() {
+class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
 
     private var _binding: FragmentConfigNewShopBinding? = null
     private val binding get() = _binding!!
-    private lateinit var configNewShopViewModel: ConfigNewShopViewModel
+    private val configNewShopViewModel: ConfigNewShopViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var adapter: ConfigNewShopAdapter
     private val lists: MutableList<ListWish> = mutableListOf()
+    private val listsProducts: MutableList<ProductsToListModel> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConfigNewShopBinding.inflate(inflater, container, false)
-        configNewShopViewModel = ViewModelProvider(this).get(ConfigNewShopViewModel::class.java)
+        setHasOptionsMenu(true)
+        NumberFormat.getInstance().isGroupingUsed = true
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadViewModels()
-        adapter = ConfigNewShopAdapter(lists)
+        adapter = ConfigNewShopAdapter(lists, this)
         binding.rvLists.setHasFixedSize(true)
         binding.rvLists.adapter = adapter
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        requireActivity().menuInflater.inflate(R.menu.new_shop, menu)
+        val item = menu.findItem(R.id.action_check)
+        item.isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+        when (item.itemId) {
+            android.R.id.home -> {
+                val exitDialog = ExitDialog(this)
+                exitDialog.show(requireActivity().supportFragmentManager, tag)
+                true
+            }
+            R.id.action_check -> {
+                validateData()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -45,5 +77,66 @@ class ConfigNewShopFragment : Fragment() {
         configNewShopViewModel.lists.observe(viewLifecycleOwner, {
             adapter.updateList(it)
         })
+        configNewShopViewModel.rateChange.observe(viewLifecycleOwner, {
+            binding.etCotizacion.setText(NumberFormat.getInstance().format(it))
+        })
+    }
+
+    private fun validateData() {
+        Keyboard.close(binding.root)
+        val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
+        var rateChange = 0.0
+        binding.tfNameList.error = null
+        binding.tfCotizacion.error = null
+        if (binding.etNameList.text.isNullOrEmpty()) {
+            binding.tfNameList.error = getString(R.string.error_field_empty)
+            binding.etNameList.requestFocus()
+            return
+        }
+        if (binding.etCotizacion.text.isNullOrEmpty()){
+            binding.tfCotizacion.error = getString(R.string.error_field_empty)
+            binding.etCotizacion.requestFocus()
+            return
+        }
+        var rateChangeString = binding.etCotizacion.text.toString()
+        if (decimalSeparator == ",") {
+            try {
+                rateChangeString = rateChangeString.replace(".", "").replace(",", ".")
+                rateChange = rateChangeString.toDouble()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            try {
+                rateChangeString = rateChangeString.replace(",", "")
+                rateChange = rateChangeString.toDouble()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
+            }
+        }
+        if (rateChange <= 0) {
+            binding.tfCotizacion.error = getString(R.string.error_field_zero)
+            return
+        }
+        sharedViewModel.sharedData(binding.etNameList.text.toString(), rateChange, listsProducts)
+        NavHostFragment.findNavController(this)
+            .navigate(R.id.action_configNewShopFragment_to_addListShopFragment)
+    }
+
+    override fun onClickExit() {
+        NavHostFragment.findNavController(this)
+            .navigate(R.id.action_configNewShopFragment_to_nav_home)
+    }
+
+    override fun switchChange(
+        isChecked: Boolean,
+        product: ProductsToListModel?,
+        list: MutableList<ProductsToListModel>?
+    ) {
+        if (isChecked) {
+            listsProducts.addAll(list!!)
+        } else {
+            listsProducts.removeAll(list!!)
+        }
     }
 }

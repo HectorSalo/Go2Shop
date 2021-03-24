@@ -7,6 +7,8 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_cerrar_sesion">Cerrar sesión</string>
     <string name="action_search">Buscar</string>
+    <string name="action_check">Check</string>
+    <string name="action_save">Save</string>
 
     <!--Generales-->
     <string name="texto_vacio">" "</string>
@@ -43,7 +45,10 @@
     <string name="text_name_listShop">Nombre de la compra</string>
     <string name="text_cotizacion">Cotización (Bs./$)</string>
     <string name="text_agregar_lista">¿Desea agregar una Lista?</string>
-    <string name="text_switch_shop">Incluir a la compra</string>
+    <string name="text_switch_off_shop_list">Incluir a la compra</string>
+    <string name="text_switch_off_shop_product">Agregar al carrito</string>
+    <string name="text_switch_on_shop">Seleccionado</string>
+    <string name="error_field_zero">Valor debe ser mayor a cero</string>
 
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>

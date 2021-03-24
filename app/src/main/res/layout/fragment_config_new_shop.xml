@@ -48,12 +48,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/text_cotizacion"
-            android:inputType="textCapSentences"
+            android:inputType="numberDecimal"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:digits="0123456789.,"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

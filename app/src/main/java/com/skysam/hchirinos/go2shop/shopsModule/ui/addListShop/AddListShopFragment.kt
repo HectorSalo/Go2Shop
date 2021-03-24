@@ -1,56 +1,65 @@
 package com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
-import com.skysam.hchirinos.go2shop.common.classView.ExitDialog
-import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
-import com.skysam.hchirinos.go2shop.common.classView.OnClickList
-import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
+import com.skysam.hchirinos.go2shop.common.classView.*
+import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
-import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
+import com.skysam.hchirinos.go2shop.databinding.FragmentAddListShopBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
+import com.skysam.hchirinos.go2shop.shopsModule.viewModel.AddListShopViewModel
+import com.skysam.hchirinos.go2shop.shopsModule.viewModel.SharedViewModel
 import java.text.NumberFormat
 
 class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
-        OnClickExit {
-    private lateinit var addListShopViewModel: AddListShopViewModel
-    private var _binding: DialogAddWishListBinding? = null
+        OnClickExit, OnSwitchChange {
+    private val addListShopViewModel: AddListShopViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var _binding: FragmentAddListShopBinding? = null
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
-    private var productsToAdd: MutableList<Product> = mutableListOf()
+    private var productsToAdd: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
-    private lateinit var addWishListAdapter: AddWishListAdapter
+    private lateinit var addListShopAdapter: AddListShopAdapter
+    private var rateChange: Double = 0.0
     private var total: Double = 0.0
     private var actived = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = DialogAddWishListBinding.inflate(inflater, container, false)
-        addListShopViewModel = ViewModelProvider(this).get(AddListShopViewModel::class.java)
+        _binding = FragmentAddListShopBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                getOut()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         loadViewModels()
         binding.rvList.setHasFixedSize(true)
-        addWishListAdapter = AddWishListAdapter(productsToAdd, this)
-        binding.rvList.adapter = addWishListAdapter
+        addListShopAdapter = AddListShopAdapter(productsToAdd, this)
+        binding.rvList.adapter = addListShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.etSarchProduct.addTextChangedListener {
@@ -81,23 +90,40 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             }
             addProductToList(positionSelected)
         }
-        binding.fabSave.setOnClickListener { //validateToSave()
-             }
-        binding.fabCancel.setOnClickListener {
-            val exitDialog = ExitDialog(this)
-            exitDialog.show(requireActivity().supportFragmentManager, tag)
-        }
     }
 
     private fun loadViewModels() {
+        sharedViewModel.nameShop.observe(viewLifecycleOwner, {
+            val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+            toolbar.title = it
+            toolbar.setNavigationIcon(R.drawable.ic_close_24)
+        })
+        sharedViewModel.productsSelected.observe(viewLifecycleOwner, {
+            if (it.size >= 2) {
+                for (i in it.indices) {
+                    var j = i + 1
+                    while (j <= it.lastIndex) {
+                        if (it[i].name == it[j].name) {
+                            val test = it[i].name
+                            val test2 = j
+                        }
+                        j++
+                    }
+                }
+            }
+            //productsToAdd.addAll(it)
+            //addListShopAdapter.updateList(it)
+        })
+        sharedViewModel.rateChange.observe(viewLifecycleOwner, {
+            rateChange = it
+        })
         addListShopViewModel.getProducts().observe(viewLifecycleOwner, {
             productsFromDB.addAll(it)
             fillListProductsDB(it)
         })
         addListShopViewModel.productsSelected.observe(viewLifecycleOwner, {
-            val test = it.size
-            productsToAdd.addAll(it)
-            addWishListAdapter.updateList(it)
+            //productsToAdd.addAll(it)
+            //addListShopAdapter.updateList(it)
         })
         addListShopViewModel.productInList.observe(viewLifecycleOwner, {
             if (it) {
@@ -113,9 +139,32 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         })
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        requireActivity().menuInflater.inflate(R.menu.new_shop, menu)
+        val itemSave = menu.findItem(R.id.action_save)
+        itemSave.isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+        when (item.itemId) {
+            android.R.id.home -> {
+                getOut()
+                true
+            }
+            R.id.action_save -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getOut() {
+        val exitDialog = ExitDialog(this)
+        exitDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
     private fun addProductToList(position: Int) {
@@ -147,6 +196,15 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     }
 
     override fun onClickExit() {
+        NavHostFragment.findNavController(this)
+            .navigate(R.id.action_addListShopFragment_to_nav_home)
+    }
+
+    override fun switchChange(
+        isChecked: Boolean,
+        product: ProductsToListModel?,
+        list: MutableList<ProductsToListModel>?
+    ) {
 
     }
 }

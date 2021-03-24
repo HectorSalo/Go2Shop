@@ -3,11 +3,8 @@ package com.skysam.hchirinos.go2shop.shopsModule.ui
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.databinding.FragmentHistoryBinding
-import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopViewModel
 
 class ShopFragment : Fragment() {
 
