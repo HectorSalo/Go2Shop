@@ -34,6 +34,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<ProductsToListModel> = mutableListOf()
+    private var productsDuplicated: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
     private lateinit var addListShopAdapter: AddListShopAdapter
     private var rateChange: Double = 0.0
@@ -104,15 +105,18 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                     var j = i + 1
                     while (j <= it.lastIndex) {
                         if (it[i].name == it[j].name) {
-                            val test = it[i].name
-                            val test2 = j
+                            if (!productsDuplicated.contains(it[i])) {
+                                productsDuplicated.add(it[i])
+                            }
+                            productsDuplicated.add(it[j])
                         }
                         j++
                     }
                 }
             }
-            //productsToAdd.addAll(it)
-            //addListShopAdapter.updateList(it)
+            val test = productsDuplicated.size
+            productsToAdd.addAll(it)
+            addListShopAdapter.updateList(it)
         })
         sharedViewModel.rateChange.observe(viewLifecycleOwner, {
             rateChange = it
