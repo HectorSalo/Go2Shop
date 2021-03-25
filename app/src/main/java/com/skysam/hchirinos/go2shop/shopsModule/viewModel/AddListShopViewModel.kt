@@ -5,27 +5,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import kotlinx.coroutines.launch
 
 class AddListShopViewModel : ViewModel() {
+    private var productToScroll: ProductsToShopModel? = null
     private val _isProductInList = MutableLiveData<Boolean>()
     val isProductInList: LiveData<Boolean> get() = _isProductInList
 
-    private val _positionProducInList = MutableLiveData<Int>()
-    val positionProductInList: LiveData<Int> get() = _positionProducInList
+    private val _positionProductInList = MutableLiveData<Int>()
+    val positionProductInList: LiveData<Int> get() = _positionProductInList
 
     private val _totalPrice = MutableLiveData<Double>().apply {
         value = 0.0
     }
     val totalPrice: LiveData<Double> get() = _totalPrice
 
-    private val _productsInList = MutableLiveData<MutableList<ProductsToListModel>>().apply { value = mutableListOf() }
-    val productsInList: LiveData<MutableList<ProductsToListModel>> get() = _productsInList
+    private val _productsNotChecked = MutableLiveData<MutableList<ProductsToShopModel>>().apply { value = mutableListOf() }
+    //val productsInList: LiveData<MutableList<ProductsToShopModel>> get() = _productsNotChecked
 
-    private val _productsToShop = MutableLiveData<MutableList<ProductsToListModel>>().apply { value = mutableListOf() }
-    val productsToShop: LiveData<MutableList<ProductsToListModel>> get() = _productsToShop
+    private val _productsChecked = MutableLiveData<MutableList<ProductsToShopModel>>().apply { value = mutableListOf() }
+    //val productsToShop: LiveData<MutableList<ProductsToShopModel>> get() = _productsChecked
+
+    private val _allProducts = MutableLiveData<MutableList<ProductsToShopModel>>().apply { value = mutableListOf() }
+    val allProducts: LiveData<MutableList<ProductsToShopModel>> get() = _allProducts
 
     private val listProducts = MutableLiveData<MutableList<Product>>().apply {
         viewModelScope.launch {
@@ -37,49 +42,95 @@ class AddListShopViewModel : ViewModel() {
         return listProducts
     }
 
-    fun addProductToList(product: ProductsToListModel) {
+    fun addProductToList(product: ProductsToShopModel) {
         var exists = false
         var position = -1
-        for (i in _productsInList.value!!.indices) {
-            if (productsInList.value!![i].name == product.name) {
+        for (i in _allProducts.value!!.indices) {
+            if (_allProducts.value!![i].name == product.name) {
                 exists = true
                 position = i
             }
         }
         if (exists) {
             _isProductInList.value = exists
-            _positionProducInList.value = position
+            _positionProductInList.value = position
         } else {
-            _productsInList.value!!.add(product)
-            val productsSorted = _productsInList.value!!.sortedWith(compareBy { it.name }).toMutableList()
-            _productsInList.value = productsSorted
+            productToScroll = product
+            _productsNotChecked.value!!.add(product)
             _isProductInList.value = exists
+            fillListComplete()
         }
     }
 
-    fun addProductToShop(product: ProductsToListModel) {
-        _productsToShop.value!!.add(product)
-        _productsToShop.value = _productsToShop.value
+    fun updateProductToList(product: ProductsToShopModel, position: Int) {
+        _productsNotChecked.value!![position] = product
+        _productsNotChecked.value = _productsNotChecked.value
+    }
+
+    fun checkedProduct(product: ProductsToShopModel) {
+        val productToShop = ProductsToShopModel(
+            product.id,
+            product.name,
+            product.unit,
+            product.userId,
+            product.listId,
+            product.price,
+            product.quantity,
+            true
+        )
+        productToScroll = productToShop
+        _productsChecked.value!!.add(productToShop)
+        _productsNotChecked.value!!.remove(product)
+        fillListComplete()
         _totalPrice.value = _totalPrice.value!! + product.quantity * product.price
     }
 
-    fun removeProductToShop(product: ProductsToListModel) {
-        _productsToShop.value!!.remove(product)
-        _productsToShop.value = _productsToShop.value
+    fun uncheckedProduct(product: ProductsToShopModel) {
+        val productFromShop = ProductsToShopModel(
+            product.id,
+            product.name,
+            product.unit,
+            product.userId,
+            product.listId,
+            product.price,
+            product.quantity,
+            false
+        )
+        productToScroll = productFromShop
+        _productsChecked.value!!.remove(product)
+        _productsNotChecked.value!!.add(productFromShop)
+        fillListComplete()
         _totalPrice.value = _totalPrice.value!! - (product.quantity * product.price)
     }
 
-    fun fillListFirst(products: MutableList<ProductsToListModel>) {
-        val productsSorted = products.sortedWith(compareBy { it.name }).toMutableList()
-        _productsInList.value!!.addAll(productsSorted)
-        _productsInList.value = _productsInList.value
+    private fun fillListComplete() {
+        _allProducts.value!!.clear()
+        val productsNotCheckedSorted = _productsNotChecked.value!!.sortedWith(compareBy { it.name }).toMutableList()
+        val productsCheckedSorted = _productsChecked.value!!.sortedWith(compareBy { it.name }).toMutableList()
+        _allProducts.value!!.addAll(productsCheckedSorted)
+        _allProducts.value!!.addAll(productsNotCheckedSorted)
+        _allProducts.value = _allProducts.value
     }
 
-    fun clear() {
-        _isProductInList.value = false
-        _positionProducInList.value = -1
-        _totalPrice.value = 0.0
-        _productsInList.value?.clear()
-        _productsToShop.value?.clear()
+    fun fillListFirst(products: MutableList<ProductsToListModel>) {
+        for (i in products.indices) {
+            val productToModel = ProductsToShopModel(
+                products[i].id,
+                products[i].name,
+                products[i].unit,
+                products[i].userId,
+                products[i].listId,
+                products[i].price,
+                products[i].quantity
+            )
+            _productsNotChecked.value!!.add(productToModel)
+        }
+        fillListComplete()
     }
+
+    fun scrollToPosition() {
+        _positionProductInList.value = _allProducts.value!!.indexOf(productToScroll)
+    }
+
+
 }

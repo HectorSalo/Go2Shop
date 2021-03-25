@@ -27,9 +27,4 @@ class ConfigNewShopViewModel: ViewModel() {
         }
     }
     val rateChange: LiveData<Double> get() = _rateChange
-
-    fun clear() {
-        _lists.value?.clear()
-        _rateChange.value = 1.0
-    }
 }

@@ -23,10 +23,4 @@ class SharedViewModel: ViewModel() {
         _rateChange.value = rate
         _productsShared.value = list
     }
-
-    fun clear() {
-        _nameShop.value = ""
-        _rateChange.value = 1.0
-        _productsShared.value?.clear()
-    }
 }

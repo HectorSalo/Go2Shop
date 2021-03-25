@@ -11,13 +11,13 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
-import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import java.text.NumberFormat
 
 /**
  * Created by Hector Chirinos (Home) on 23/3/2021.
  */
-class AddListShopAdapter(private var products: MutableList<ProductsToListModel>,
+class AddListShopAdapter(private var products: MutableList<ProductsToShopModel>,
                          private val listener: OnSwitchChange, private val listenerClickList: OnClickList):
     RecyclerView.Adapter<AddListShopAdapter.ViewHolder>() {
     private lateinit var context: Context
@@ -43,6 +43,8 @@ class AddListShopAdapter(private var products: MutableList<ProductsToListModel>,
         } else {
             holder.nameList.text = context.getString(R.string.text_list_belong, item.listId)
         }
+
+        holder.switch.isChecked = item.isChecked
 
         if (holder.switch.isChecked) {
             holder.switch.text = context.getString(R.string.text_switch_on_shop)
@@ -77,7 +79,7 @@ class AddListShopAdapter(private var products: MutableList<ProductsToListModel>,
         val card: MaterialCardView = view.findViewById(R.id.card)
     }
 
-    fun updateList(newList: MutableList<ProductsToListModel>) {
+    fun updateList(newList: MutableList<ProductsToShopModel>) {
         products = newList
         notifyDataSetChanged()
     }

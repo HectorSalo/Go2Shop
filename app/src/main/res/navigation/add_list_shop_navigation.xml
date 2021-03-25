@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/configNewShopFragment">
+
+    <fragment
+        android:id="@+id/configNewShopFragment"
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.ConfigNewShopFragment"
+        android:label="@string/btn_new_shop"
+        tools:layout="@layout/fragment_config_new_shop" >
+        <action
+            android:id="@+id/action_configNewShopFragment_to_addListShopFragment"
+            app:destination="@id/addListShopFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addListShopFragment"
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment"
+        android:label="@string/btn_new_shop" />
+</navigation>

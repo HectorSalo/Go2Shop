@@ -3,9 +3,9 @@ package com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
@@ -13,6 +13,7 @@ import com.skysam.hchirinos.go2shop.common.classView.ExitDialog
 import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
 import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentConfigNewShopBinding
 import com.skysam.hchirinos.go2shop.shopsModule.viewModel.ConfigNewShopViewModel
@@ -43,6 +44,12 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                getOut()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         loadViewModels()
         adapter = ConfigNewShopAdapter(lists, this)
         binding.rvLists.setHasFixedSize(true)
@@ -58,8 +65,7 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     override fun onOptionsItemSelected(item: MenuItem) =
         when (item.itemId) {
             android.R.id.home -> {
-                val exitDialog = ExitDialog(this)
-                exitDialog.show(requireActivity().supportFragmentManager, tag)
+                getOut()
                 true
             }
             R.id.action_check -> {
@@ -124,16 +130,18 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
             .navigate(R.id.action_configNewShopFragment_to_addListShopFragment)
     }
 
+    private fun getOut() {
+        val exitDialog = ExitDialog(this)
+        exitDialog.show(requireActivity().supportFragmentManager, tag)
+    }
+
     override fun onClickExit() {
-        sharedViewModel.clear()
-        configNewShopViewModel.clear()
-        NavHostFragment.findNavController(this)
-            .navigate(R.id.action_configNewShopFragment_to_nav_home)
+        requireActivity().finish()
     }
 
     override fun switchChange(
         isChecked: Boolean,
-        product: ProductsToListModel?,
+        product: ProductsToShopModel?,
         list: MutableList<ProductsToListModel>?,
         nameList: String?
     ) {

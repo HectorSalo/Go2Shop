@@ -1,6 +1,7 @@
 package com.skysam.hchirinos.go2shop.homeModule.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +17,7 @@ import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
+import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
 import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment
 
 class InicioFragment : Fragment() {
@@ -49,8 +51,8 @@ class InicioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNewShop.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.action_nav_home_to_configNewShopFragment)
+           requireActivity().startActivity(Intent(requireContext(),
+               AddListShopActivity::class.java))
         }
         binding.btnNewList.setOnClickListener {
             val addListWishDialog = AddListWishDialog()
