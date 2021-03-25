@@ -49,6 +49,7 @@
     <string name="text_switch_off_shop_product">Agregar al carrito</string>
     <string name="text_switch_on_shop">Seleccionado</string>
     <string name="error_field_zero">Valor debe ser mayor a cero</string>
+    <string name="text_list_belong">Lista: %1$s</string>
 
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>
@@ -62,7 +63,7 @@
     <string name="text_quantity_total">%1$.1f %2$s</string>
     <string name="text_quantity">Cantidad</string>
     <string name="text_unit">Unidad</string>
-    <string name="product_added">Producto ya agregado</string>
+    <string name="product_added">Producto ya estaba en la lista</string>
 
 
     <!--Fragment Products-->

@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
@@ -124,6 +125,8 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     }
 
     override fun onClickExit() {
+        sharedViewModel.clear()
+        configNewShopViewModel.clear()
         NavHostFragment.findNavController(this)
             .navigate(R.id.action_configNewShopFragment_to_nav_home)
     }
@@ -131,12 +134,24 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     override fun switchChange(
         isChecked: Boolean,
         product: ProductsToListModel?,
-        list: MutableList<ProductsToListModel>?
+        list: MutableList<ProductsToListModel>?,
+        nameList: String?
     ) {
-        if (isChecked) {
-            listsProducts.addAll(list!!)
-        } else {
-            listsProducts.removeAll(list!!)
+        for (i in list!!.indices) {
+            val productToShop = ProductsToListModel(
+                list[i].id,
+                list[i].name,
+                list[i].unit,
+                list[i].userId,
+                nameList!!,
+                list[i].price,
+                list[i].quantity
+            )
+            if (isChecked) {
+                listsProducts.add(productToShop)
+            } else {
+                listsProducts.remove(productToShop)
+            }
         }
     }
 }

@@ -42,12 +42,6 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        /*addWishListViewModel =
-                ViewModelProvider(this).get(AddWishListViewModel::class.java)
-        addWishListViewModel.text.observe(viewLifecycleOwner, Observer {
-            binding.tvSarchProduct.text = it
-        })*/
-
         _binding = FragmentListsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
         listsWishPresenter = ListsWishPresenterClass(this)

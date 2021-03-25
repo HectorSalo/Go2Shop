@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import kotlinx.coroutines.launch
 
 class AddListShopViewModel : ViewModel() {
-    private val _producInList = MutableLiveData<Boolean>()
-    val productInList: LiveData<Boolean> get() = _producInList
+    private val _isProductInList = MutableLiveData<Boolean>()
+    val isProductInList: LiveData<Boolean> get() = _isProductInList
 
     private val _positionProducInList = MutableLiveData<Int>()
     val positionProductInList: LiveData<Int> get() = _positionProducInList
@@ -20,8 +21,11 @@ class AddListShopViewModel : ViewModel() {
     }
     val totalPrice: LiveData<Double> get() = _totalPrice
 
-    private val _productsSelected = MutableLiveData<MutableList<Product>>().apply { value = mutableListOf() }
-    val productsSelected: LiveData<MutableList<Product>> get() = _productsSelected
+    private val _productsInList = MutableLiveData<MutableList<ProductsToListModel>>().apply { value = mutableListOf() }
+    val productsInList: LiveData<MutableList<ProductsToListModel>> get() = _productsInList
+
+    private val _productsToShop = MutableLiveData<MutableList<ProductsToListModel>>().apply { value = mutableListOf() }
+    val productsToShop: LiveData<MutableList<ProductsToListModel>> get() = _productsToShop
 
     private val listProducts = MutableLiveData<MutableList<Product>>().apply {
         viewModelScope.launch {
@@ -33,22 +37,49 @@ class AddListShopViewModel : ViewModel() {
         return listProducts
     }
 
-    fun addProductToList(product: Product) {
-        if (!_productsSelected.value!!.contains(product)) {
-            _productsSelected.value!!.add(product)
-            _productsSelected.value = _productsSelected.value
-            _totalPrice.value = _totalPrice.value!! + product.quantity * product.price
-            _producInList.value = false
-            return
+    fun addProductToList(product: ProductsToListModel) {
+        var exists = false
+        var position = -1
+        for (i in _productsInList.value!!.indices) {
+            if (productsInList.value!![i].name == product.name) {
+                exists = true
+                position = i
+            }
         }
-        _producInList.value = true
-        _positionProducInList.value = _productsSelected.value!!.indexOf(product)
+        if (exists) {
+            _isProductInList.value = exists
+            _positionProducInList.value = position
+        } else {
+            _productsInList.value!!.add(product)
+            val productsSorted = _productsInList.value!!.sortedWith(compareBy { it.name }).toMutableList()
+            _productsInList.value = productsSorted
+            _isProductInList.value = exists
+        }
     }
 
-    fun removeProductFromList(position: Int) {
-        val productSelected = _productsSelected.value!![position]
-        _productsSelected.value!!.removeAt(position)
-        _productsSelected.value = _productsSelected.value
-        _totalPrice.value = _totalPrice.value!! - (productSelected.quantity * productSelected.price)
+    fun addProductToShop(product: ProductsToListModel) {
+        _productsToShop.value!!.add(product)
+        _productsToShop.value = _productsToShop.value
+        _totalPrice.value = _totalPrice.value!! + product.quantity * product.price
+    }
+
+    fun removeProductToShop(product: ProductsToListModel) {
+        _productsToShop.value!!.remove(product)
+        _productsToShop.value = _productsToShop.value
+        _totalPrice.value = _totalPrice.value!! - (product.quantity * product.price)
+    }
+
+    fun fillListFirst(products: MutableList<ProductsToListModel>) {
+        val productsSorted = products.sortedWith(compareBy { it.name }).toMutableList()
+        _productsInList.value!!.addAll(productsSorted)
+        _productsInList.value = _productsInList.value
+    }
+
+    fun clear() {
+        _isProductInList.value = false
+        _positionProducInList.value = -1
+        _totalPrice.value = 0.0
+        _productsInList.value?.clear()
+        _productsToShop.value?.clear()
     }
 }

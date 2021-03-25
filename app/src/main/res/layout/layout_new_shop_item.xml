@@ -3,8 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:checkable="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:id="@+id/card">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,31 +31,47 @@
 
             <TextView
                 android:id="@+id/tv_price"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_weight="1"
                 android:text="@string/text_price"
                 android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_weight="1"/>
+                android:textColor="?android:attr/textColorSecondary" />
 
             <TextView
                 android:id="@+id/tv_unit_items"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                android:gravity="end"
                 android:text="@string/text_unit"
                 android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_weight="1"
-                android:gravity="end"/>
+                android:textColor="?android:attr/textColorSecondary" />
 
         </LinearLayout>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_shop"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_name_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/texto_vacio" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_shop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+
     </LinearLayout>
 
 

@@ -15,12 +15,18 @@ class SharedViewModel: ViewModel() {
     private val _rateChange = MutableLiveData<Double>()
     val rateChange: LiveData<Double> get() = _rateChange
 
-    private val _productsSelected = MutableLiveData<MutableList<ProductsToListModel>>().apply { value = mutableListOf() }
-    val productsSelected: LiveData<MutableList<ProductsToListModel>> get() = _productsSelected
+    private val _productsShared = MutableLiveData<MutableList<ProductsToListModel>>().apply { value = mutableListOf() }
+    val productsShared: LiveData<MutableList<ProductsToListModel>> get() = _productsShared
 
     fun sharedData(name: String, rate: Double, list: MutableList<ProductsToListModel>) {
         _nameShop.value = name
         _rateChange.value = rate
-        _productsSelected.value = list
+        _productsShared.value = list
+    }
+
+    fun clear() {
+        _nameShop.value = ""
+        _rateChange.value = 1.0
+        _productsShared.value?.clear()
     }
 }

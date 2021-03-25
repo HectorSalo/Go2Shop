@@ -46,7 +46,7 @@ class ConfigNewShopAdapter(private var lists: MutableList<ListWish>, private val
             } else {
                 holder.switch.text = context.getString(R.string.text_switch_off_shop_list)
             }
-            listener.switchChange(isChecked, null, item.listProducts)
+            listener.switchChange(isChecked, null, item.listProducts, item.name)
         }
     }
 

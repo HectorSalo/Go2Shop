@@ -7,5 +7,5 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
  */
 interface OnSwitchChange {
     fun switchChange(isChecked: Boolean, product: ProductsToListModel?,
-                     list: MutableList<ProductsToListModel>?)
+                     list: MutableList<ProductsToListModel>?, nameList: String?)
 }
