@@ -11,5 +11,5 @@ data class ProductsToShopModel(
     val listId: String,
     val price: Double = 0.0,
     val quantity: Double = 1.0,
-    val isChecked: Boolean = false
+    var isChecked: Boolean = false
 )

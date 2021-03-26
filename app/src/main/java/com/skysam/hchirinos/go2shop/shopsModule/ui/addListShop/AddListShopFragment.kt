@@ -41,6 +41,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private var rateChange: Double = 0.0
     private var total: Double = 0.0
     private var actived = true
+    private var checked = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -111,16 +112,12 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             fillListProductsDB(it)
         })
         addListShopViewModel.allProducts.observe(viewLifecycleOwner, {
-            productsToAdd.clear()
-            productsToAdd.addAll(it)
-            for (i in productsToAdd.indices){
-                val test = productsToAdd[i].name
-                val tester = productsToAdd[i].price
-                val testr = productsToAdd[i].isChecked
-                val tet = productsToAdd[i].quantity
+            if (!checked) {
+                productsToAdd.clear()
+                productsToAdd.addAll(it)
+                addListShopAdapter.updateList(productsToAdd)
+                addListShopViewModel.scrollToPosition()
             }
-            addListShopAdapter.updateList(productsToAdd)
-            //addListShopViewModel.scrollToPosition()
         })
         addListShopViewModel.isProductInList.observe(viewLifecycleOwner, {
             if (it) {
@@ -233,6 +230,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         list: MutableList<ProductsToListModel>?,
         nameList: String?
     ) {
+        checked = true
         if (actived) {
             if (isChecked) {
                 if (product!!.price == 0.0) {

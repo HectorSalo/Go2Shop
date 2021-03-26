@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -44,27 +45,44 @@ class AddListShopAdapter(private var products: MutableList<ProductsToShopModel>,
             holder.nameList.text = context.getString(R.string.text_list_belong, item.listId)
         }
 
-        /*if (item.isChecked) {
-            holder.switch.isChecked = true
+        holder.switch.isChecked = item.isChecked
+        if (item.isChecked) {
             holder.switch.text = context.getString(R.string.text_switch_on_shop)
         } else {
-            holder.switch.isChecked = false
             holder.switch.text = context.getString(R.string.text_switch_off_shop_product)
-        }*/
+        }
 
-        holder.switch.setOnCheckedChangeListener { _, isChecked ->
+        holder.switch.setOnClickListener {
+            val isChecked: Boolean = !item.isChecked
+            if (isChecked) {
+                if (item.price == 0.0) {
+                    holder.switch.isChecked = false
+                    item.isChecked = false
+                } else {
+                    holder.switch.text = context.getString(R.string.text_switch_on_shop)
+                    item.isChecked = true
+                }
+            } else {
+                holder.switch.text = context.getString(R.string.text_switch_off_shop_product)
+                item.isChecked = false
+            }
+            listener.switchChange(isChecked, item, null, null)
+        }
+
+        /*holder.switch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (item.price == 0.0) {
                     holder.switch.isChecked = false
                 } else {
                     holder.switch.text = context.getString(R.string.text_switch_on_shop)
+                    item.isChecked = isChecked
                 }
             } else {
                 holder.switch.text = context.getString(R.string.text_switch_off_shop_product)
+                item.isChecked = isChecked
             }
             listener.switchChange(isChecked, item, null, null)
-        }
-
+        }*/
         holder.card.setOnClickListener { listenerClickList.onClickEdit(position) }
     }
 

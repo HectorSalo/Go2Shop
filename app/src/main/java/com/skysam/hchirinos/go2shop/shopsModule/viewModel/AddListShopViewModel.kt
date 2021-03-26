@@ -23,12 +23,6 @@ class AddListShopViewModel : ViewModel() {
     }
     val totalPrice: LiveData<Double> get() = _totalPrice
 
-    private val _productsNotChecked = MutableLiveData<MutableList<ProductsToShopModel>>().apply { value = mutableListOf() }
-    //val productsInList: LiveData<MutableList<ProductsToShopModel>> get() = _productsNotChecked
-
-    private val _productsChecked = MutableLiveData<MutableList<ProductsToShopModel>>().apply { value = mutableListOf() }
-    //val productsToShop: LiveData<MutableList<ProductsToShopModel>> get() = _productsChecked
-
     private val _allProducts = MutableLiveData<MutableList<ProductsToShopModel>>().apply { value = mutableListOf() }
     val allProducts: LiveData<MutableList<ProductsToShopModel>> get() = _allProducts
 
@@ -64,8 +58,7 @@ class AddListShopViewModel : ViewModel() {
     }
 
     fun updateProductToList(product: ProductsToShopModel, position: Int) {
-        _productsNotChecked.value!![position] = product
-        _productsNotChecked.value = _productsNotChecked.value
+
     }
 
     fun checkedProduct(product: ProductsToShopModel) {
@@ -87,6 +80,7 @@ class AddListShopViewModel : ViewModel() {
     }
 
     fun uncheckedProduct(product: ProductsToShopModel) {
+        val position = _allProducts.value!!.indexOf(product)
         val productFromShop = ProductsToShopModel(
             product.id,
             product.name,
@@ -98,8 +92,8 @@ class AddListShopViewModel : ViewModel() {
             false
         )
         productToScroll = productFromShop
-        _productsChecked.value!!.remove(product)
-        _productsNotChecked.value!!.add(productFromShop)
+        _allProducts.value!![position] = productFromShop
+        _allProducts.value = _allProducts.value
         _totalPrice.value = _totalPrice.value!! - (product.quantity * product.price)
     }
 
