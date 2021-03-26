@@ -56,9 +56,10 @@ class AddListShopViewModel : ViewModel() {
             _positionProductInList.value = position
         } else {
             productToScroll = product
-            _productsNotChecked.value!!.add(product)
             _isProductInList.value = exists
-            fillListComplete()
+            _allProducts.value!!.add(product)
+            _allProducts.value = _allProducts.value!!.sortedWith(compareBy { it.name }).toMutableList()
+            _allProducts.value = _allProducts.value
         }
     }
 
@@ -68,6 +69,7 @@ class AddListShopViewModel : ViewModel() {
     }
 
     fun checkedProduct(product: ProductsToShopModel) {
+        val position = _allProducts.value!!.indexOf(product)
         val productToShop = ProductsToShopModel(
             product.id,
             product.name,
@@ -79,9 +81,8 @@ class AddListShopViewModel : ViewModel() {
             true
         )
         productToScroll = productToShop
-        _productsChecked.value!!.add(productToShop)
-        _productsNotChecked.value!!.remove(product)
-        fillListComplete()
+        _allProducts.value!![position] = productToShop
+        _allProducts.value = _allProducts.value
         _totalPrice.value = _totalPrice.value!! + product.quantity * product.price
     }
 
@@ -99,20 +100,11 @@ class AddListShopViewModel : ViewModel() {
         productToScroll = productFromShop
         _productsChecked.value!!.remove(product)
         _productsNotChecked.value!!.add(productFromShop)
-        fillListComplete()
         _totalPrice.value = _totalPrice.value!! - (product.quantity * product.price)
     }
 
-    private fun fillListComplete() {
-        _allProducts.value!!.clear()
-        val productsNotCheckedSorted = _productsNotChecked.value!!.sortedWith(compareBy { it.name }).toMutableList()
-        val productsCheckedSorted = _productsChecked.value!!.sortedWith(compareBy { it.name }).toMutableList()
-        _allProducts.value!!.addAll(productsCheckedSorted)
-        _allProducts.value!!.addAll(productsNotCheckedSorted)
-        _allProducts.value = _allProducts.value
-    }
-
     fun fillListFirst(products: MutableList<ProductsToListModel>) {
+        val list: MutableList<ProductsToShopModel> = mutableListOf()
         for (i in products.indices) {
             val productToModel = ProductsToShopModel(
                 products[i].id,
@@ -123,9 +115,10 @@ class AddListShopViewModel : ViewModel() {
                 products[i].price,
                 products[i].quantity
             )
-            _productsNotChecked.value!!.add(productToModel)
+            list.add(productToModel)
         }
-        fillListComplete()
+        _allProducts.value = list.sortedWith(compareBy { it.name }).toMutableList()
+        _allProducts.value = _allProducts.value
     }
 
     fun scrollToPosition() {

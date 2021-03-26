@@ -44,13 +44,13 @@ class AddListShopAdapter(private var products: MutableList<ProductsToShopModel>,
             holder.nameList.text = context.getString(R.string.text_list_belong, item.listId)
         }
 
-        holder.switch.isChecked = item.isChecked
-
-        if (holder.switch.isChecked) {
+        /*if (item.isChecked) {
+            holder.switch.isChecked = true
             holder.switch.text = context.getString(R.string.text_switch_on_shop)
         } else {
+            holder.switch.isChecked = false
             holder.switch.text = context.getString(R.string.text_switch_off_shop_product)
-        }
+        }*/
 
         holder.switch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {

@@ -111,12 +111,16 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             fillListProductsDB(it)
         })
         addListShopViewModel.allProducts.observe(viewLifecycleOwner, {
-            binding.rvList.post {
-                productsToAdd.clear()
-                productsToAdd.addAll(it)
-                addListShopAdapter.updateList(it)
-                addListShopViewModel.scrollToPosition()
+            productsToAdd.clear()
+            productsToAdd.addAll(it)
+            for (i in productsToAdd.indices){
+                val test = productsToAdd[i].name
+                val tester = productsToAdd[i].price
+                val testr = productsToAdd[i].isChecked
+                val tet = productsToAdd[i].quantity
             }
+            addListShopAdapter.updateList(productsToAdd)
+            //addListShopViewModel.scrollToPosition()
         })
         addListShopViewModel.isProductInList.observe(viewLifecycleOwner, {
             if (it) {
