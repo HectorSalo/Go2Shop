@@ -40,8 +40,8 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private lateinit var addListShopAdapter: AddListShopAdapter
     private var rateChange: Double = 0.0
     private var total: Double = 0.0
+    private var priceBeforeUpdated: Double = 0.0
     private var actived = true
-    private var checked = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -112,12 +112,10 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             fillListProductsDB(it)
         })
         addListShopViewModel.allProducts.observe(viewLifecycleOwner, {
-            if (!checked) {
-                productsToAdd.clear()
-                productsToAdd.addAll(it)
-                addListShopAdapter.updateList(productsToAdd)
-                addListShopViewModel.scrollToPosition()
-            }
+            productsToAdd.clear()
+            productsToAdd.addAll(it)
+            addListShopAdapter.updateList(productsToAdd)
+            addListShopViewModel.scrollToPosition()
         })
         addListShopViewModel.isProductInList.observe(viewLifecycleOwner, {
             if (it) {
@@ -191,6 +189,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     override fun onClickEdit(position: Int) {
         if (actived) {
             val productSelected = productsToAdd[position]
+            priceBeforeUpdated = productSelected.price
             val productToUpdated = Product(
                 productSelected.id,
                 productSelected.name,
@@ -199,7 +198,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 productSelected.price,
                 productSelected.quantity
             )
-            val editProductDialog = EditProductDialog(productToUpdated, position, true, this)
+            val editProductDialog = EditProductDialog(productToUpdated, position, true, this, rateChange)
             editProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
     }
@@ -230,7 +229,6 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         list: MutableList<ProductsToListModel>?,
         nameList: String?
     ) {
-        checked = true
         if (actived) {
             if (isChecked) {
                 if (product!!.price == 0.0) {
@@ -245,15 +243,20 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     }
 
     override fun updatedProduct(position: Int, product: Product) {
-        val productModel = ProductsToListModel(
+        val productSelected = productsToAdd[position]
+        val productModel = ProductsToShopModel(
             product.id,
             product.name,
             product.unit,
             product.userId,
             "",
             product.price,
-            product.quantity
+            product.quantity,
+            productSelected.isChecked
         )
-        //addListShopViewModel.updateProductToList(productModel, position)
+        addListShopViewModel.updateProductToList(productModel, position)
+        if (productSelected.isChecked) {
+            addListShopViewModel.updatedPrice(priceBeforeUpdated, product.price)
+        }
     }
 }

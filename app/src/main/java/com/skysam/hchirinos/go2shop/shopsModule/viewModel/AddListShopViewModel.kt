@@ -58,42 +58,18 @@ class AddListShopViewModel : ViewModel() {
     }
 
     fun updateProductToList(product: ProductsToShopModel, position: Int) {
-
+        _allProducts.value!![position] = product
+        _allProducts.value = _allProducts.value
+        productToScroll = product
     }
 
     fun checkedProduct(product: ProductsToShopModel) {
         val position = _allProducts.value!!.indexOf(product)
-        val productToShop = ProductsToShopModel(
-            product.id,
-            product.name,
-            product.unit,
-            product.userId,
-            product.listId,
-            product.price,
-            product.quantity,
-            true
-        )
-        productToScroll = productToShop
-        _allProducts.value!![position] = productToShop
-        _allProducts.value = _allProducts.value
         _totalPrice.value = _totalPrice.value!! + product.quantity * product.price
     }
 
     fun uncheckedProduct(product: ProductsToShopModel) {
         val position = _allProducts.value!!.indexOf(product)
-        val productFromShop = ProductsToShopModel(
-            product.id,
-            product.name,
-            product.unit,
-            product.userId,
-            product.listId,
-            product.price,
-            product.quantity,
-            false
-        )
-        productToScroll = productFromShop
-        _allProducts.value!![position] = productFromShop
-        _allProducts.value = _allProducts.value
         _totalPrice.value = _totalPrice.value!! - (product.quantity * product.price)
     }
 
@@ -119,5 +95,8 @@ class AddListShopViewModel : ViewModel() {
         _positionProductInList.value = _allProducts.value!!.indexOf(productToScroll)
     }
 
+    fun updatedPrice(priceOld: Double, priceNew: Double) {
+        _totalPrice.value = _totalPrice.value!! + priceNew - priceOld
+    }
 
 }

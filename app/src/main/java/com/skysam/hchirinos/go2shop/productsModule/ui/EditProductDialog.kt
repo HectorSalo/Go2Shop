@@ -27,7 +27,8 @@ import java.text.NumberFormat
  */
 class EditProductDialog(
     var product: Product, private val position: Int, private val fromList: Boolean,
-    private val updatedProduct: UpdatedProduct): DialogFragment(), EditProductView {
+    private val updatedProduct: UpdatedProduct, private val rateChange: Double?):
+    DialogFragment(), EditProductView {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var editProductPresenter: EditProductPresenter
@@ -160,8 +161,9 @@ class EditProductDialog(
             unit = binding.spinner.selectedItem.toString()
         }
         if (binding.rbBolivar.isChecked) {
-            val valueWeb = SharedPreferenceBD.getValue(AuthAPI.getCurrenUser()!!.uid)
-            priceTotal /= valueWeb
+            val value: Double =
+                rateChange ?: SharedPreferenceBD.getValue(AuthAPI.getCurrenUser()!!.uid).toDouble()
+            priceTotal /= value
         }
         productResult = Product(
             product.id,

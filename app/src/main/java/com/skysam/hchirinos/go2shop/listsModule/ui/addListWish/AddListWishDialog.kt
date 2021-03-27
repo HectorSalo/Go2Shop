@@ -198,7 +198,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
     override fun onClickEdit(position: Int) {
         if (actived) {
             val productSelected = productsToAdd[position]
-            val editProductDialog = EditProductDialog(productSelected, position, true, this)
+            val editProductDialog = EditProductDialog(productSelected, position, true, this, null)
             editProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
     }
