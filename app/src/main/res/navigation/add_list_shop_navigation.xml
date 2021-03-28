@@ -8,7 +8,6 @@
     <fragment
         android:id="@+id/configNewShopFragment"
         android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.ConfigNewShopFragment"
-        android:label="@string/btn_new_shop"
         tools:layout="@layout/fragment_config_new_shop" >
         <action
             android:id="@+id/action_configNewShopFragment_to_addListShopFragment"
@@ -16,6 +15,5 @@
     </fragment>
     <fragment
         android:id="@+id/addListShopFragment"
-        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment"
-        android:label="@string/btn_new_shop" />
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment" />
 </navigation>

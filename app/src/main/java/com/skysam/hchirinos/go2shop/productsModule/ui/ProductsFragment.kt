@@ -134,7 +134,7 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         } else {
             listSearch[position]
         }
-        val editProductDialog = EditProductDialog(productSelected, position, false, this)
+        val editProductDialog = EditProductDialog(productSelected, position, false, this, null)
         editProductDialog.show(requireActivity().supportFragmentManager, tag)
     }
 

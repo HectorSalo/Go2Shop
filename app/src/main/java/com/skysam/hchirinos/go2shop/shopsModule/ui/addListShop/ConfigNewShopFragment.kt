@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -50,6 +51,8 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+        toolbar.title = getString(R.string.nav_products)
         loadViewModels()
         adapter = ConfigNewShopAdapter(lists, this)
         binding.rvLists.setHasFixedSize(true)

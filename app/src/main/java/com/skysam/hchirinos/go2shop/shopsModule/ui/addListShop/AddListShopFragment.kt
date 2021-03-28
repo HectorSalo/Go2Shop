@@ -42,6 +42,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private var total: Double = 0.0
     private var priceBeforeUpdated: Double = 0.0
     private var actived = true
+    private lateinit var toolbar: Toolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -58,7 +59,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
+        toolbar = requireActivity().findViewById(R.id.toolbar)
         loadViewModels()
         binding.rvList.setHasFixedSize(true)
         addListShopAdapter = AddListShopAdapter(productsToAdd, this, this)
@@ -97,7 +98,6 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
 
     private fun loadViewModels() {
         sharedViewModel.nameShop.observe(viewLifecycleOwner, {
-            val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
             toolbar.title = it
             toolbar.setNavigationIcon(R.drawable.ic_close_24)
         })
