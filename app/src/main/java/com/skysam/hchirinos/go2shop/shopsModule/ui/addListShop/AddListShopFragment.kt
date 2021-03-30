@@ -189,6 +189,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     }
 
     private fun fillListProductsDB(list: MutableList<Product>){
+        productsName.clear()
         for (i in list.indices) {
             productsName.add(i, list[i].name)
         }

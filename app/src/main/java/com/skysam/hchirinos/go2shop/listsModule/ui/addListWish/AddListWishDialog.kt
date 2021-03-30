@@ -163,6 +163,7 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
     }
 
     private fun fillListProductsDB(list: MutableList<Product>){
+        productsName.clear()
         for (i in list.indices) {
             productsName.add(i, list[i].name)
         }

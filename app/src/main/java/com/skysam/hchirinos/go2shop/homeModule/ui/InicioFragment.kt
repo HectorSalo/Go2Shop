@@ -18,6 +18,8 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
 import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
+import java.text.DateFormat
+import java.util.*
 
 class InicioFragment : Fragment() {
 
@@ -49,10 +51,25 @@ class InicioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeViewModel.listFlow.observe(viewLifecycleOwner, {shop->
+            if (!shop.isNullOrEmpty()) {
+                val listFinal =shop.sortedWith(compareBy { it.dateCreated }).toMutableList()
+                val date = DateFormat.getDateInstance().format(Date(listFinal[listFinal.size - 1].dateCreated))
+                binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
+            }
+        })
         homeViewModel.lastDateShop.observe(viewLifecycleOwner, {
+            if (it.isNullOrEmpty()) {
+                binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
+                return@observe
+            }
             binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, it)
         })
         homeViewModel.priceLastShop.observe(viewLifecycleOwner, {
+            if (it.isNullOrEmpty()) {
+                binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
+                return@observe
+            }
             binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, it)
         })
         binding.btnNewShop.setOnClickListener {

@@ -3,6 +3,7 @@ package com.skysam.hchirinos.go2shop.database.room.daos
 import androidx.room.*
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Hector Chirinos on 04/03/2021.
@@ -10,7 +11,7 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 @Dao
 interface Shop {
     @Query("SELECT * FROM compras")
-    suspend fun getAll(): MutableList<Shop>
+    fun getAll(): Flow<MutableList<Shop>>
 
     @Query("SELECT * FROM compras WHERE id = :id")
     suspend fun getById(id: String): Shop
