@@ -64,12 +64,10 @@ class AddListShopViewModel : ViewModel() {
     }
 
     fun checkedProduct(product: ProductsToShopModel) {
-        val position = _allProducts.value!!.indexOf(product)
         _totalPrice.value = _totalPrice.value!! + product.quantity * product.price
     }
 
     fun uncheckedProduct(product: ProductsToShopModel) {
-        val position = _allProducts.value!!.indexOf(product)
         _totalPrice.value = _totalPrice.value!! - (product.quantity * product.price)
     }
 

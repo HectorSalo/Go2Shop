@@ -59,6 +59,8 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         requireActivity().menuInflater.inflate(R.menu.main, menu)
         val item = menu.findItem(R.id.action_cerrar_sesion)
+        val item2 = menu.findItem(R.id.action_sync)
+        item2.isVisible = false
         item.isVisible = false
         val itemSearch = menu.findItem(R.id.action_search)
         search = itemSearch.actionView as SearchView

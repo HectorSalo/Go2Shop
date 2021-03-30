@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".homeModule.ui.InicioFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:indeterminate="true"/>
+
     <TextView
         android:id="@+id/text_home_first_line"
         android:layout_width="0dp"

@@ -69,7 +69,7 @@ object FirestoreAPI {
                     list.dateCreated,
                     list.lastEdited
                 )
-                productsSavedToList.saved(listWishToAdd, null)
+                productsSavedToList.savedListWish(listWishToAdd)
             }
     }
 
@@ -101,7 +101,7 @@ object FirestoreAPI {
                             list.dateCreated,
                             list.lastEdited
                     )
-                    productsSavedToList.saved(null, listWishToAdd)
+                    productsSavedToList.savedListShop(listWishToAdd)
                 }
     }
 }

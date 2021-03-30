@@ -12,31 +12,31 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
+import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
+import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
+import com.skysam.hchirinos.go2shop.initModule.ui.InitActivity
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
 import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
 import java.text.DateFormat
+import java.text.NumberFormat
 import java.util.*
 
-class InicioFragment : Fragment() {
-
-    private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-        }
-    }
+class InicioFragment : Fragment(), InicioView {
 
     private var _binding: FragmentInicioBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private lateinit var inicioPresenter: InicioPresenter
+    private lateinit var snackbar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (AuthAPI.getCurrenUser() == null) {
-            startAuthUI()
-        }
+        inicioPresenter = InicioPresenterClass(this)
     }
 
     override fun onCreateView(
@@ -51,26 +51,20 @@ class InicioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (AuthAPI.getCurrenUser() != null) {
+            syncServer()
+        }
         homeViewModel.listFlow.observe(viewLifecycleOwner, {shop->
             if (!shop.isNullOrEmpty()) {
-                val listFinal =shop.sortedWith(compareBy { it.dateCreated }).toMutableList()
+                val listFinal = shop.sortedWith(compareBy { it.dateCreated }).toMutableList()
                 val date = DateFormat.getDateInstance().format(Date(listFinal[listFinal.size - 1].dateCreated))
+                val ammount = NumberFormat.getInstance().format(listFinal[listFinal.size - 1].total)
                 binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
-            }
-        })
-        homeViewModel.lastDateShop.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty()) {
-                binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
+                binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
                 return@observe
             }
-            binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, it)
-        })
-        homeViewModel.priceLastShop.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty()) {
-                binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
-                return@observe
-            }
-            binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, it)
+            binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
+            binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
         })
         binding.btnNewShop.setOnClickListener {
            requireActivity().startActivity(Intent(requireContext(),
@@ -99,6 +93,8 @@ class InicioFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_cerrar_sesion) {
             signOut()
+        } else if (item.itemId == R.id.action_sync) {
+            syncServer()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -116,27 +112,34 @@ class InicioFragment : Fragment() {
                     val googleSingInClient : GoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
                     googleSingInClient.signOut()
                 }
-                startAuthUI()
+                requireActivity().startActivity(Intent(requireContext(), InitActivity::class.java))
+                requireActivity().finish()
             }
     }
 
-    private fun startAuthUI() {
-        // Choose authentication providers
-        val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
-            AuthUI.IdpConfig.GoogleBuilder().build())
-
-// Create and launch sign-in intent
-        requestIntentLauncher.launch(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .setTheme(R.style.Theme_Go2Shop)
-                .build())
+    private fun syncServer() {
+        inicioPresenter.getValueWeb()
+        inicioPresenter.getProductsFromFirestore()
+        binding.progressBar.visibility = View.VISIBLE
+        snackbar = Snackbar.make(binding.root, R.string.msg_sync, Snackbar.LENGTH_SHORT)
+        snackbar.show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun resultSync(statusOk: Boolean) {
+        if (_binding != null) {
+            val msg = if (statusOk) {
+                getString(R.string.msg_sync_ok)
+            } else {
+                getString(R.string.msg_sync_error)
+            }
+            binding.progressBar.visibility = View.GONE
+            snackbar = Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT)
+            snackbar.show()
+        }
     }
 }

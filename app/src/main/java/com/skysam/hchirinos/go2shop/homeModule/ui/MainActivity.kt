@@ -20,15 +20,12 @@ import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var inicioPresenter: InicioPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        inicioPresenter = InicioPresenterClass()
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -47,9 +44,6 @@ class MainActivity : AppCompatActivity() {
 
         val user = AuthAPI.getCurrenUser()
         if (user != null) {
-            inicioPresenter.getValueWeb()
-            inicioPresenter.getProductsFromFirestore()
-            inicioPresenter.getListsWishFromFirestore()
             tvNameUser.text = user.displayName
             tvEmailUser.text = user.email
         }

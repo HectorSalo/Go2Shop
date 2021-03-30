@@ -11,4 +11,9 @@
         android:title="@string/action_search"
         app:showAsAction="ifRoom"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
+    <item
+        android:id="@+id/action_sync"
+        android:icon="@drawable/ic_cloud_sync_24"
+        android:title="@string/action_cerrar_sesion"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -1,6 +1,7 @@
 package com.skysam.hchirinos.go2shop.shopsModule.interactor
 
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.Network
 import com.skysam.hchirinos.go2shop.common.classView.ProductsSavedToList
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
@@ -29,6 +30,9 @@ class AddListShopInteractorClass(private val addListShopPresenter: AddListShopPr
                 .addOnFailureListener { e->
                     addListShopPresenter.resultSaveListWishFirestore(false, e.toString())
                 }
+        if (!Network.isAvailable()) {
+            addListShopPresenter.resultSaveListWishFirestore(false, "e.toString()")
+        }
     }
 
     private fun saveProductsInList(list: Shop, id: String) {
@@ -52,10 +56,17 @@ class AddListShopInteractorClass(private val addListShopPresenter: AddListShopPr
                         addListShopPresenter.resultSaveListWishFirestore(false, e.toString())
                     }
         }
+        if (!Network.isAvailable()) {
+            addListShopPresenter.resultSaveListWishFirestore(false, "e.toString()")
+        }
     }
 
-    override fun saved(listWish: ListWish?, listShop: Shop?) {
-        RoomDB.saveListShopToRoom(listShop!!)
+    override fun savedListWish(listWish: ListWish) {
+
+    }
+
+    override fun savedListShop(listShop: Shop) {
+        RoomDB.saveListShopToRoom(listShop)
         addListShopPresenter.resultSaveListWishFirestore(true, "")
     }
 }

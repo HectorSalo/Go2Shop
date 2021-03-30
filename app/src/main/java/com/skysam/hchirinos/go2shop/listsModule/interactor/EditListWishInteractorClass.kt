@@ -132,8 +132,12 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
         }
     }
 
-    override fun saved(listWish: ListWish?, listShop: Shop?) {
-        RoomDB.updateListWishToRoom(listWish!!)
+    override fun savedListWish(listWish: ListWish) {
+        RoomDB.updateListWishToRoom(listWish)
         editListWishPresenter.resultEditListWishFirestore(true, "")
+    }
+
+    override fun savedListShop(listShop: Shop) {
+
     }
 }

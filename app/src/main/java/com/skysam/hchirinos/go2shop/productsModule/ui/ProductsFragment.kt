@@ -58,6 +58,8 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         requireActivity().menuInflater.inflate(R.menu.main, menu)
+        val item2 = menu.findItem(R.id.action_sync)
+        item2.isVisible = false
         val item = menu.findItem(R.id.action_cerrar_sesion)
         item.isVisible = false
         val itemSearch = menu.findItem(R.id.action_search)

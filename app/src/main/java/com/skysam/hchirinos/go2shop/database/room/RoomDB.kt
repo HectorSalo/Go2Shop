@@ -55,6 +55,13 @@ object RoomDB: CoroutineScope {
         }
     }
 
+    fun updateListShopToRoom(list: Shop) {
+        launch {
+            getInstance().shop()
+                .update(list)
+        }
+    }
+
     fun deleteProductToRoom(product: Product) {
         launch {
             getInstance().product()

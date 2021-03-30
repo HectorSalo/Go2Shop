@@ -15,6 +15,7 @@ import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
+import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import kotlin.coroutines.CoroutineContext
@@ -22,13 +23,10 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by Hector Chirinos on 10/03/2021.
  */
-class InicioInteractorClass: InicioInteractor, CoroutineScope, ProductsSavedToList {
+class InicioInteractorClass(private val inicioPresenter: InicioPresenter): InicioInteractor, CoroutineScope, ProductsSavedToList {
     private var job: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    private var listNew = false
-
 
     override fun getValueWeb() {
         launch {
@@ -76,6 +74,7 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope, ProductsSavedToLi
                 .addSnapshotListener (MetadataChanges.INCLUDE) { snapshots, e ->
                     if (e != null) {
                         Log.w(TAG, "listen:error", e)
+                        inicioPresenter.resultSync(false)
                         return@addSnapshotListener
                     }
 
@@ -121,11 +120,14 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope, ProductsSavedToLi
                             }
                         }
                     }
+                    if (AuthAPI.getCurrenUser() != null) {
+                        getListsWishFromFirestore()
+                    }
                 }
         }
     }
 
-    override fun getListsWishFromFirestore() {
+    private fun getListsWishFromFirestore() {
         //launch { RoomDB.getInstance().listWish().deleteAll() }
         FirestoreAPI.getListWish()
             .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
@@ -133,42 +135,75 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope, ProductsSavedToLi
             .get()
             .addOnSuccessListener { documents->
                 for (doc in documents) {
-                    launch {
-                        val list = RoomDB.getInstance().listWish()
-                            .getById(doc.id)
-                        val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
-                        val dateCreated = doc.getDate(Constants.DATE_CREATED)!!.time
-                        val dateEdited = doc.getDate(Constants.DATE_LAST_EDITED)!!.time
-                        val listToAdd = ListWish(
-                            doc.id,
-                            doc.getString(Constants.NAME)!!,
-                            doc.getString(Constants.USER_ID)!!,
-                            productsFromList,
-                            doc.getDouble(Constants.TOTAL_LIST_WISH)!!,
-                            dateCreated,
-                            dateEdited
-                        )
-                        if (list == null) {
-                            listNew = true
-                            FirestoreAPI.getProductsToListWishFromFirestore(doc.id, listToAdd, this@InicioInteractorClass)
-                        } else {
-                            listNew = false
-                            FirestoreAPI.getProductsToListWishFromFirestore(doc.id, listToAdd, this@InicioInteractorClass)
-                        }
-                    }
+                    val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
+                    val dateCreated = doc.getDate(Constants.DATE_CREATED)!!.time
+                    val dateEdited = doc.getDate(Constants.DATE_LAST_EDITED)!!.time
+                    val listToAdd = ListWish(
+                        doc.id,
+                        doc.getString(Constants.NAME)!!,
+                        doc.getString(Constants.USER_ID)!!,
+                        productsFromList,
+                        doc.getDouble(Constants.TOTAL_LIST_WISH)!!,
+                        dateCreated,
+                        dateEdited
+                    )
+                    FirestoreAPI.getProductsToListWishFromFirestore(doc.id, listToAdd, this@InicioInteractorClass)
+                }
+                if (AuthAPI.getCurrenUser() != null) {
+                    getListsShopFromFirestore()
                 }
             }
+            .addOnFailureListener { inicioPresenter.resultSync(false) }
     }
 
-    override fun getListsShopFromFirestore() {
-
+    private fun getListsShopFromFirestore() {
+        //launch { RoomDB.getInstance().shop().deleteAll() }
+        FirestoreAPI.getListShop()
+            .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+            .orderBy(Constants.DATE_CREATED, Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { documents->
+                for (doc in documents) {
+                    val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
+                    val dateCreated = doc.getDate(Constants.DATE_CREATED)!!.time
+                    val dateEdited = doc.getDate(Constants.DATE_LAST_EDITED)!!.time
+                    val listToAdd = Shop(
+                        doc.id,
+                        doc.getString(Constants.NAME)!!,
+                        doc.getString(Constants.USER_ID)!!,
+                        productsFromList,
+                        doc.getDouble(Constants.TOTAL_LIST_WISH)!!,
+                        dateCreated,
+                        dateEdited
+                    )
+                    FirestoreAPI.getProductsToListShopFromFirestore(doc.id, listToAdd, this@InicioInteractorClass)
+                }
+                inicioPresenter.resultSync(true)
+            }
+            .addOnFailureListener { inicioPresenter.resultSync(false) }
     }
 
-    override fun saved(listWish: ListWish?, listShop: Shop?) {
-        if (listNew) {
-            RoomDB.saveListWishToRoom(listWish!!)
-        } else {
-            RoomDB.updateListWishToRoom(listWish!!)
+    override fun savedListWish(listWish: ListWish) {
+        launch {
+            val list = RoomDB.getInstance().listWish()
+                .getById(listWish.id)
+            if (list == null) {
+                RoomDB.saveListWishToRoom(listWish)
+            } else {
+                RoomDB.updateListWishToRoom(listWish)
+            }
+        }
+    }
+
+    override fun savedListShop(listShop: Shop) {
+        launch {
+            val list = RoomDB.getInstance().shop()
+                .getById(listShop.id)
+            if (list == null) {
+                RoomDB.saveListShopToRoom(listShop)
+            } else {
+                RoomDB.updateListShopToRoom(listShop)
+            }
         }
     }
 
