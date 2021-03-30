@@ -32,7 +32,8 @@
     <!--Fragment Inicio-->
     <string name="nav_inicio">Inicio</string>
     <string name="text_no_shopping">No ha realizado su primer mercado.</string>
-    <string name="text_last_shopping">Su última compra fue realizada el %1$s.\nCon un gasto total de %2$s.</string>
+    <string name="text_last_shopping_first_line">Su última compra fue realizada el %1$s.</string>
+    <string name="text_last_shopping_second_line">Con un gasto total de $%1$s.</string>
     <string name="btn_new_shop">Nueva Compra</string>
     <string name="btn_new_lista">Crear Lista de compras</string>
     <string name="btn_new_product">Agregar Producto</string>
@@ -86,8 +87,12 @@
     <string name="text_dolar">Dolar</string>
 
     <!--Dialog Exit-->
-    <string name="title_exit_dialog">Confirmar</string>
+    <string name="title_confirmation_dialog">Confirmar</string>
     <string name="msg_exit_dialog">Se perderá toda la información.\n¿Desea salir?</string>
+
+    <!--Dialog Shop-->
+    <string name="msg_shop_dialog">Una vez totalizada la compra, no podrá editarla.\n¿Desea completar la compra?</string>
+    <string name="btn_shop">Comprar</string>
 
     <!--Ajustes-->
     <string name="nav_ajustes">Ajustes</string>

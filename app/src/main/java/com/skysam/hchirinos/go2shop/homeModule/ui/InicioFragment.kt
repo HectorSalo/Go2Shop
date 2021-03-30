@@ -6,30 +6,29 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
 import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
-import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment
 
 class InicioFragment : Fragment() {
 
     private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val user = FirebaseAuth.getInstance().currentUser
         }
     }
 
     private var _binding: FragmentInicioBinding? = null
     private val binding get() = _binding!!
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +49,12 @@ class InicioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeViewModel.lastDateShop.observe(viewLifecycleOwner, {
+            binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, it)
+        })
+        homeViewModel.priceLastShop.observe(viewLifecycleOwner, {
+            binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, it)
+        })
         binding.btnNewShop.setOnClickListener {
            requireActivity().startActivity(Intent(requireContext(),
                AddListShopActivity::class.java))

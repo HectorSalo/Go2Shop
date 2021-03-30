@@ -6,6 +6,7 @@ import com.skysam.hchirinos.go2shop.common.classView.ProductsSavedToList
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -33,17 +34,24 @@ object RoomDB: CoroutineScope {
         }
     }
 
-    fun updateListToRoom(list: ListWish) {
+    fun updateListWishToRoom(list: ListWish) {
         launch {
             getInstance().listWish()
                 .update(list)
         }
     }
 
-    fun saveListToRoom(list: ListWish) {
+    fun saveListWishToRoom(list: ListWish) {
         launch {
             getInstance().listWish()
                 .insert(list)
+        }
+    }
+
+    fun saveListShopToRoom(list: Shop) {
+        launch {
+            getInstance().shop()
+                    .insert(list)
         }
     }
 

@@ -13,6 +13,7 @@ import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
@@ -163,11 +164,11 @@ class InicioInteractorClass: InicioInteractor, CoroutineScope, ProductsSavedToLi
 
     }
 
-    override fun saved(listToAdd: ListWish) {
+    override fun saved(listWish: ListWish?, listShop: Shop?) {
         if (listNew) {
-            RoomDB.saveListToRoom(listToAdd)
+            RoomDB.saveListWishToRoom(listWish!!)
         } else {
-            RoomDB.updateListToRoom(listToAdd)
+            RoomDB.updateListWishToRoom(listWish!!)
         }
     }
 

@@ -57,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tv_total"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_search_products"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
         tools:context=".listsModule.ui.addListWish.AddListWishDialog"
         tools:listitem="@layout/layout_product_list" />
 

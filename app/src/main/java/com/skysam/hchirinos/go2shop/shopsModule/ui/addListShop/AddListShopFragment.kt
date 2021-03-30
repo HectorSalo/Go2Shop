@@ -15,20 +15,28 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentAddListShopBinding
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
+import com.skysam.hchirinos.go2shop.shopsModule.presenter.AddListShopPresenter
+import com.skysam.hchirinos.go2shop.shopsModule.presenter.AddListShopPresenterClass
+import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopView
 import com.skysam.hchirinos.go2shop.shopsModule.viewModel.AddListShopViewModel
 import com.skysam.hchirinos.go2shop.shopsModule.viewModel.SharedViewModel
 import java.text.NumberFormat
+import java.util.*
 
 class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
-        OnClickExit, OnSwitchChange, UpdatedProduct {
+        OnClickExit, OnSwitchChange, UpdatedProduct, OnClickShop, AddListShopView {
     private val addListShopViewModel: AddListShopViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentAddListShopBinding? = null
@@ -37,7 +45,9 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private var productsToAdd: MutableList<ProductsToShopModel> = mutableListOf()
     private var productsToShop: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
+    private lateinit var addListShopPresenter: AddListShopPresenter
     private lateinit var addListShopAdapter: AddListShopAdapter
+    private lateinit var nameList: String
     private var rateChange: Double = 0.0
     private var total: Double = 0.0
     private var priceBeforeUpdated: Double = 0.0
@@ -47,6 +57,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = FragmentAddListShopBinding.inflate(inflater, container, false)
+        addListShopPresenter = AddListShopPresenterClass(this)
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -98,6 +109,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
 
     private fun loadViewModels() {
         sharedViewModel.nameShop.observe(viewLifecycleOwner, {
+            nameList = it
             toolbar.title = it
             toolbar.setNavigationIcon(R.drawable.ic_close_24)
         })
@@ -144,6 +156,8 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 true
             }
             R.id.action_save -> {
+                val confirmationDialog = ConfirmationDialog(this)
+                confirmationDialog.show(requireActivity().supportFragmentManager, tag)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -235,8 +249,32 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                     Toast.makeText(requireContext(), getString(R.string.error_field_zero), Toast.LENGTH_SHORT).show()
                     return
                 }
+                val productModelSelected = ProductsToListModel(
+                        product.id,
+                        product.name,
+                        product.unit,
+                        product.userId,
+                        Constants.LIST_ID,
+                        product.price,
+                        product.quantity
+                )
+                productsToShop.add(productModelSelected)
                 addListShopViewModel.checkedProduct(product)
             } else {
+                for (i in productsToShop.indices) {
+                    if (productsToShop[i].id == product!!.id) {
+                        val productModelSelected = ProductsToListModel(
+                                product.id,
+                                product.name,
+                                product.unit,
+                                product.userId,
+                                Constants.LIST_ID,
+                                product.price,
+                                product.quantity
+                        )
+                        productsToShop.remove(productModelSelected)
+                    }
+                }
                 addListShopViewModel.uncheckedProduct(product!!)
             }
         }
@@ -257,6 +295,54 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         addListShopViewModel.updateProductToList(productModel, position)
         if (productSelected.isChecked) {
             addListShopViewModel.updatedPrice(priceBeforeUpdated, product.price)
+        }
+    }
+
+    override fun onClick() {
+        if (productsToShop.isEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.msg_list_empty), Toast.LENGTH_SHORT).show()
+            return
+        }
+        binding.progressBar.visibility = View.VISIBLE
+        binding.tfSearchProducts.isEnabled = false
+        actived = false
+        val dateCurrent = Calendar.getInstance().timeInMillis
+        val listFinal: MutableList<ProductsToListModel> = mutableListOf()
+        for (i in productsToShop.indices) {
+            val prod = ProductsToListModel(
+                    productsToShop[i].id,
+                    productsToShop[i].name,
+                    productsToShop[i].unit,
+                    productsToShop[i].userId,
+                    Constants.USERS,
+                    productsToShop[i].price,
+                    productsToShop[i].quantity
+            )
+            listFinal.add(prod)
+        }
+        val listToSend = Shop(
+                Constants.USERS,
+                nameList,
+                AuthAPI.getCurrenUser()!!.uid,
+                listFinal,
+                total,
+                dateCurrent,
+                dateCurrent
+        )
+        addListShopPresenter.saveListWish(listToSend)
+    }
+
+    override fun resultSaveListWishFirestore(statusOk: Boolean, msg: String) {
+        if (_binding != null) {
+            if (statusOk) {
+                Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+                requireActivity().finish()
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.tfSearchProducts.isEnabled = true
+                actived = true
+                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.RoomDB
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
+import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenter
 import java.util.*
 
@@ -131,8 +132,8 @@ class EditListWishInteractorClass(private val editListWishPresenter: EditListWis
         }
     }
 
-    override fun saved(listToAdd: ListWish) {
-        RoomDB.updateListToRoom(listToAdd)
+    override fun saved(listWish: ListWish?, listShop: Shop?) {
+        RoomDB.updateListWishToRoom(listWish!!)
         editListWishPresenter.resultEditListWishFirestore(true, "")
     }
 }
