@@ -262,9 +262,10 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 productsToShop.add(productModelSelected)
                 addListShopViewModel.checkedProduct(product)
             } else {
+                var productModelSelected: ProductsToListModel? = null
                 for (i in productsToShop.indices) {
                     if (productsToShop[i].id == product!!.id) {
-                        val productModelSelected = ProductsToListModel(
+                        productModelSelected = ProductsToListModel(
                                 product.id,
                                 product.name,
                                 product.unit,
@@ -273,10 +274,12 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                                 product.price,
                                 product.quantity
                         )
-                        productsToShop.remove(productModelSelected)
                     }
                 }
-                addListShopViewModel.uncheckedProduct(product!!)
+                if (productModelSelected != null) {
+                    productsToShop.remove(productModelSelected)
+                    addListShopViewModel.uncheckedProduct(product!!)
+                }
             }
         }
     }
@@ -328,7 +331,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 listFinal,
                 total,
                 dateCurrent,
-                dateCurrent
+                rateChange
         )
         addListShopPresenter.saveListWish(listToSend)
     }

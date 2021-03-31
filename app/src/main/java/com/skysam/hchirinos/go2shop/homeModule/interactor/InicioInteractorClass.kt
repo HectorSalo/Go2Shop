@@ -166,7 +166,6 @@ class InicioInteractorClass(private val inicioPresenter: InicioPresenter): Inici
                 for (doc in documents) {
                     val productsFromList: MutableList<ProductsToListModel> = mutableListOf()
                     val dateCreated = doc.getDate(Constants.DATE_CREATED)!!.time
-                    val dateEdited = doc.getDate(Constants.DATE_LAST_EDITED)!!.time
                     val listToAdd = Shop(
                         doc.id,
                         doc.getString(Constants.NAME)!!,
@@ -174,7 +173,7 @@ class InicioInteractorClass(private val inicioPresenter: InicioPresenter): Inici
                         productsFromList,
                         doc.getDouble(Constants.TOTAL_LIST_WISH)!!,
                         dateCreated,
-                        dateEdited
+                        doc.getDouble(Constants.RATE_CHANGE)!!
                     )
                     FirestoreAPI.getProductsToListShopFromFirestore(doc.id, listToAdd, this@InicioInteractorClass)
                 }

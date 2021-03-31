@@ -21,7 +21,7 @@ class AddListShopInteractorClass(private val addListShopPresenter: AddListShopPr
                 Constants.USER_ID to list.userId,
                 Constants.TOTAL_LIST_WISH to list.total,
                 Constants.DATE_CREATED to date,
-                Constants.DATE_LAST_EDITED to date
+                Constants.RATE_CHANGE to list.rateChange
         )
         FirestoreAPI.getListShop().add(data)
                 .addOnSuccessListener { doc ->

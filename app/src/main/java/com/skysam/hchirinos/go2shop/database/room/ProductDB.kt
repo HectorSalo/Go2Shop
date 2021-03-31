@@ -12,7 +12,7 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Shop
  * Created by Hector Chirinos on 04/03/2021.
  */
 
-@Database(entities = [Shop::class, ListWish::class, Product::class], version = 5)
+@Database(entities = [Shop::class, ListWish::class, Product::class], version = 6)
 @TypeConverters(ProductsConverter::class)
 abstract class ProductDB: RoomDatabase() {
     abstract fun product(): com.skysam.hchirinos.go2shop.database.room.daos.Product

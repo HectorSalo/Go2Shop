@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
@@ -51,14 +52,15 @@ class InicioFragment : Fragment(), InicioView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (AuthAPI.getCurrenUser() != null) {
+        val state = SharedPreferenceBD.getSyncState(AuthAPI.getCurrenUser()!!.uid)
+        if (AuthAPI.getCurrenUser() != null && state) {
             syncServer()
+            SharedPreferenceBD.saveSyncState(AuthAPI.getCurrenUser()!!.uid, false)
         }
         homeViewModel.listFlow.observe(viewLifecycleOwner, {shop->
             if (!shop.isNullOrEmpty()) {
-                val listFinal = shop.sortedWith(compareBy { it.dateCreated }).toMutableList()
-                val date = DateFormat.getDateInstance().format(Date(listFinal[listFinal.size - 1].dateCreated))
-                val ammount = NumberFormat.getInstance().format(listFinal[listFinal.size - 1].total)
+                val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
+                val ammount = NumberFormat.getInstance().format(shop[0].total)
                 binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
                 binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
                 return@observe

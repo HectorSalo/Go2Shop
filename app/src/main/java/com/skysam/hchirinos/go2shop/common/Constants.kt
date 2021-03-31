@@ -4,7 +4,8 @@ package com.skysam.hchirinos.go2shop.common
  * Created by Hector Chirinos on 04/03/2021.
  */
 object Constants {
-    const val VALUE_WEB = "valueWeb"
+    const val SHARED_VALUE_WEB = "valueWeb"
+    const val SHARED_SYNC_ACTIVED = "syncActive"
 
     const val PRODUCTOS = "productos"
     const val LIST_WISH = "listasPendientes"
@@ -21,6 +22,7 @@ object Constants {
     const val QUANTITY = "quantity"
     const val DATE_CREATED = "dateCreated"
     const val DATE_LAST_EDITED = "dateLastEdited"
+    const val RATE_CHANGE = "rateChange"
 
     const val TOTAL_LIST_WISH = "totalListWish"
 }

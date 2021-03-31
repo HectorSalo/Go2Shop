@@ -99,7 +99,7 @@ object FirestoreAPI {
                             listProducts,
                             list.total,
                             list.dateCreated,
-                            list.lastEdited
+                            list.rateChange
                     )
                     productsSavedToList.savedListShop(listWishToAdd)
                 }

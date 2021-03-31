@@ -19,7 +19,11 @@
         android:id="@+id/nav_history"
         android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.ShopFragment"
         android:label="@string/nav_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_nav_history_to_viewShopItem"
+            app:destination="@id/viewShopItem" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_lists"
@@ -40,4 +44,8 @@
         android:name="com.skysam.hchirinos.go2shop.productsModule.ui.ProductsFragment"
         android:label="@string/nav_products"
         tools:layout="@layout/fragment_products" />
+    <fragment
+        android:id="@+id/viewShopItem"
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopItem"
+        android:label="ViewShopItem" />
 </navigation>

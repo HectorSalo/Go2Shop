@@ -15,11 +15,21 @@ object SharedPreferenceBD {
 
     fun saveValue(uid: String, valorFloat: Float) {
         val editor = getInstance(uid).edit()
-        editor.putFloat(Constants.VALUE_WEB, valorFloat)
+        editor.putFloat(Constants.SHARED_VALUE_WEB, valorFloat)
         editor.apply()
     }
 
     fun getValue(uid: String,): Float {
-        return getInstance(uid).getFloat(Constants.VALUE_WEB, 1f)
+        return getInstance(uid).getFloat(Constants.SHARED_VALUE_WEB, 1f)
+    }
+
+    fun saveSyncState(uid: String, syncActive: Boolean) {
+        val editor = getInstance(uid).edit()
+        editor.putBoolean(Constants.SHARED_SYNC_ACTIVED, syncActive)
+        editor.apply()
+    }
+
+    fun getSyncState(uid: String): Boolean {
+        return getInstance(uid).getBoolean(Constants.SHARED_SYNC_ACTIVED, false)
     }
 }

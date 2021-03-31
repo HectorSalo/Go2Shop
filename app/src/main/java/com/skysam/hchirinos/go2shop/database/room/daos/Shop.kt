@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface Shop {
-    @Query("SELECT * FROM compras")
+    @Query("SELECT * FROM compras ORDER BY dateCreated DESC")
     fun getAll(): Flow<MutableList<Shop>>
 
     @Query("SELECT * FROM compras WHERE id = :id")

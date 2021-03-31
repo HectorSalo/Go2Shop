@@ -19,5 +19,5 @@ data class Shop(
         val listProducts: MutableList<ProductsToListModel>,
         val total: Double,
         val dateCreated: Long,
-        val lastEdited: Long
+        val rateChange: Double
 )

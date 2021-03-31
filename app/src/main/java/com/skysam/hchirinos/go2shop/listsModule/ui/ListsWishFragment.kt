@@ -13,12 +13,10 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListsWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.ListsWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
-import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import java.util.*
 
 class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWish, SearchView.OnQueryTextListener {
