@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,24 +65,9 @@ class AddListWishDialog : DialogFragment(), ProductsView, OnClickList,
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
-        binding.etSarchProduct.addTextChangedListener {
-            if (binding.etSarchProduct.text.toString().isEmpty()) {
-                binding.tfSearchProducts.startIconDrawable = null
-                binding.tfSearchProducts.helperText = null
-            } else {
-                if (binding.etSarchProduct.adapter.isEmpty) {
-                    binding.tfSearchProducts.startIconDrawable = ContextCompat
-                        .getDrawable(requireContext(), R.drawable.ic_add_product_24)
-                    binding.tfSearchProducts.helperText = getString(R.string.title_add_producto_dialog)
-                    binding.tfSearchProducts.setStartIconOnClickListener {
-                        val addProduct = AddProductDialog(binding.etSarchProduct.text.toString(), this)
-                        addProduct.show(requireActivity().supportFragmentManager, tag)
-                    }
-                } else {
-                    binding.tfSearchProducts.startIconDrawable = null
-                    binding.tfSearchProducts.helperText = null
-                }
-            }
+        binding.tfSearchProducts.setStartIconOnClickListener {
+            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this)
+            addProduct.show(requireActivity().supportFragmentManager, tag)
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)

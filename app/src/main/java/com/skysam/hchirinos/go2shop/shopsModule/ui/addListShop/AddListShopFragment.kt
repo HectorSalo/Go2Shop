@@ -7,8 +7,6 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -21,7 +19,6 @@ import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentAddListShopBinding
@@ -77,24 +74,9 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         binding.rvList.adapter = addListShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
-        binding.etSarchProduct.addTextChangedListener {
-            if (binding.etSarchProduct.text.toString().isEmpty()) {
-                binding.tfSearchProducts.startIconDrawable = null
-                binding.tfSearchProducts.helperText = null
-            } else {
-                if (binding.etSarchProduct.adapter.isEmpty) {
-                    binding.tfSearchProducts.startIconDrawable = ContextCompat
-                        .getDrawable(requireContext(), R.drawable.ic_add_product_24)
-                    binding.tfSearchProducts.helperText = getString(R.string.title_add_producto_dialog)
-                    binding.tfSearchProducts.setStartIconOnClickListener {
-                        val addProduct = AddProductDialog(binding.etSarchProduct.text.toString(), this)
-                        addProduct.show(requireActivity().supportFragmentManager, tag)
-                    }
-                } else {
-                    binding.tfSearchProducts.startIconDrawable = null
-                    binding.tfSearchProducts.helperText = null
-                }
-            }
+        binding.tfSearchProducts.setStartIconOnClickListener {
+            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this)
+            addProduct.show(requireActivity().supportFragmentManager, tag)
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)
@@ -224,7 +206,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             product.name,
             product.unit,
             product.userId,
-            "",
+            Constants.LIST_ID,
             product.price,
             product.quantity
         )

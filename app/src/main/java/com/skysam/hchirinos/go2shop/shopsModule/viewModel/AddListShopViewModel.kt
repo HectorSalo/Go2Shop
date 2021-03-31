@@ -38,7 +38,7 @@ class AddListShopViewModel : ViewModel() {
 
     fun addProductToList(product: ProductsToShopModel) {
         var exists = false
-        var position = -1
+        var position = 0
         for (i in _allProducts.value!!.indices) {
             if (_allProducts.value!![i].name == product.name) {
                 exists = true
@@ -90,11 +90,12 @@ class AddListShopViewModel : ViewModel() {
     }
 
     fun scrollToPosition() {
-        _positionProductInList.value = _allProducts.value!!.indexOf(productToScroll)
+        if (productToScroll != null) {
+            _positionProductInList.value = _allProducts.value!!.indexOf(productToScroll)
+        }
     }
 
     fun updatedPrice(priceOld: Double, priceNew: Double) {
         _totalPrice.value = _totalPrice.value!! + priceNew - priceOld
     }
-
 }

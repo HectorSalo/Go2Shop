@@ -48,4 +48,8 @@
         android:id="@+id/viewShopItem"
         android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopItem"
         android:label="ViewShopItem" />
+    <activity
+        android:id="@+id/nav_settings"
+        android:name="com.skysam.hchirinos.go2shop.settingsModule.SettingsActivity"
+        android:label="SettingsActivity" />
 </navigation>

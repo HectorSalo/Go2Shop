@@ -62,6 +62,7 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
 
     override fun onDestroyView() {
         super.onDestroyView()
+        listProductsSaved.clear()
         _binding = null
     }
 
@@ -83,8 +84,10 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
             Toast.makeText(requireContext(), getString(R.string.error_spinner_units_position), Toast.LENGTH_SHORT).show()
             return
         }
-        product = Product(Constants.USER_ID, name, binding.spinner.selectedItem.toString(),
-        AuthAPI.getCurrenUser()!!.uid)
+        product = Product(Constants.USER_ID,
+            name,
+            binding.spinner.selectedItem.toString(),
+            AuthAPI.getCurrenUser()!!.uid)
         dialog!!.setCanceledOnTouchOutside(false)
         binding.tfName.isEnabled = false
         binding.spinner.isEnabled = false
