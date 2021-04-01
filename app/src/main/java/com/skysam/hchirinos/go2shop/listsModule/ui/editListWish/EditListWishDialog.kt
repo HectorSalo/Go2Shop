@@ -74,24 +74,9 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         sumTotal(listWish.total)
         loadProducts()
 
-        binding.etSarchProduct.addTextChangedListener {
-            if (binding.etSarchProduct.text.toString().isEmpty()) {
-                binding.tfSearchProducts.startIconDrawable = null
-                binding.tfSearchProducts.helperText = null
-            } else {
-                if (binding.etSarchProduct.adapter.isEmpty) {
-                    binding.tfSearchProducts.startIconDrawable = ContextCompat
-                        .getDrawable(requireContext(), R.drawable.ic_add_product_24)
-                    binding.tfSearchProducts.helperText = getString(R.string.title_add_producto_dialog)
-                    binding.tfSearchProducts.setStartIconOnClickListener {
-                        val addProduct = AddProductDialog(binding.etSarchProduct.text.toString(), this)
-                        addProduct.show(requireActivity().supportFragmentManager, tag)
-                    }
-                } else {
-                    binding.tfSearchProducts.startIconDrawable = null
-                    binding.tfSearchProducts.helperText = null
-                }
-            }
+        binding.tfSearchProducts.setStartIconOnClickListener {
+            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this)
+            addProduct.show(requireActivity().supportFragmentManager, tag)
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)

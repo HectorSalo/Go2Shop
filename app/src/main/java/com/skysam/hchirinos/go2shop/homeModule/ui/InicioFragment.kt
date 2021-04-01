@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -81,8 +82,15 @@ class InicioFragment : Fragment(), InicioView {
             addProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnInventory.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.action_nav_home_to_storageFragment)
+            val builder = AlertDialog.Builder(requireActivity())
+            builder.setTitle(getString(R.string.title_new_features))
+                    .setMessage(getString(R.string.msg_new_features))
+                    .setIcon(R.drawable.ic_new_features_24)
+                    .setPositiveButton(R.string.btn_accept) { _, _ ->
+                    }
+                    .show()
+            /*NavHostFragment.findNavController(this)
+                .navigate(R.id.action_nav_home_to_storageFragment)*/
         }
     }
 

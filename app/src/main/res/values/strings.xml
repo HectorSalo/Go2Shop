@@ -13,6 +13,7 @@
     <!--Generales-->
     <string name="texto_vacio">" "</string>
     <string name="error_field_empty">Campo vacío</string>
+    <string name="btn_accept">Aceptar</string>
     <string name="btn_save">Guardar</string>
     <string name="btn_edit">Editar</string>
     <string name="btn_exit">Salir</string>
@@ -102,5 +103,9 @@
     <string name="nav_ajustes">Ajustes</string>
     <string name="text_about">Información de la App</string>
     <string name="about_title">Desarrollado por&#8230;</string>
+
+    <!--New Features-->
+    <string name="title_new_features">¡Próximamente!</string>
+    <string name="msg_new_features">Esta opción estará disponible en la próxima versión</string>
 
 </resources>
