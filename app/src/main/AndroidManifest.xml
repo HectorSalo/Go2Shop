@@ -15,7 +15,8 @@
         android:theme="@style/Theme.Go2Shop">
         <activity
             android:name=".settingsModule.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:theme="@style/Theme.Go2Shop.NoActionBar"
+            android:label="@string/nav_ajustes"/>
         <activity android:name=".initModule.ui.InitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
