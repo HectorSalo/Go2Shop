@@ -22,6 +22,7 @@ class InitActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_Go2Shop)
         setContentView(R.layout.activity_init)
         if (AuthAPI.getCurrenUser() == null) {
             startAuthUI()
@@ -42,6 +43,8 @@ class InitActivity : AppCompatActivity() {
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false)
+                .setLogo(R.drawable.g2s_icon)
                 .setTheme(R.style.Theme_Go2Shop)
                 .build())
     }

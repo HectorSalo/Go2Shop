@@ -12,12 +12,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Go2Shop">
+        android:theme="@style/Theme.Go2Shop"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".settingsModule.SettingsActivity"
             android:theme="@style/Theme.Go2Shop.NoActionBar"
             android:label="@string/nav_ajustes"/>
-        <activity android:name=".initModule.ui.InitActivity">
+        <activity android:name=".initModule.ui.InitActivity"
+            android:theme="@style/Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
