@@ -33,6 +33,7 @@ class ConfigNewShopAdapter(private var lists: MutableList<ListWish>, private val
         holder.name.text = item.name
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.total))
         holder.unit.text = context.getString(R.string.text_item_in_list, item.listProducts.size.toString())
+        holder.switchStorage.visibility = View.GONE
 
         if (holder.switch.isChecked) {
             holder.switch.text = context.getString(R.string.text_switch_on_shop)
@@ -57,6 +58,7 @@ class ConfigNewShopAdapter(private var lists: MutableList<ListWish>, private val
         val unit: TextView = view.findViewById(R.id.tv_unit_items)
         val price: TextView = view.findViewById(R.id.tv_price)
         val switch: SwitchMaterial = view.findViewById(R.id.switch_shop)
+        val switchStorage: SwitchMaterial = view.findViewById(R.id.switch_storage)
     }
 
     fun updateList(newList: MutableList<ListWish>) {

@@ -65,7 +65,6 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         val itemSearch = menu.findItem(R.id.action_search)
         search = itemSearch.actionView as SearchView
         search.setOnQueryTextListener(this)
-
     }
 
     override fun onDestroyView() {

@@ -27,13 +27,14 @@ import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.shopsModule.presenter.AddListShopPresenter
 import com.skysam.hchirinos.go2shop.shopsModule.presenter.AddListShopPresenterClass
 import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopView
+import com.skysam.hchirinos.go2shop.shopsModule.ui.OnClickToStorage
 import com.skysam.hchirinos.go2shop.shopsModule.viewModel.AddListShopViewModel
 import com.skysam.hchirinos.go2shop.shopsModule.viewModel.SharedViewModel
 import java.text.NumberFormat
 import java.util.*
 
 class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
-        OnClickExit, OnSwitchChange, UpdatedProduct, OnClickShop, AddListShopView {
+        OnClickExit, OnSwitchChange, UpdatedProduct, OnClickShop, AddListShopView, OnClickToStorage {
     private val addListShopViewModel: AddListShopViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentAddListShopBinding? = null
@@ -41,6 +42,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<ProductsToShopModel> = mutableListOf()
     private var productsToShop: MutableList<ProductsToListModel> = mutableListOf()
+    private var productsToStorage: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
     private lateinit var addListShopPresenter: AddListShopPresenter
     private lateinit var addListShopAdapter: AddListShopAdapter
@@ -70,7 +72,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         toolbar = requireActivity().findViewById(R.id.toolbar)
         loadViewModels()
         binding.rvList.setHasFixedSize(true)
-        addListShopAdapter = AddListShopAdapter(productsToAdd, this, this)
+        addListShopAdapter = AddListShopAdapter(productsToAdd, this, this, this)
         binding.rvList.adapter = addListShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
@@ -276,10 +278,10 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             "",
             product.price,
             product.quantity,
-            productSelected.isChecked
+            productSelected.isCheckedToShop
         )
         addListShopViewModel.updateProductToList(productModel, position)
-        if (productSelected.isChecked) {
+        if (productSelected.isCheckedToShop) {
             addListShopViewModel.updatedPrice(priceBeforeUpdated, product.price)
         }
     }
@@ -329,6 +331,39 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 actived = true
                 Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    override fun onClickAddToStorage(product: ProductsToShopModel) {
+        val productModelSelected = ProductsToListModel(
+            product.id,
+            product.name,
+            product.unit,
+            product.userId,
+            Constants.LIST_ID,
+            product.price,
+            product.quantity
+        )
+        productsToStorage.add(productModelSelected)
+    }
+
+    override fun onClickRemoveToStorage(product: ProductsToShopModel) {
+        var productModelSelected: ProductsToListModel? = null
+        for (i in productsToStorage.indices) {
+            if (productsToStorage[i].id == product.id) {
+                productModelSelected = ProductsToListModel(
+                    product.id,
+                    product.name,
+                    product.unit,
+                    product.userId,
+                    Constants.LIST_ID,
+                    product.price,
+                    product.quantity
+                )
+            }
+        }
+        if (productModelSelected != null) {
+            productsToShop.remove(productModelSelected)
         }
     }
 }

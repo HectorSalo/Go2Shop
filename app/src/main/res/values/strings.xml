@@ -53,8 +53,11 @@
     <string name="text_agregar_lista">¿Desea agregar una Lista?</string>
     <string name="text_switch_off_shop_list">Incluir a la compra</string>
     <string name="text_switch_off_shop_product">Agregar al carrito</string>
+    <string name="text_switch_off_to_storage_product">Agregar al inventario</string>
+    <string name="text_switch_on_to_storage_product">Inventariado</string>
     <string name="text_switch_on_shop">Seleccionado</string>
     <string name="error_field_zero">Valor debe ser mayor a cero</string>
+    <string name="error_name_repeated_storage">Ya agregó un producto con este nombre al inventario</string>
     <string name="text_list_belong">Lista: %1$s</string>
 
     <!--Fragment Listas-->
