@@ -65,68 +65,6 @@ class InicioInteractorClass(private val inicioPresenter: InicioPresenter): Inici
         SharedPreferenceBD.saveValue(AuthAPI.getCurrenUser()!!.uid, valorFloat)
     }
 
-    override fun getProductsFromFirestore() {
-        launch {
-            val productsInRoom = RoomDB.getInstance().product().getAll()
-
-            FirestoreAPI.getProducts()
-                .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
-                .addSnapshotListener (MetadataChanges.INCLUDE) { snapshots, e ->
-                    if (e != null) {
-                        Log.w(TAG, "listen:error", e)
-                        inicioPresenter.resultSync(false)
-                        return@addSnapshotListener
-                    }
-
-                    for (dc in snapshots!!.documentChanges) {
-                        when (dc.type) {
-                            DocumentChange.Type.ADDED -> {
-                                Log.d(TAG, "New city: ${dc.document.data}")
-                                val product = Product(
-                                    dc.document.id,
-                                    dc.document.getString(Constants.NAME)!!,
-                                    dc.document.getString(Constants.UNIT)!!,
-                                    dc.document.getString(Constants.USER_ID)!!,
-                                    dc.document.getDouble(Constants.PRICE)!!,
-                                    dc.document.getDouble(Constants.QUANTITY)!!
-                                )
-                                if (!productsInRoom.contains(product)) {
-                                    RoomDB.saveProductToRoom(product)
-                                }
-                            }
-                            DocumentChange.Type.MODIFIED -> {
-                                Log.d(TAG,"Modified city: ${dc.document.data}")
-                                val product = Product(
-                                    dc.document.id,
-                                    dc.document.getString(Constants.NAME)!!,
-                                    dc.document.getString(Constants.UNIT)!!,
-                                    dc.document.getString(Constants.USER_ID)!!,
-                                    dc.document.getDouble(Constants.PRICE)!!,
-                                    dc.document.getDouble(Constants.QUANTITY)!!
-                                )
-                                RoomDB.updateProductToRoom(product)
-                            }
-                            DocumentChange.Type.REMOVED -> {
-                                Log.d(TAG, "Removed city: ${dc.document.data}")
-                                val product = Product(
-                                    dc.document.id,
-                                    dc.document.getString(Constants.NAME)!!,
-                                    dc.document.getString(Constants.UNIT)!!,
-                                    dc.document.getString(Constants.USER_ID)!!,
-                                    dc.document.getDouble(Constants.PRICE)!!,
-                                    dc.document.getDouble(Constants.QUANTITY)!!
-                                )
-                                RoomDB.deleteProductToRoom(product)
-                            }
-                        }
-                    }
-                    if (AuthAPI.getCurrenUser() != null) {
-                        getListsWishFromFirestore()
-                    }
-                }
-        }
-    }
-
     private fun getListsWishFromFirestore() {
         //launch { RoomDB.getInstance().listWish().deleteAll() }
         FirestoreAPI.getListWish()

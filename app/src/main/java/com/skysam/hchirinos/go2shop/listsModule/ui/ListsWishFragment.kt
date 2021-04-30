@@ -8,23 +8,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
-import com.skysam.hchirinos.go2shop.listsModule.presenter.ListsWishPresenter
-import com.skysam.hchirinos.go2shop.listsModule.presenter.ListsWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.util.*
 
-class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWish, SearchView.OnQueryTextListener {
+class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.OnQueryTextListener {
 
     private var _binding: FragmentListsBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var adapter: ListsWishAdapter
-    private lateinit var listsWishPresenter: ListsWishPresenter
     private lateinit var search: SearchView
     private var listsWish: MutableList<ListWish> = mutableListOf()
     private var listToDelete: MutableList<ListWish> = mutableListOf()
@@ -42,16 +42,15 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
     ): View {
         _binding = FragmentListsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        listsWishPresenter = ListsWishPresenterClass(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listsWishPresenter.getLists()
         adapter = ListsWishAdapter(listsWish, this)
         binding.rvList.setHasFixedSize(true)
         binding.rvList.adapter = adapter
+        loadViewModels()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -68,6 +67,24 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun loadViewModels() {
+        viewModel.listsWish.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                if (it.isNotEmpty()) {
+                    listsWish.clear()
+                    listsWish.addAll(it)
+                    adapter.updateList(listsWish)
+                    binding.rvList.visibility = View.VISIBLE
+                    binding.tvListEmpty.visibility = View.GONE
+                } else {
+                    binding.tvListEmpty.visibility = View.VISIBLE
+                    binding.rvList.visibility = View.GONE
+                }
+                binding.progressBar.visibility = View.GONE
+            }
+        })
     }
 
     override fun onClickDelete(position: Int) {
@@ -114,18 +131,7 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
         editListWishDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
-    override fun resultGetLists(lists: MutableList<ListWish>) {
-        binding.progressBar.visibility = View.GONE
-        if (lists.isNullOrEmpty()) {
-            binding.tvListEmpty.visibility = View.VISIBLE
-        } else {
-            listsWish.addAll(lists)
-            adapter.updateList(lists)
-            binding.rvList.visibility = View.VISIBLE
-        }
-    }
-
-    override fun resultDeleteLists(statusOk: Boolean, msg: String) {
+    /*override fun resultDeleteLists(statusOk: Boolean, msg: String) {
         if (_binding != null) {
             if (!statusOk) {
                 for (i in listToRestored.indices) {
@@ -135,7 +141,7 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
                 binding.rvList.scrollToPosition(firstPositionToDelete)
             }
         }
-    }
+    }*/
 
     override fun updatedListWish(position: Int, listWishResult: ListWish) {
         if (listSearch.isEmpty()) {
@@ -197,7 +203,7 @@ class ListsWishFragment : Fragment(), ListsWishView, OnClickList, UpdatedListWis
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (listToRestored.isNotEmpty()) {
-                            listsWishPresenter.deleteLists(listToRestored)
+                            //listsWishPresenter.deleteLists(listToRestored)
                             listToRestored.clear()
                             positionsToDelete.clear()
                         }

@@ -22,7 +22,6 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.AddWishListPresenterClass
-import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
@@ -69,12 +68,13 @@ class AddListWishDialog : DialogFragment(), OnClickList,
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)
-            var positionSelected = 0
+            var product: Product? = null
             val nameSelected = parent.getItemAtPosition(position)
             for (i in productsName.indices) {
-                positionSelected = productsName.indexOf(nameSelected)
+                val positionSelected = productsName.indexOf(nameSelected)
+                product = productsFromDB[positionSelected]
             }
-            addProductToList(positionSelected)
+            addProductToList(product!!)
         }
         binding.fabSave.setOnClickListener { validateToSave() }
         binding.fabCancel.setOnClickListener {
@@ -105,7 +105,7 @@ class AddListWishDialog : DialogFragment(), OnClickList,
         for (i in list.indices) {
             productsName.add(i, list[i].name)
         }
-        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName)
+        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName.sorted())
         binding.etSarchProduct.setAdapter(adapterSearchProduct)
     }
 
@@ -154,18 +154,23 @@ class AddListWishDialog : DialogFragment(), OnClickList,
         addListWishPresenter.saveListWish(listToSend)
     }
 
-    private fun addProductToList(position: Int) {
-        val productSelected = productsFromDB[position]
-        if (productsToAdd.contains(productSelected)) {
+    private fun addProductToList(product: Product) {
+        var exist = false
+        for (i in productsToAdd.indices) {
+            if (productsToAdd[i].name == product.name) {
+                exist = true
+            }
+        }
+        if (exist) {
             Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
-            binding.rvList.scrollToPosition(position)
+            binding.rvList.scrollToPosition(productsToAdd.indexOf(product))
             return
         }
-        productsToAdd.add(productSelected)
+        productsToAdd.add(product)
         addWishListAdapter.updateList(productsToAdd)
         binding.etSarchProduct.setText("")
 
-        val subtotal = productSelected.quantity * productSelected.price
+        val subtotal = product.quantity * product.price
         sumTotal(subtotal)
     }
 
@@ -194,7 +199,7 @@ class AddListWishDialog : DialogFragment(), OnClickList,
 
     override fun productSave(product: Product) {
         viewModel.addProduct(product)
-        addProductToList(productsFromDB.size - 1)
+        addProductToList(product)
     }
 
     override fun onClickExit() {

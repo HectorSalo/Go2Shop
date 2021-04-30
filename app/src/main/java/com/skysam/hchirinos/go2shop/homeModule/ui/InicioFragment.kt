@@ -142,7 +142,6 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
     private fun syncServer() {
         inicioPresenter.getValueWeb()
-        inicioPresenter.getProductsFromFirestore()
         binding.progressBar.visibility = View.VISIBLE
         snackbar = Snackbar.make(binding.root, R.string.msg_sync, Snackbar.LENGTH_SHORT)
         snackbar.show()

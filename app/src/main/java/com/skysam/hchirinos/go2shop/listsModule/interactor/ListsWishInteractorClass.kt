@@ -13,18 +13,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by Hector Chirinos on 16/03/2021.
  */
-class ListsWishInteractorClass(private val listsWishPresenter: ListsWishPresenter): ListsWishInteractor, CoroutineScope {
-    private var job: Job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun getLists() {
-        launch {
-            val lists = RoomDB.getInstance().listWish()
-                .getAll()
-            listsWishPresenter.resultGetLists(lists)
-        }
-    }
+class ListsWishInteractorClass(private val listsWishPresenter: ListsWishPresenter): ListsWishInteractor {
 
     override fun deleteLists(lists: MutableList<ListWish>) {
         val listsId = mutableListOf<String>()

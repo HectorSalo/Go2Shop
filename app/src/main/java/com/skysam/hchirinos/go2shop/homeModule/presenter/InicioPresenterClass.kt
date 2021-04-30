@@ -13,10 +13,6 @@ class InicioPresenterClass(private val inicioView: InicioView): InicioPresenter 
         inicioInteractor.getValueWeb()
     }
 
-    override fun getProductsFromFirestore() {
-        inicioInteractor.getProductsFromFirestore()
-    }
-
     override fun resultSync(statusOk: Boolean) {
         inicioView.resultSync(statusOk)
     }

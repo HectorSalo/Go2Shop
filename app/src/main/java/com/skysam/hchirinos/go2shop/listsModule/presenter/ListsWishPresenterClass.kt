@@ -10,9 +10,6 @@ import com.skysam.hchirinos.go2shop.listsModule.ui.ListsWishView
  */
 class ListsWishPresenterClass(private val listsWishView: ListsWishView): ListsWishPresenter {
     private val listsWishInteractor: ListsWishInteractor = ListsWishInteractorClass(this)
-    override fun getLists() {
-        listsWishInteractor.getLists()
-    }
 
     override fun deleteLists(lists: MutableList<ListWish>) {
         listsWishInteractor.deleteLists(lists)
