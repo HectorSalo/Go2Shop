@@ -77,7 +77,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.tfSearchProducts.setStartIconOnClickListener {
-            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this)
+            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
             addProduct.show(requireActivity().supportFragmentManager, tag)
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->

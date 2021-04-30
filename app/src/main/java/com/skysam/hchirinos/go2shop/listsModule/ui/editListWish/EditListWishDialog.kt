@@ -22,8 +22,6 @@ import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenter
 import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
@@ -38,7 +36,6 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         OnClickList, UpdatedProduct, ProductSaveFromList, EditListWishView {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var productsPresenter: ProductsPresenter
     private lateinit var editListWishPresenter: EditListWishPresenter
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<Product> = mutableListOf()
@@ -59,14 +56,12 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
-        productsPresenter = ProductsPresenterClass(this)
         editListWishPresenter = EditListWishPresenterClass(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        productsPresenter.getProducts()
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
@@ -75,7 +70,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         loadProducts()
 
         binding.tfSearchProducts.setStartIconOnClickListener {
-            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this)
+            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
             addProduct.show(requireActivity().supportFragmentManager, tag)
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->

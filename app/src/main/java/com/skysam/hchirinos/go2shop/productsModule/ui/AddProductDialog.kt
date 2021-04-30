@@ -3,7 +3,6 @@ package com.skysam.hchirinos.go2shop.productsModule.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
@@ -16,27 +15,18 @@ import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddProductBinding
-import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.AddProductPresenterClass
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
 
-class AddProductDialog(private val name: String?, private val productSaveFromList: ProductSaveFromList?):
-    DialogFragment(), ProductsView, AddProductView {
+class AddProductDialog(private val name: String?, private val productSaveFromList: ProductSaveFromList,
+    private val products: MutableList<Product>):
+    DialogFragment() {
     private var _binding: DialogAddProductBinding? = null
     private val binding get() = _binding!!
-    private lateinit var addProductPresenter: AddProductPresenter
-    private lateinit var productsPresenter: ProductsPresenter
     private lateinit var product: Product
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
-    private var listProductsSaved: MutableList<Product> = mutableListOf()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogAddProductBinding.inflate(layoutInflater)
-        addProductPresenter = AddProductPresenterClass(this)
-        productsPresenter = ProductsPresenterClass(this)
-        productsPresenter.getProducts()
 
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
@@ -62,7 +52,6 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
 
     override fun onDestroyView() {
         super.onDestroyView()
-        listProductsSaved.clear()
         _binding = null
     }
 
@@ -73,8 +62,8 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
             binding.tfName.error = getString(R.string.error_field_empty)
             return
         }
-        for (i in listProductsSaved.indices) {
-            if (listProductsSaved[i].name.equals(name, true)) {
+        for (i in products.indices) {
+            if (products[i].name.equals(name, true)) {
                 binding.tfName.error = getString(R.string.error_name_exists)
                 return
             }
@@ -88,35 +77,7 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
             name,
             binding.spinner.selectedItem.toString(),
             AuthAPI.getCurrenUser()!!.uid)
-        dialog!!.setCanceledOnTouchOutside(false)
-        binding.tfName.isEnabled = false
-        binding.spinner.isEnabled = false
-        buttonPositive.isEnabled = false
-        buttonNegative.isEnabled = false
-        binding.progressBar.visibility = View.VISIBLE
-        addProductPresenter.saveProductToFirestore(product)
-    }
-
-    override fun resultSaveProduct(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            binding.progressBar.visibility = View.GONE
-            if (statusOk) {
-                Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
-                productSaveFromList?.productSave(product)
-                dialog!!.dismiss()
-            } else {
-                dialog!!.setCanceledOnTouchOutside(true)
-                binding.tfName.isEnabled = true
-                binding.spinner.isEnabled = true
-                buttonPositive.isEnabled = true
-                buttonNegative.isEnabled = true
-                binding.progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun resultGetProducts(products: MutableList<Product>) {
-        listProductsSaved.addAll(products)
+        dialog?.dismiss()
+        productSaveFromList.productSave(product)
     }
 }

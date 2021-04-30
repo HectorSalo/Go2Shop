@@ -17,8 +17,6 @@ import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
-import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.EditProductPresenterClass
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 
@@ -28,10 +26,9 @@ import java.text.NumberFormat
 class EditProductDialog(
     var product: Product, private val position: Int, private val fromList: Boolean,
     private val updatedProduct: UpdatedProduct, private val rateChange: Double?):
-    DialogFragment(), EditProductView {
+    DialogFragment() {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
-    private lateinit var editProductPresenter: EditProductPresenter
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
     private lateinit var productResult: Product
@@ -42,8 +39,6 @@ class EditProductDialog(
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogEditProductBinding.inflate(layoutInflater)
-
-        editProductPresenter = EditProductPresenterClass(this)
 
         val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
         NumberFormat.getInstance().isGroupingUsed = true
@@ -174,38 +169,7 @@ class EditProductDialog(
             quantityTotal
         )
         Keyboard.close(binding.root)
-        if (fromList) {
-            updatedProduct.updatedProduct(position, productResult)
-            dismiss()
-        } else {
-            dialog!!.setCanceledOnTouchOutside(false)
-            binding.progressBar.visibility = View.VISIBLE
-            binding.tfName.isEnabled = false
-            binding.tfPrice.isEnabled = false
-            buttonNegative.isEnabled = false
-            buttonPositive.isEnabled = false
-            editProductPresenter.editToFirestore(productResult)
-        }
-    }
-
-    override fun resultEditToFirestore(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            if (statusOk) {
-                updatedProduct.updatedProduct(position, productResult)
-                dismiss()
-            } else {
-                dialog!!.setCanceledOnTouchOutside(true)
-                binding.progressBar.visibility = View.GONE
-                binding.tfName.isEnabled = true
-                binding.tfPrice.isEnabled = true
-                buttonNegative.isEnabled = true
-                buttonPositive.isEnabled = true
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.save_data_error),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+        updatedProduct.updatedProduct(position, productResult)
+        dismiss()
     }
 }

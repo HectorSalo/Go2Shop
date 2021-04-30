@@ -21,10 +21,6 @@ object FirestoreAPI {
         return getInstance().collection(Constants.PRODUCTOS)
     }
 
-    fun getProductById(id: String): DocumentReference {
-        return getInstance().collection(Constants.PRODUCTOS).document(id)
-    }
-
     fun getListWish(): CollectionReference {
         return getInstance().collection(Constants.LIST_WISH)
     }

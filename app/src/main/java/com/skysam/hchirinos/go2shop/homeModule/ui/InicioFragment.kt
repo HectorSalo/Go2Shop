@@ -1,21 +1,20 @@
 package com.skysam.hchirinos.go2shop.homeModule.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.NavHostFragment
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
@@ -24,15 +23,14 @@ import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
 import com.skysam.hchirinos.go2shop.initModule.ui.InitActivity
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
 import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
-import java.text.DateFormat
-import java.text.NumberFormat
-import java.util.*
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 
-class InicioFragment : Fragment(), InicioView {
+class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
     private var _binding: FragmentInicioBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
+    private var products: MutableList<Product> = mutableListOf()
     private lateinit var inicioPresenter: InicioPresenter
     private lateinit var snackbar: Snackbar
 
@@ -58,7 +56,7 @@ class InicioFragment : Fragment(), InicioView {
             syncServer()
             SharedPreferenceBD.saveSyncState(AuthAPI.getCurrenUser()!!.uid, false)
         }
-        homeViewModel.listFlow.observe(viewLifecycleOwner, {shop->
+        /*mainViewModel.listFlow.observe(viewLifecycleOwner, { shop->
             if (!shop.isNullOrEmpty()) {
                 val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
                 val ammount = NumberFormat.getInstance().format(shop[0].total)
@@ -68,7 +66,7 @@ class InicioFragment : Fragment(), InicioView {
             }
             binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
             binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
-        })
+        })*/
         binding.btnNewShop.setOnClickListener {
            requireActivity().startActivity(Intent(requireContext(),
                AddListShopActivity::class.java))
@@ -78,7 +76,7 @@ class InicioFragment : Fragment(), InicioView {
             addListWishDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnNewProduct.setOnClickListener {
-            val addProductDialog = AddProductDialog(null, null)
+            val addProductDialog = AddProductDialog(null, this, products)
             addProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnInventory.setOnClickListener {
@@ -92,6 +90,7 @@ class InicioFragment : Fragment(), InicioView {
             /*NavHostFragment.findNavController(this)
                 .navigate(R.id.action_nav_home_to_storageFragment)*/
         }
+        loadViewModels()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -107,6 +106,20 @@ class InicioFragment : Fragment(), InicioView {
             syncServer()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun loadViewModels() {
+        viewModel.products.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                products.clear()
+                products.addAll(it)
+            }
+        })
     }
 
     private fun signOut() {
@@ -135,11 +148,6 @@ class InicioFragment : Fragment(), InicioView {
         snackbar.show()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun resultSync(statusOk: Boolean) {
         if (_binding != null) {
             val msg = if (statusOk) {
@@ -151,5 +159,9 @@ class InicioFragment : Fragment(), InicioView {
             snackbar = Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT)
             snackbar.show()
         }
+    }
+
+    override fun productSave(product: Product) {
+        viewModel.addProduct(product)
     }
 }
