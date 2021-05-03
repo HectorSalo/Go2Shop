@@ -19,23 +19,23 @@ import java.text.NumberFormat
 /**
  * Created by Hector Chirinos (Home) on 23/3/2021.
  */
-class AddListShopAdapter(private var products: MutableList<ProductsToShopModel>,
-                         private val listener: OnSwitchChange, private val listenerClickList: OnClickList,
-                         private val onClickToStorage: OnClickToStorage):
-    RecyclerView.Adapter<AddListShopAdapter.ViewHolder>() {
+class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
+                     private val listener: OnSwitchChange, private val listenerClickList: OnClickList,
+                     private val onClickToStorage: OnClickToStorage):
+    RecyclerView.Adapter<AddShopAdapter.ViewHolder>() {
     private lateinit var context: Context
     private val listToStorage: MutableList<String> = mutableListOf()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): AddListShopAdapter.ViewHolder {
+    ): AddShopAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_new_shop_item, parent, false)
         context = parent.context
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: AddListShopAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AddShopAdapter.ViewHolder, position: Int) {
         val item = products[position]
 
         holder.name.text = item.name

@@ -42,20 +42,32 @@
         app:layout_constraintTop_toBottomOf="@id/tv_name_list"
         tools:text="@string/nav_products" />
 
+    <TextView
+        android:id="@+id/tv_rate"
+        style="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_date"
+        tools:text="@string/nav_lists" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
         android:name="com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/tv_total"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_date"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rate"
         tools:context=".listsModule.ui.addListWish.AddListWishDialog"
         tools:listitem="@layout/layout_product_list" />
 

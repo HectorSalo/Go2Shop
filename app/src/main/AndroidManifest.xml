@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".shopsModule.ui.addListShop.AddListShopActivity"
+            android:name=".shopsModule.ui.addListShop.AddShopActivity"
             android:label="@string/title_activity_add_list_shop"
             android:theme="@style/Theme.Go2Shop.NoActionBar" />
         <activity

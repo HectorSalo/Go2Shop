@@ -13,6 +13,7 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.*
 
 /**
  * Created by Hector Chirinos (Home) on 2/5/2021.
@@ -81,5 +82,48 @@ object ShopRepository {
                }
            awaitClose { request.remove() }
        }
+    }
+
+    fun saveShop(shop: Shop) {
+        val date = Date(shop.dateCreated)
+        val data = hashMapOf(
+            Constants.NAME to shop.name,
+            Constants.USER_ID to shop.userId,
+            Constants.TOTAL_LIST_WISH to shop.total,
+            Constants.DATE_CREATED to date,
+            Constants.RATE_CHANGE to shop.rateChange
+        )
+        getInstance()
+            .add(data)
+            .addOnSuccessListener { doc ->
+                saveProductsInList(shop, doc.id)
+            }
+    }
+
+    private fun saveProductsInList(shop: Shop, id: String) {
+        for (i in shop.listProducts.indices) {
+            val data = hashMapOf(
+                Constants.NAME to shop.listProducts[i].name,
+                Constants.UNIT to shop.listProducts[i].unit,
+                Constants.USER_ID to shop.listProducts[i].userId,
+                Constants.LIST_ID to id,
+                Constants.PRICE to shop.listProducts[i].price,
+                Constants.QUANTITY to shop.listProducts[i].quantity
+            )
+            getInstanceProductsShop()
+                .add(data)
+                .addOnSuccessListener {
+                    if (i == shop.listProducts.indices.last) {
+                        updateDateEdited(id)
+                    }
+                }
+        }
+    }
+
+    private fun updateDateEdited(id: String) {
+        val calendar = Calendar.getInstance()
+        getInstance()
+            .document(id)
+            .update(Constants.DATE_CREATED, calendar.time)
     }
 }

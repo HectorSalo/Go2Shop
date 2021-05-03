@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
@@ -24,19 +23,14 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentAddListShopBinding
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
-import com.skysam.hchirinos.go2shop.shopsModule.presenter.AddListShopPresenter
-import com.skysam.hchirinos.go2shop.shopsModule.presenter.AddListShopPresenterClass
-import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopView
 import com.skysam.hchirinos.go2shop.shopsModule.ui.OnClickToStorage
-import com.skysam.hchirinos.go2shop.shopsModule.viewModel.AddListShopViewModel
-import com.skysam.hchirinos.go2shop.shopsModule.viewModel.SharedViewModel
+import com.skysam.hchirinos.go2shop.viewmodels.AddShopViewModel
 import java.text.NumberFormat
 import java.util.*
 
-class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
-        OnClickExit, OnSwitchChange, UpdatedProduct, OnClickShop, AddListShopView, OnClickToStorage {
-    private val addListShopViewModel: AddListShopViewModel by activityViewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+class AddShopFragment : Fragment(),
+    OnClickList, ProductSaveFromList, OnClickExit, OnSwitchChange, UpdatedProduct, OnClickShop, OnClickToStorage {
+    private val viewModel: AddShopViewModel by activityViewModels()
     private var _binding: FragmentAddListShopBinding? = null
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
@@ -44,19 +38,18 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
     private var productsToShop: MutableList<ProductsToListModel> = mutableListOf()
     private var productsToStorage: MutableList<ProductsToListModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
-    private lateinit var addListShopPresenter: AddListShopPresenter
-    private lateinit var addListShopAdapter: AddListShopAdapter
+    private lateinit var addShopAdapter: AddShopAdapter
     private lateinit var nameList: String
     private var rateChange: Double = 0.0
     private var total: Double = 0.0
     private var priceBeforeUpdated: Double = 0.0
+    private var productAdded: ProductsToShopModel? = null
     private var actived = true
     private lateinit var toolbar: Toolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = FragmentAddListShopBinding.inflate(inflater, container, false)
-        addListShopPresenter = AddListShopPresenterClass(this)
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -70,10 +63,9 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         toolbar = requireActivity().findViewById(R.id.toolbar)
-        loadViewModels()
         binding.rvList.setHasFixedSize(true)
-        addListShopAdapter = AddListShopAdapter(productsToAdd, this, this, this)
-        binding.rvList.adapter = addListShopAdapter
+        addShopAdapter = AddShopAdapter(productsToAdd, this, this, this)
+        binding.rvList.adapter = addShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.tfSearchProducts.setStartIconOnClickListener {
@@ -82,46 +74,48 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)
-            var positionSelected = -1
+            var product: Product? = null
             val nameSelected = parent.getItemAtPosition(position)
             for (i in productsName.indices) {
-                positionSelected = productsName.indexOf(nameSelected)
+                val positionSelected = productsName.indexOf(nameSelected)
+                product = productsFromDB[positionSelected]
             }
-            addProductToList(positionSelected)
+            addProductToList(product!!)
         }
+        loadViewModels()
     }
 
     private fun loadViewModels() {
-        sharedViewModel.nameShop.observe(viewLifecycleOwner, {
+        viewModel.nameShop.observe(viewLifecycleOwner, {
             nameList = it
             toolbar.title = it
             toolbar.setNavigationIcon(R.drawable.ic_close_24)
         })
-        sharedViewModel.productsShared.observe(viewLifecycleOwner, { list ->
-            addListShopViewModel.fillListFirst(list)
-        })
-        sharedViewModel.rateChange.observe(viewLifecycleOwner, {
-            rateChange = it
-        })
-        addListShopViewModel.getProducts().observe(viewLifecycleOwner, {
-            productsFromDB.addAll(it)
-            fillListProductsDB(it)
-        })
-        addListShopViewModel.allProducts.observe(viewLifecycleOwner, {
-            productsToAdd.clear()
-            productsToAdd.addAll(it)
-            addListShopAdapter.updateList(productsToAdd)
-            addListShopViewModel.scrollToPosition()
-        })
-        addListShopViewModel.isProductInList.observe(viewLifecycleOwner, {
-            if (it) {
-                Snackbar.make(binding.root, getString(R.string.product_added), Snackbar.LENGTH_LONG).show()
+        viewModel.productsShared.observe(viewLifecycleOwner, { list ->
+            if (list.isNotEmpty()) {
+                viewModel.fillListFirst(list)
             }
         })
-        addListShopViewModel.positionProductInList.observe(viewLifecycleOwner, {
-            binding.rvList.scrollToPosition(it)
+        viewModel.rateChange.observe(viewLifecycleOwner, {
+            rateChange = it
         })
-        addListShopViewModel.totalPrice.observe(viewLifecycleOwner, {
+        viewModel.productsStoraged.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                productsFromDB.clear()
+                productsFromDB.addAll(it)
+                fillListProductsDB(productsFromDB)
+            }
+        })
+        viewModel.allProducts.observe(viewLifecycleOwner, {
+            productsToAdd.clear()
+            productsToAdd.addAll(it)
+            addShopAdapter.updateList(productsToAdd)
+            if (productAdded != null) {
+                binding.rvList.scrollToPosition(productsToAdd.indexOf(productAdded))
+                productAdded = null
+            }
+        })
+        viewModel.totalPrice.observe(viewLifecycleOwner, {
             total = it
             binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
         })
@@ -157,18 +151,31 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         exitDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
-    private fun addProductToList(position: Int) {
-        val productSelected = productsFromDB[position]
+    private fun addProductToList(product: Product) {
+        var exist = false
+        var position = 0
+        for (i in productsToAdd.indices) {
+            if (productsToAdd[i].name == product.name) {
+                exist = true
+                position = i
+            }
+        }
+        if (exist) {
+            Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
+            binding.rvList.scrollToPosition(position)
+            return
+        }
         val productModelSelected = ProductsToShopModel(
-            productSelected.id,
-            productSelected.name,
-            productSelected.unit,
-            productSelected.userId,
+            product.id,
+            product.name,
+            product.unit,
+            product.userId,
             "",
-            productSelected.price,
-            productSelected.quantity
+            product.price,
+            product.quantity
         )
-        addListShopViewModel.addProductToList(productModelSelected)
+        productAdded = productModelSelected
+        viewModel.addProductToList(productModelSelected)
         binding.etSarchProduct.setText("")
     }
 
@@ -177,7 +184,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
         for (i in list.indices) {
             productsName.add(i, list[i].name)
         }
-        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName)
+        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName.sorted())
         binding.etSarchProduct.setAdapter(adapterSearchProduct)
     }
 
@@ -208,14 +215,14 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             product.name,
             product.unit,
             product.userId,
-            Constants.LIST_ID,
+            "",
             product.price,
             product.quantity
         )
-        addListShopViewModel.addProductToList(productModelSelected)
+        productAdded = productModelSelected
+        viewModel.addProduct(product)
+        viewModel.addProductToList(productModelSelected)
         binding.etSarchProduct.setText("")
-        productsFromDB.add(product)
-        fillListProductsDB(productsFromDB)
     }
 
     override fun onClickExit() {
@@ -244,7 +251,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                         product.quantity
                 )
                 productsToShop.add(productModelSelected)
-                addListShopViewModel.checkedProduct(product)
+                viewModel.checkedProduct(product)
             } else {
                 var productModelSelected: ProductsToListModel? = null
                 for (i in productsToShop.indices) {
@@ -262,7 +269,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 }
                 if (productModelSelected != null) {
                     productsToShop.remove(productModelSelected)
-                    addListShopViewModel.uncheckedProduct(product!!)
+                    viewModel.uncheckedProduct(product!!)
                 }
             }
         }
@@ -275,14 +282,14 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
             product.name,
             product.unit,
             product.userId,
-            "",
+            productSelected.listId,
             product.price,
             product.quantity,
             productSelected.isCheckedToShop
         )
-        addListShopViewModel.updateProductToList(productModel, position)
+        viewModel.updateProductToList(productModel, position)
         if (productSelected.isCheckedToShop) {
-            addListShopViewModel.updatedPrice(priceBeforeUpdated, product.price)
+            viewModel.updatedPrice(priceBeforeUpdated, product.price)
         }
     }
 
@@ -302,7 +309,7 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                     productsToShop[i].name,
                     productsToShop[i].unit,
                     productsToShop[i].userId,
-                    Constants.USERS,
+                    Constants.LIST_ID,
                     productsToShop[i].price,
                     productsToShop[i].quantity
             )
@@ -317,21 +324,9 @@ class AddListShopFragment : Fragment(), OnClickList, ProductSaveFromList,
                 dateCurrent,
                 rateChange
         )
-        addListShopPresenter.saveListWish(listToSend)
-    }
-
-    override fun resultSaveListWishFirestore(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            if (statusOk) {
-                Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
-                requireActivity().finish()
-            } else {
-                binding.progressBar.visibility = View.GONE
-                binding.tfSearchProducts.isEnabled = true
-                actived = true
-                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
-            }
-        }
+        viewModel.saveShop(listToSend)
+        Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+        requireActivity().finish()
     }
 
     override fun onClickAddToStorage(product: ProductsToShopModel) {

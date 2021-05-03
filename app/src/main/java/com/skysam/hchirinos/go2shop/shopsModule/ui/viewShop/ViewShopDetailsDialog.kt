@@ -45,6 +45,7 @@ class ViewShopDetailsDialog(private val shop: Shop): DialogFragment() {
     private fun loadData() {
         binding.tvNameList.text = shop.name
         binding.tvDate.text = DateFormat.getDateInstance().format(Date(shop.dateCreated))
+        binding.tvRate.text = getString(R.string.text_cotizacion_from_shop, NumberFormat.getInstance().format(shop.rateChange))
         binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(shop.total))
         adapter = ViewShopDetailsAdapter(shop.listProducts.sortedWith(compareBy { it.name }).toMutableList())
         binding.rvList.adapter = adapter

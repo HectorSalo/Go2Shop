@@ -26,8 +26,8 @@ import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.text.NumberFormat
 import java.util.*
 
-class AddListWishDialog : DialogFragment(), OnClickList,
-    ProductSaveFromList, OnClickExit, UpdatedProduct {
+class AddListWishDialog : DialogFragment(),
+    OnClickList, ProductSaveFromList, OnClickExit, UpdatedProduct {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()

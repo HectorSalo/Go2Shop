@@ -11,7 +11,7 @@
     <string name="action_save">Save</string>
 
     <!--Generales-->
-    <string name="texto_vacio">" "</string>
+    <string name="texto_vacio"> </string>
     <string name="error_field_empty">Campo vacío</string>
     <string name="btn_accept">Aceptar</string>
     <string name="btn_save">Guardar</string>
@@ -59,6 +59,7 @@
     <string name="error_field_zero">Valor debe ser mayor a cero</string>
     <string name="error_name_repeated_storage">Ya agregó un producto con este nombre al inventario</string>
     <string name="text_list_belong">Lista: %1$s</string>
+    <string name="text_cotizacion_from_shop">Cotización del día de la compra: Bs.%1$s</string>
 
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>

@@ -21,7 +21,7 @@ import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
 import com.skysam.hchirinos.go2shop.initModule.ui.InitActivity
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
-import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopActivity
+import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddShopActivity
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.text.DateFormat
 import java.text.NumberFormat
@@ -55,7 +55,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNewShop.setOnClickListener {
            requireActivity().startActivity(Intent(requireContext(),
-               AddListShopActivity::class.java))
+               AddShopActivity::class.java))
         }
         binding.btnNewList.setOnClickListener {
             val addListWishDialog = AddListWishDialog()

@@ -5,11 +5,11 @@ package com.skysam.hchirinos.go2shop.common
  */
 object Constants {
     const val SHARED_VALUE_WEB = "valueWeb"
-    const val SHARED_SYNC_ACTIVED = "syncActive"
 
     const val PRODUCTOS = "productos"
     const val LIST_WISH = "listasPendientes"
     const val SHOP = "compras"
+    const val STORAGE = "inventario"
     const val PRODUCTS_TO_LIST_WISH = "productsToListWish"
     const val PRODUCTS_TO_LIST_SHOP = "productsToShop"
     const val USERS = "users"
@@ -23,6 +23,7 @@ object Constants {
     const val DATE_CREATED = "dateCreated"
     const val DATE_LAST_EDITED = "dateLastEdited"
     const val RATE_CHANGE = "rateChange"
+    const val QUANTITY_REMAINING = "quantityRemaining"
 
     const val TOTAL_LIST_WISH = "totalListWish"
 }
