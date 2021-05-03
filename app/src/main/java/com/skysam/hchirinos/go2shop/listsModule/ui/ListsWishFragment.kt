@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedListWish
+import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
@@ -32,8 +33,10 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
     private var listSearch: MutableList<ListWish> = mutableListOf()
     private var positionsToDelete: MutableList<Int> = mutableListOf()
     var actionMode: androidx.appcompat.view.ActionMode? = null
+    private var deleting = false
     var actionModeActived = false
     var firstPositionToDelete = 0
+    private var positionEdit = 0
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -73,11 +76,18 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
         viewModel.listsWish.observe(viewLifecycleOwner, {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
-                    listsWish.clear()
-                    listsWish.addAll(it)
-                    adapter.updateList(listsWish)
-                    binding.rvList.visibility = View.VISIBLE
-                    binding.tvListEmpty.visibility = View.GONE
+                    if (!deleting) {
+                        listsWish.clear()
+                        listsWish.addAll(it)
+                        adapter.updateList(listsWish)
+                        binding.rvList.visibility = View.VISIBLE
+                        binding.tvListEmpty.visibility = View.GONE
+                        if (listSearch.isNotEmpty()) {
+                            binding.rvList.scrollToPosition(positionEdit)
+                            listSearch.clear()
+                        }
+                    }
+                    deleting = false
                 } else {
                     binding.tvListEmpty.visibility = View.VISIBLE
                     binding.rvList.visibility = View.GONE
@@ -127,38 +137,20 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
         } else {
             listSearch[position]
         }
+        positionEdit = listsWish.indexOf(listSelected)
         val editListWishDialog = EditListWishDialog(listSelected, position, this)
         editListWishDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
-    /*override fun resultDeleteLists(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            if (!statusOk) {
-                for (i in listToRestored.indices) {
-                    listsWish.add(positionsToDelete[i], listToRestored[i])
-                }
-                adapter.updateList(listsWish)
-                binding.rvList.scrollToPosition(firstPositionToDelete)
-            }
-        }
-    }*/
-
-    override fun updatedListWish(position: Int, listWishResult: ListWish) {
-        if (listSearch.isEmpty()) {
-            listsWish[position] = listWishResult
-            adapter.updateList(listsWish)
-        } else {
-            var positionOriginal = -1
-            for (i in listsWish.indices) {
-                if (listsWish[i].id == listWishResult.id) {
-                    positionOriginal = i
-                }
-            }
-            listsWish[positionOriginal] = listWishResult
-            listSearch[position] = listWishResult
-            adapter.updateList(listSearch)
-        }
-        binding.rvList.scrollToPosition(position)
+    override fun updatedListWish(
+        position: Int,
+        listWishResult: ListWish,
+        productsToSave: MutableList<ProductsToListModel>,
+        productsToUpdate: MutableList<ProductsToListModel>,
+        productsToDelete: MutableList<ProductsToListModel>
+    ) {
+        viewModel.editListWish(listWishResult, productsToSave, productsToUpdate, productsToDelete)
+        search.onActionViewCollapsed()
     }
 
     private val callback = object : androidx.appcompat.view.ActionMode.Callback {
@@ -203,7 +195,8 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (listToRestored.isNotEmpty()) {
-                            //listsWishPresenter.deleteLists(listToRestored)
+                            deleting = true
+                            viewModel.deleteListsWish(listToRestored)
                             listToRestored.clear()
                             positionsToDelete.clear()
                         }

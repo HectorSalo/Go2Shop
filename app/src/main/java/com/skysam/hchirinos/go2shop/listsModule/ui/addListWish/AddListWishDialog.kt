@@ -20,8 +20,6 @@ import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
-import com.skysam.hchirinos.go2shop.listsModule.presenter.AddListWishPresenter
-import com.skysam.hchirinos.go2shop.listsModule.presenter.AddWishListPresenterClass
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
@@ -29,8 +27,7 @@ import java.text.NumberFormat
 import java.util.*
 
 class AddListWishDialog : DialogFragment(), OnClickList,
-    ProductSaveFromList, OnClickExit, UpdatedProduct, AddWishListView {
-    private lateinit var addListWishPresenter: AddListWishPresenter
+    ProductSaveFromList, OnClickExit, UpdatedProduct {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -51,7 +48,6 @@ class AddListWishDialog : DialogFragment(), OnClickList,
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
-        addListWishPresenter = AddWishListPresenterClass(this)
         return binding.root
     }
 
@@ -151,7 +147,9 @@ class AddListWishDialog : DialogFragment(), OnClickList,
             dateCurrent,
             dateCurrent
         )
-        addListWishPresenter.saveListWish(listToSend)
+        viewModel.addListWish(listToSend)
+        Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
+        dialog!!.dismiss()
     }
 
     private fun addProductToList(product: Product) {
@@ -212,22 +210,5 @@ class AddListWishDialog : DialogFragment(), OnClickList,
         val subtotal = (product.quantity * product.price) - oldPrice
         sumTotal(subtotal)
         addWishListAdapter.updateList(productsToAdd)
-    }
-
-    override fun resultSaveListWish(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            if (statusOk) {
-                Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
-                dialog!!.dismiss()
-            } else {
-                binding.progressBar.visibility = View.GONE
-                binding.fabSave.isEnabled = true
-                binding.fabCancel.isEnabled = true
-                binding.tfNameList.isEnabled = true
-                binding.tfSearchProducts.isEnabled = true
-                actived = true
-                Toast.makeText(requireContext(), getString(R.string.save_data_error), Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }

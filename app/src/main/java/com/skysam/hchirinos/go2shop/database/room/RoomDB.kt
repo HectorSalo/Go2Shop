@@ -2,10 +2,6 @@ package com.skysam.hchirinos.go2shop.database.room
 
 import androidx.room.Room
 import com.skysam.hchirinos.go2shop.common.GoToShop
-import com.skysam.hchirinos.go2shop.common.classView.ProductsSavedToList
-import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,59 +23,10 @@ object RoomDB: CoroutineScope {
             .build()
     }
 
-    fun deleteListWishToRoom(id: String) {
-        launch {
-            getInstance().listWish()
-                .delete(id)
-        }
-    }
-
-    fun updateListWishToRoom(list: ListWish) {
-        launch {
-            getInstance().listWish()
-                .update(list)
-        }
-    }
-
-    fun saveListWishToRoom(list: ListWish) {
-        launch {
-            getInstance().listWish()
-                .insert(list)
-        }
-    }
-
     fun saveListShopToRoom(list: Shop) {
         launch {
             getInstance().shop()
                     .insert(list)
-        }
-    }
-
-    fun updateListShopToRoom(list: Shop) {
-        launch {
-            getInstance().shop()
-                .update(list)
-        }
-    }
-
-    fun deleteProductToRoom(product: Product) {
-        launch {
-            getInstance().product()
-                .delete(product)
-        }
-    }
-
-    fun updateProductToRoom(product: Product) {
-        launch {
-            getInstance().product()
-                .update(product)
-        }
-    }
-
-    fun saveProductToRoom(product: Product) {
-        launch {
-            getInstance().product()
-                .insert(product)
         }
     }
 }

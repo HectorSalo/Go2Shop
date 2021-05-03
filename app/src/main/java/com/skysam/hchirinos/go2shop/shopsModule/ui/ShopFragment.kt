@@ -10,8 +10,8 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentHistoryBinding
-import com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopItem
-import com.skysam.hchirinos.go2shop.shopsModule.viewModel.ShopViewModel
+import com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopDetailsDialog
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.util.*
 
 class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
@@ -22,7 +22,7 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
     private lateinit var search: SearchView
     private var listsShop: MutableList<Shop> = mutableListOf()
     private var listSearch: MutableList<Shop> = mutableListOf()
-    private val shopViewModel: ShopViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -40,11 +40,18 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
         binding.rvList.setHasFixedSize(true)
         binding.rvList.adapter = adapter
 
-        shopViewModel.listFlow.observe(viewLifecycleOwner, {shop->
+        viewModel.shops.observe(viewLifecycleOwner, {shop->
             if (_binding != null) {
-                listsShop.clear()
-                listsShop.addAll(shop)
-                adapter.updateList(listsShop)
+                if (shop.isNotEmpty()) {
+                    listsShop.clear()
+                    listsShop.addAll(shop)
+                    adapter.updateList(listsShop)
+                    binding.tvListEmpty.visibility = View.GONE
+                    binding.rvList.visibility = View.VISIBLE
+                } else {
+                    binding.tvListEmpty.visibility = View.VISIBLE
+                    binding.rvList.visibility = View.GONE
+                }
                 binding.progressBar.visibility = View.GONE
             }
         })
@@ -97,7 +104,7 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
         } else {
             listSearch[position]
         }
-        val action = ViewShopItem(listSelected)
+        val action = ViewShopDetailsDialog(listSelected)
         action.show(requireActivity().supportFragmentManager, tag)
     }
 }

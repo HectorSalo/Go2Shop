@@ -17,8 +17,6 @@ import com.bumptech.glide.Glide
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
-import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
-import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         if (user != null) {
             tvNameUser.text = user.displayName
             tvEmailUser.text = user.email
-            SharedPreferenceBD.saveSyncState(AuthAPI.getCurrenUser()!!.uid, true)
             if (user.photoUrl != null) {
                 Glide.with(this).load(user.photoUrl)
                     .circleCrop().into(ivUser)

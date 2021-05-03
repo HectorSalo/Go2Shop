@@ -6,7 +6,6 @@ import com.google.firebase.firestore.*
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
-import com.skysam.hchirinos.go2shop.database.firebase.FirestoreAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -79,7 +78,6 @@ object ListWishRepository {
                                 listsWish.add(listWish)
                             }
                             offer(listsWish)
-
                         }
                 }
             awaitClose { request.remove() }
@@ -164,6 +162,49 @@ object ListWishRepository {
         }
     }
 
+    fun addListWish(list: ListWish) {
+        val date = Date(list.dateCreated)
+        val data = hashMapOf(
+            Constants.NAME to list.name,
+            Constants.USER_ID to list.userId,
+            Constants.TOTAL_LIST_WISH to list.total,
+            Constants.DATE_CREATED to date,
+            Constants.DATE_LAST_EDITED to date
+        )
+        getInstance()
+            .add(data)
+            .addOnSuccessListener { doc ->
+                saveProductsInList(list, doc.id)
+            }
+    }
+
+    private fun saveProductsInList(list: ListWish, id: String) {
+        for (i in list.listProducts.indices) {
+            val data = hashMapOf(
+                Constants.NAME to list.listProducts[i].name,
+                Constants.UNIT to list.listProducts[i].unit,
+                Constants.USER_ID to list.listProducts[i].userId,
+                Constants.LIST_ID to id,
+                Constants.PRICE to list.listProducts[i].price,
+                Constants.QUANTITY to list.listProducts[i].quantity
+            )
+            getInstanceProductsListsWish()
+                .add(data)
+                .addOnSuccessListener {
+                    if (i == list.listProducts.indices.last) {
+                        updateDateEdited(id)
+                    }
+                }
+        }
+    }
+
+    private fun updateDateEdited(id: String) {
+        val calendar = Calendar.getInstance()
+        getInstance()
+            .document(id)
+            .update(Constants.DATE_LAST_EDITED, calendar.time)
+    }
+
     private fun updateListWish(list: ListWish) {
         val dateCreated = Date(list.dateCreated)
         val dateEdited = Date(list.lastEdited)
@@ -175,7 +216,26 @@ object ListWishRepository {
             Constants.DATE_LAST_EDITED to dateEdited
         )
 
-        FirestoreAPI.getListWish().document(list.id)
+        getInstance().document(list.id)
             .set(data)
+    }
+
+    fun deleteLists(lists: MutableList<ListWish>) {
+        for (list in lists) {
+            for (product in list.listProducts) {
+                getInstanceProductsListsWish()
+                    .document(product.id)
+                    .delete()
+            }
+        }
+        deleteData(lists)
+    }
+
+    private fun deleteData(lists: MutableList<ListWish>) {
+        for (list in lists) {
+            getInstance()
+                .document(list.id)
+                .delete()
+        }
     }
 }

@@ -39,7 +39,7 @@
     <string name="btn_new_lista">Crear Lista de compras</string>
     <string name="btn_new_product">Agregar Producto</string>
     <string name="btn_storage">Inventario</string>
-    <string name="msg_sync">Sincronizando con servidor</string>
+    <string name="msg_sync">Sincronizando cotización actual</string>
     <string name="msg_sync_ok">Sincronización exitosa</string>
     <string name="msg_sync_error">Error al sincronizar</string>
 

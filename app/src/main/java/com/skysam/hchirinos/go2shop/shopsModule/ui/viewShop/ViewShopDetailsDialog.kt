@@ -17,10 +17,10 @@ import java.util.*
 /**
  * Created by Hector Chirinos (Home) on 30/3/2021.
  */
-class ViewShopItem(private val shop: Shop): DialogFragment() {
+class ViewShopDetailsDialog(private val shop: Shop): DialogFragment() {
     private var _binding: DialogViewShopBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: ViewShopItemAdapter
+    private lateinit var adapter: ViewShopDetailsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class ViewShopItem(private val shop: Shop): DialogFragment() {
         binding.tvNameList.text = shop.name
         binding.tvDate.text = DateFormat.getDateInstance().format(Date(shop.dateCreated))
         binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(shop.total))
-        adapter = ViewShopItemAdapter(shop.listProducts)
+        adapter = ViewShopDetailsAdapter(shop.listProducts.sortedWith(compareBy { it.name }).toMutableList())
         binding.rvList.adapter = adapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.progressBar.visibility = View.GONE

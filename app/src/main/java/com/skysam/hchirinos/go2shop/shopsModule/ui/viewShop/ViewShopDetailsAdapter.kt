@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
@@ -15,19 +14,19 @@ import java.text.NumberFormat
 /**
  * Created by Hector Chirinos (Home) on 30/3/2021.
  */
-class ViewShopItemAdapter(private val products: MutableList<ProductsToListModel>): RecyclerView.Adapter<ViewShopItemAdapter.ViewHolder>() {
+class ViewShopDetailsAdapter(private val products: MutableList<ProductsToListModel>): RecyclerView.Adapter<ViewShopDetailsAdapter.ViewHolder>() {
     private lateinit var context: Context
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewShopItemAdapter.ViewHolder {
+    ): ViewShopDetailsAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_product_list, parent, false)
         context = parent.context
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewShopItemAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewShopDetailsAdapter.ViewHolder, position: Int) {
         val item = products[position]
         holder.name.text = item.name
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.price))

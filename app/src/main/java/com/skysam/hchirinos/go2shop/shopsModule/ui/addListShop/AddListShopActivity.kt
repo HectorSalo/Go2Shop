@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.go2shop.shopsModule.ui
+package com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

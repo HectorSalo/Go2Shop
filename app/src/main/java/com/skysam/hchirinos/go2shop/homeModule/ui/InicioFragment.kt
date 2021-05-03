@@ -15,15 +15,17 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
-import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
 import com.skysam.hchirinos.go2shop.initModule.ui.InitActivity
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
-import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
+import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopActivity
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
+import java.text.DateFormat
+import java.text.NumberFormat
+import java.util.*
 
 class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
@@ -51,22 +53,6 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val state = SharedPreferenceBD.getSyncState(AuthAPI.getCurrenUser()!!.uid)
-        if (AuthAPI.getCurrenUser() != null && state) {
-            syncServer()
-            SharedPreferenceBD.saveSyncState(AuthAPI.getCurrenUser()!!.uid, false)
-        }
-        /*mainViewModel.listFlow.observe(viewLifecycleOwner, { shop->
-            if (!shop.isNullOrEmpty()) {
-                val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
-                val ammount = NumberFormat.getInstance().format(shop[0].total)
-                binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
-                binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
-                return@observe
-            }
-            binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
-            binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
-        })*/
         binding.btnNewShop.setOnClickListener {
            requireActivity().startActivity(Intent(requireContext(),
                AddListShopActivity::class.java))
@@ -114,6 +100,17 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
     }
 
     private fun loadViewModels() {
+        viewModel.shops.observe(viewLifecycleOwner, { shop->
+            if (!shop.isNullOrEmpty()) {
+                val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
+                val ammount = NumberFormat.getInstance().format(shop[0].total)
+                binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
+                binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
+                return@observe
+            }
+            binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
+            binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
+        })
         viewModel.products.observe(viewLifecycleOwner, {
             if (_binding != null) {
                 products.clear()
