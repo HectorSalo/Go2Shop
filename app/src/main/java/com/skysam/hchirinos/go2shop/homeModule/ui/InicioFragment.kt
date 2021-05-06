@@ -6,6 +6,7 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.NavHostFragment
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -66,15 +67,8 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
             addProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnInventory.setOnClickListener {
-            val builder = AlertDialog.Builder(requireActivity())
-            builder.setTitle(getString(R.string.title_new_features))
-                    .setMessage(getString(R.string.msg_new_features))
-                    .setIcon(R.drawable.ic_new_features_24)
-                    .setPositiveButton(R.string.btn_accept) { _, _ ->
-                    }
-                    .show()
-            /*NavHostFragment.findNavController(this)
-                .navigate(R.id.action_nav_home_to_storageFragment)*/
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.action_nav_home_to_storageFragment)
         }
         loadViewModels()
     }

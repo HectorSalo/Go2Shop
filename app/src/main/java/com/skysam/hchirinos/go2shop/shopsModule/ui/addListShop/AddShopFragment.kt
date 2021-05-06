@@ -17,6 +17,7 @@ import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
+import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
@@ -36,7 +37,8 @@ class AddShopFragment : Fragment(),
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<ProductsToShopModel> = mutableListOf()
     private var productsToShop: MutableList<ProductsToListModel> = mutableListOf()
-    private var productsToStorage: MutableList<ProductsToListModel> = mutableListOf()
+    private var productsToStorage: MutableList<StorageModel> = mutableListOf()
+    private var productsStoraged: MutableList<StorageModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
     private lateinit var addShopAdapter: AddShopAdapter
     private lateinit var nameList: String
@@ -99,11 +101,17 @@ class AddShopFragment : Fragment(),
         viewModel.rateChange.observe(viewLifecycleOwner, {
             rateChange = it
         })
-        viewModel.productsStoraged.observe(viewLifecycleOwner, {
+        viewModel.allProductsCreated.observe(viewLifecycleOwner, {
             if (_binding != null) {
                 productsFromDB.clear()
                 productsFromDB.addAll(it)
                 fillListProductsDB(productsFromDB)
+            }
+        })
+        viewModel.productsStoraged.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                productsStoraged.clear()
+                productsStoraged.addAll(it)
             }
         })
         viewModel.allProducts.observe(viewLifecycleOwner, {
@@ -325,40 +333,34 @@ class AddShopFragment : Fragment(),
                 rateChange
         )
         viewModel.saveShop(listToSend)
+        viewModel.saveProductsToStorage(productsToStorage)
         Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()
         requireActivity().finish()
     }
 
     override fun onClickAddToStorage(product: ProductsToShopModel) {
-        val productModelSelected = ProductsToListModel(
+        val calendar = Calendar.getInstance()
+        val productToStorage = StorageModel(
             product.id,
             product.name,
             product.unit,
             product.userId,
-            Constants.LIST_ID,
-            product.price,
+            product.quantity,
+            calendar.time,
             product.quantity
         )
-        productsToStorage.add(productModelSelected)
+        productsToStorage.add(productToStorage)
     }
 
     override fun onClickRemoveToStorage(product: ProductsToShopModel) {
-        var productModelSelected: ProductsToListModel? = null
+        var position = -1
         for (i in productsToStorage.indices) {
             if (productsToStorage[i].id == product.id) {
-                productModelSelected = ProductsToListModel(
-                    product.id,
-                    product.name,
-                    product.unit,
-                    product.userId,
-                    Constants.LIST_ID,
-                    product.price,
-                    product.quantity
-                )
+                position = i
             }
         }
-        if (productModelSelected != null) {
-            productsToShop.remove(productModelSelected)
+        if (position > 0) {
+            productsToStorage.remove(productsToStorage[position])
         }
     }
 }

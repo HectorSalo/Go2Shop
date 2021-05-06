@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.database.repositories.ListWishRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ProductsRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ShopRepository
+import com.skysam.hchirinos.go2shop.database.repositories.StorageRepository
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
@@ -18,6 +20,7 @@ class MainViewModel: ViewModel() {
     val products: LiveData<List<Product>> = ProductsRepository.getProducts().asLiveData()
     val listsWish: LiveData<List<ListWish>> = ListWishRepository.getListsWish().asLiveData()
     val shops: LiveData<List<Shop>> = ShopRepository.getShops().asLiveData()
+    val productsFromStorage: LiveData<List<StorageModel>> = StorageRepository.getProductsFromStorage().asLiveData()
 
     fun addProduct(product: Product) {
         ProductsRepository.addProduct(product)

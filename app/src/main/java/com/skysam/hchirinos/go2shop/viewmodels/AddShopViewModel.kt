@@ -3,10 +3,12 @@ package com.skysam.hchirinos.go2shop.viewmodels
 import androidx.lifecycle.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
+import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.repositories.ListWishRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ProductsRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ShopRepository
+import com.skysam.hchirinos.go2shop.database.repositories.StorageRepository
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
@@ -41,7 +43,8 @@ class AddShopViewModel: ViewModel() {
 
 
     //AddShop
-    val productsStoraged: LiveData<List<Product>> = ProductsRepository.getProducts().asLiveData()
+    val allProductsCreated: LiveData<List<Product>> = ProductsRepository.getProducts().asLiveData()
+    val productsStoraged: LiveData<List<StorageModel>> = StorageRepository.getProductsFromStorage().asLiveData()
 
     private val _totalPrice = MutableLiveData<Double>().apply {
         value = 0.0
@@ -98,5 +101,18 @@ class AddShopViewModel: ViewModel() {
 
     fun saveShop(shop: Shop) {
         ShopRepository.saveShop(shop)
+    }
+
+    fun saveProductsToStorage(products: MutableList<StorageModel>) {
+        for (productToSave in products) {
+            for (product in productsStoraged.value!!) {
+                if (productToSave.name == product.name) {
+
+                } else {
+
+                }
+            }
+        }
+
     }
 }

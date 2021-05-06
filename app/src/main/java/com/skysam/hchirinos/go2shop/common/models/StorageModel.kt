@@ -12,5 +12,6 @@ data class StorageModel(
     val userId: String,
     var quantityFromShop: Double,
     var dateShop: Date,
-    var quantityRemaining: Double
+    var quantityRemaining: Double,
+    var isExpanded: Boolean = false,
 )
