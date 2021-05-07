@@ -6,9 +6,9 @@ import java.util.*
  * Created by Hector Chirinos on 03/05/2021.
  */
 data class StorageModel(
-    val id: String,
+    var id: String,
     val name: String,
-    val unit: String,
+    var unit: String,
     val userId: String,
     var quantityFromShop: Double,
     var dateShop: Date,

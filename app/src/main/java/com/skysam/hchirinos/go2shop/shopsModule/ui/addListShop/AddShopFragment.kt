@@ -299,6 +299,12 @@ class AddShopFragment : Fragment(),
         if (productSelected.isCheckedToShop) {
             viewModel.updatedPrice(priceBeforeUpdated, product.price)
         }
+        for (productSto in productsToStorage) {
+            if (productSto.id == productModel.id) {
+                productSto.unit = productModel.unit
+                productSto.quantityFromShop = productModel.quantity
+            }
+        }
     }
 
     override fun onClick() {

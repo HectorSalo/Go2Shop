@@ -56,20 +56,28 @@ object StorageRepository {
         for (product in products) {
             val data = hashMapOf(
                 Constants.NAME to product.name,
+                Constants.UNIT to product.unit,
                 Constants.USER_ID to product.userId,
-                Constants.TOTAL_LIST_WISH to shop.total,
-                Constants.DATE_CREATED to date,
-                Constants.RATE_CHANGE to shop.rateChange
+                Constants.QUANTITY to product.quantityFromShop,
+                Constants.DATE_CREATED to product.dateShop,
+                Constants.QUANTITY_REMAINING to product.quantityRemaining
             )
-            ShopRepository.getInstance()
+            getInstance()
                 .add(data)
-                .addOnSuccessListener { doc ->
-                    ShopRepository.saveProductsInList(shop, doc.id)
-                }
         }
     }
 
     fun updateProductsToStorage(products: MutableList<StorageModel>) {
-
+        for (product in products) {
+            val data: Map<String, Any> = hashMapOf(
+                Constants.UNIT to product.unit,
+                Constants.QUANTITY to product.quantityFromShop,
+                Constants.DATE_CREATED to product.dateShop,
+                Constants.QUANTITY_REMAINING to product.quantityRemaining
+            )
+            getInstance()
+                .document(product.id)
+                .update(data)
+        }
     }
 }

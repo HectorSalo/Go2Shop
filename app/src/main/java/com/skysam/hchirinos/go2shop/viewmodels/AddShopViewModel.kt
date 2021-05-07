@@ -104,15 +104,25 @@ class AddShopViewModel: ViewModel() {
     }
 
     fun saveProductsToStorage(products: MutableList<StorageModel>) {
-        for (productToSave in products) {
+        val productsToSave: MutableList<StorageModel> = mutableListOf()
+        val productsToUpdate: MutableList<StorageModel> = mutableListOf()
+        for (productToStorage in products) {
+            var exists = false
             for (product in productsStoraged.value!!) {
-                if (productToSave.name == product.name) {
-
-                } else {
-
+                if (productToStorage.name == product.name) {
+                    exists = true
+                    productToStorage.id = product.id
+                    val quantity = productToStorage.quantityFromShop + product.quantityRemaining
+                    productToStorage.quantityRemaining = quantity
                 }
             }
+            if (exists) {
+                productsToUpdate.add(productToStorage)
+            } else {
+                productsToSave.add(productToStorage)
+            }
         }
-
+        StorageRepository.saveProductsToStorge(productsToSave)
+        StorageRepository.updateProductsToStorage(productsToUpdate)
     }
 }
