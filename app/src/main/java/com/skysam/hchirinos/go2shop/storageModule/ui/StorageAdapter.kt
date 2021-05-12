@@ -30,13 +30,19 @@ class StorageAdapter(private var products: MutableList<StorageModel>):
             item.quantityRemaining.toString(), item.unit)
         holder.quantityShop.text = context.getString(R.string.text_products_from_shop,
             item.quantityFromShop.toString(), item.unit)
-        holder.date.text = DateFormat.getInstance().format(item.dateShop)
+        holder.date.text = context.getString(R.string.text_date_last_shop,
+            DateFormat.getInstance().format(item.dateShop))
         if (item.isExpanded) {
             holder.btnDetails.setImageResource(R.drawable.ic_close_view_details_24)
             holder.expandable.visibility = View.VISIBLE
         } else {
             holder.btnDetails.setImageResource(R.drawable.ic_view_details_24)
             holder.expandable.visibility = View.GONE
+        }
+
+        holder.btnDetails.setOnClickListener {
+            item.isExpanded = !item.isExpanded
+            notifyItemChanged(position)
         }
     }
 

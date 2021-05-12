@@ -25,7 +25,7 @@ object StorageRepository {
         return callbackFlow {
             val request = getInstance()
                 .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
-                .orderBy(Constants.NAME, Query.Direction.DESCENDING)
+                .orderBy(Constants.NAME, Query.Direction.ASCENDING)
                 .addSnapshotListener(MetadataChanges.INCLUDE) { value, error ->
                     val products: MutableList<StorageModel> = mutableListOf()
                     if (error != null) {

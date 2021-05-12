@@ -89,6 +89,7 @@
     <string name="btn_remove">Descontar producto</string>
     <string name="text_products_remaining">Restante: %1$s %2$s</string>
     <string name="text_products_from_shop">Última cantidad comprada: %1$s %2$s</string>
+    <string name="text_date_last_shop">Fecha de última compra: %1$s</string>
 
     <!--Dialog Edit Products from Lists-->
     <string name="title_edit_producto_dialog">Editar %1$s</string>

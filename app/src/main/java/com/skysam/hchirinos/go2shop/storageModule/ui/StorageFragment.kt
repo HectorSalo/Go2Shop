@@ -7,6 +7,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.databinding.FragmentStorageBinding
@@ -37,6 +39,7 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter = StorageAdapter(products)
         binding.rvProducts.setHasFixedSize(true)
         binding.rvProducts.adapter = adapter
+        binding.rvProducts.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
 
         viewModel.productsFromStorage.observe(viewLifecycleOwner, {
             if (_binding != null) {

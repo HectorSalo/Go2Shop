@@ -99,10 +99,12 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
                 listToStorage.add(item.name)
                 item.isCheckedToStorage = true
                 holder.switchStorage.text = context.getString(R.string.text_switch_on_to_storage_product)
+                onClickToStorage.onClickAddToStorage(item)
             } else {
                 listToStorage.remove(item.name)
                 item.isCheckedToStorage = false
                 holder.switchStorage.text = context.getString(R.string.text_switch_off_to_storage_product)
+                onClickToStorage.onClickRemoveToStorage(item)
             }
         }
 
