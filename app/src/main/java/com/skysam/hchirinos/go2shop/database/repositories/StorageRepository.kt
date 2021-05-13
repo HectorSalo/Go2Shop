@@ -80,4 +80,8 @@ object StorageRepository {
                 .update(data)
         }
     }
+
+    fun removeProductToStorage(product: StorageModel) {
+
+    }
 }

@@ -203,7 +203,7 @@ class AddShopFragment : Fragment(),
     override fun onClickEdit(position: Int) {
         if (actived) {
             val productSelected = productsToAdd[position]
-            priceBeforeUpdated = productSelected.price
+            priceBeforeUpdated = productSelected.price * productSelected.quantity
             val productToUpdated = Product(
                 productSelected.id,
                 productSelected.name,
@@ -297,7 +297,8 @@ class AddShopFragment : Fragment(),
         )
         viewModel.updateProductToList(productModel, position)
         if (productSelected.isCheckedToShop) {
-            viewModel.updatedPrice(priceBeforeUpdated, product.price)
+            val priceNew = product.price * product.quantity
+            viewModel.updatedPrice(priceBeforeUpdated, priceNew)
         }
         for (productSto in productsToStorage) {
             if (productSto.id == productModel.id) {
