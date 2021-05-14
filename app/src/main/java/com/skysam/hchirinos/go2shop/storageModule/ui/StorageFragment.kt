@@ -15,7 +15,7 @@ import com.skysam.hchirinos.go2shop.databinding.FragmentStorageBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.util.*
 
-class StorageFragment : Fragment(), SearchView.OnQueryTextListener {
+class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemoveQuantity {
     private var _binding: FragmentStorageBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: StorageAdapter
@@ -36,7 +36,7 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = StorageAdapter(products)
+        adapter = StorageAdapter(products, this)
         binding.rvProducts.setHasFixedSize(true)
         binding.rvProducts.adapter = adapter
         binding.rvProducts.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
@@ -98,6 +98,14 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener {
             adapter.updateList(listSearch)
         }
         return false
+    }
+
+    override fun remove(product: StorageModel) {
+        if (product.quantityRemaining > 0) {
+            viewModel.removeUnitFromProductToStorage(product)
+        } else {
+            viewModel.deleteProductToStorage(product)
+        }
     }
 
 }

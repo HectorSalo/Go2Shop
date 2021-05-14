@@ -46,4 +46,12 @@ class MainViewModel: ViewModel() {
     fun deleteListsWish(lists: MutableList<ListWish>) {
         ListWishRepository.deleteLists(lists)
     }
+
+    fun removeUnitFromProductToStorage(product: StorageModel) {
+        StorageRepository.removeUnitFromProductToStorage(product)
+    }
+
+    fun deleteProductToStorage(product: StorageModel) {
+        StorageRepository.deleteProductToStorage(product)
+    }
 }

@@ -13,7 +13,8 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import java.text.DateFormat
 
-class StorageAdapter(private var products: MutableList<StorageModel>):
+class StorageAdapter(private var products: MutableList<StorageModel>,
+                     private val onClickRemoveQuantity: OnClickRemoveQuantity):
     RecyclerView.Adapter<StorageAdapter.ViewHolder>() {
     private lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StorageAdapter.ViewHolder {
@@ -43,6 +44,11 @@ class StorageAdapter(private var products: MutableList<StorageModel>):
         holder.btnDetails.setOnClickListener {
             item.isExpanded = !item.isExpanded
             notifyItemChanged(position)
+        }
+
+        holder.btnRemove.setOnClickListener {
+            item.quantityRemaining = item.quantityRemaining - 1
+            onClickRemoveQuantity.remove(item)
         }
     }
 
