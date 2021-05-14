@@ -40,7 +40,7 @@ object ShopRepository {
 
                    val allProductsShop: MutableList<ProductsToListModel> = mutableListOf()
                    getInstanceProductsShop()
-                       .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+                       .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()?.uid)
                        .get()
                        .addOnSuccessListener { result ->
                            for (document in result) {

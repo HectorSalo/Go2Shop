@@ -80,4 +80,16 @@ object StorageRepository {
                 .update(data)
         }
     }
+
+    fun removeUnitFromProductToStorage(product: StorageModel) {
+        getInstance()
+            .document(product.id)
+            .update(Constants.QUANTITY_REMAINING, product.quantityRemaining)
+    }
+
+    fun deleteProductToStorage(product: StorageModel) {
+        getInstance()
+            .document(product.id)
+            .delete()
+    }
 }
