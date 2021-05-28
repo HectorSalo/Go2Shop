@@ -13,6 +13,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         setHasOptionsMenu(true)
 
+        val deleteShops: PreferenceScreen = findPreference("deleteShops")!!
+        deleteShops.setOnPreferenceClickListener {
+            val deleteShopsDialog = DeleteShopsDialog()
+            deleteShopsDialog.show(requireActivity().supportFragmentManager, tag)
+            true
+        }
+
         val aboutPreference: PreferenceScreen = findPreference("about")!!
         aboutPreference.setOnPreferenceClickListener {
             NavHostFragment.findNavController(this)

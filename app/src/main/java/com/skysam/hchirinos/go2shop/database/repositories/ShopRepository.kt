@@ -126,4 +126,8 @@ object ShopRepository {
             .document(id)
             .update(Constants.DATE_CREATED, calendar.time)
     }
+
+    private fun deleteShops() {
+
+    }
 }

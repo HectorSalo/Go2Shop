@@ -12,4 +12,16 @@
         <item>Paquete(s)</item>
         <item>Unidad(es)</item>
     </string-array>
+
+    <string-array name="themes_entries">
+        <item>Definido por sistema</item>
+        <item>Tema oscuro</item>
+        <item>Tema claro</item>
+    </string-array>
+
+    <string-array name="themes_values">
+        <item>system</item>
+        <item>dark</item>
+        <item>ligth</item>
+    </string-array>
 </resources>

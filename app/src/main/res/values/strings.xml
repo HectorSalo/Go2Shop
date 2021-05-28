@@ -109,7 +109,11 @@
 
     <!--Ajustes-->
     <string name="nav_ajustes">Ajustes</string>
+    <string name="title_profile">Personal</string>
+    <string name="title_theme">Tema</string>
+    <string name="title_delete_shops">Borrar historial de compras</string>
     <string name="text_about">Información de la App</string>
+    <string name="message_dialog_delete_shops">Se eliminará el historial completo de todas las compras realizadas. Esta acción no se puede deshacer.\n¿Desea eliminarla?</string>
     <string name="about_title">Desarrollado por&#8230;</string>
 
     <!--New Features-->

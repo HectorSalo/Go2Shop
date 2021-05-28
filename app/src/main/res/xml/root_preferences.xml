@@ -1,18 +1,20 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/texto_vacio"
-        app:isPreferenceVisible="false">
+    <PreferenceCategory app:title="@string/title_profile">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/texto_vacio"
-            app:useSimpleSummaryProvider="true" />
+        <PreferenceScreen
+            app:key="deleteShops"
+            app:title="@string/title_delete_shops"
+            app:icon="@drawable/ic_delete_forever_24"/>
 
         <ListPreference
-            app:defaultValue="reply"
-            app:key="reply"
-            app:title="@string/texto_vacio"
-            app:useSimpleSummaryProvider="true" />
+            app:entries="@array/themes_entries"
+            app:entryValues="@array/themes_values"
+            app:defaultValue="system"
+            app:key="theme"
+            app:title="@string/title_theme"
+            app:useSimpleSummaryProvider="true"
+            app:icon="@drawable/ic_theme_24"/>
 
     </PreferenceCategory>
 
