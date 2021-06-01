@@ -5,6 +5,10 @@ package com.skysam.hchirinos.go2shop.common
  */
 object Constants {
     const val SHARED_VALUE_WEB = "valueWeb"
+    const val PREFERENCE_THEME = "them"
+    const val PREFERENCE_THEME_DARK = "dark"
+    const val PREFERENCE_THEME_LIGTH = "ligth"
+    const val PREFERENCE_THEME_SYSTEM = "system"
 
     const val PRODUCTOS = "productos"
     const val LIST_WISH = "listasPendientes"

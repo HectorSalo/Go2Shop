@@ -127,7 +127,25 @@ object ShopRepository {
             .update(Constants.DATE_CREATED, calendar.time)
     }
 
-    private fun deleteShops() {
+    fun deleteShops() {
+        getInstanceProductsShop()
+            .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()?.uid)
+            .get()
+            .addOnSuccessListener { result->
+                for (document in result) {
+                    getInstanceProductsShop().document(document.id)
+                        .delete()
+                }
 
+                getInstance()
+                    .whereEqualTo(Constants.USER_ID, AuthAPI.getCurrenUser()!!.uid)
+                    .get()
+                    .addOnSuccessListener { result2->
+                        for (document in result2) {
+                            getInstance().document(document.id)
+                                .delete()
+                        }
+                    }
+            }
     }
 }
