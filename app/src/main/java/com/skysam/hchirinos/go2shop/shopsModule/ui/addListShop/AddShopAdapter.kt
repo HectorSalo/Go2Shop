@@ -58,8 +58,10 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         holder.switchShop.isChecked = item.isCheckedToShop
         if (item.isCheckedToShop) {
             holder.switchShop.text = context.getString(R.string.text_switch_on_shop)
+            holder.switchStorage.isEnabled = true
         } else {
             holder.switchShop.text = context.getString(R.string.text_switch_off_shop_product)
+            holder.switchStorage.isEnabled = false
         }
 
         holder.switchShop.setOnClickListener {

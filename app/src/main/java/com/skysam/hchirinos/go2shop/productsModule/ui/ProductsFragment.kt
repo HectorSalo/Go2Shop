@@ -228,6 +228,12 @@ class ProductsFragment : Fragment(), OnClickList, UpdatedProduct, SearchView.OnQ
                     listSearch.add(product)
                 }
             }
+            if (listSearch.isEmpty()) {
+                binding.lottieAnimationView.visibility = View.VISIBLE
+                binding.lottieAnimationView.playAnimation()
+            } else {
+                binding.lottieAnimationView.visibility = View.GONE
+            }
             adapterProduct.updateList(listSearch)
         }
         return false
