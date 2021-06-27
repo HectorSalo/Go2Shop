@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.skysam.hchirinos.go2shop.R
@@ -59,9 +60,13 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         if (item.isCheckedToShop) {
             holder.switchShop.text = context.getString(R.string.text_switch_on_shop)
             holder.switchStorage.isEnabled = true
+            holder.lottie.progress = 0.5f
         } else {
             holder.switchShop.text = context.getString(R.string.text_switch_off_shop_product)
             holder.switchStorage.isEnabled = false
+            holder.lottie.progress = 0.0f
+            holder.lottie.cancelAnimation()
+            holder.lottie.removeAllUpdateListeners()
         }
 
         holder.switchShop.setOnClickListener {
@@ -74,6 +79,12 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
                     holder.switchShop.text = context.getString(R.string.text_switch_on_shop)
                     item.isCheckedToShop = true
                     holder.switchStorage.isEnabled = true
+                    holder.lottie.addAnimatorUpdateListener { value->
+                        if ((value.animatedValue as Float * 100).toInt() == 50) {
+                            holder.lottie.cancelAnimation()
+                        }
+                    }
+                    holder.lottie.playAnimation()
                 }
             } else {
                 holder.switchShop.text = context.getString(R.string.text_switch_off_shop_product)
@@ -82,6 +93,8 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
                 holder.switchStorage.isChecked = false
                 holder.switchStorage.text = context.getString(R.string.text_switch_off_to_storage_product)
                 item.isCheckedToStorage = false
+                holder.lottie.resumeAnimation()
+                holder.lottie.removeAllUpdateListeners()
                 if (listToStorage.contains(item.name)){
                     listToStorage.remove(item.name)
                 }
@@ -123,6 +136,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         val switchShop: SwitchMaterial = view.findViewById(R.id.switch_shop)
         val switchStorage: SwitchMaterial = view.findViewById(R.id.switch_storage)
         val card: MaterialCardView = view.findViewById(R.id.card)
+        val lottie: LottieAnimationView = view.findViewById(R.id.lottieAnimationView)
     }
 
     fun updateList(newList: MutableList<ProductsToShopModel>) {

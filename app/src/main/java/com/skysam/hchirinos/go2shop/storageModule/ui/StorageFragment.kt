@@ -95,6 +95,12 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemov
                     listSearch.add(product)
                 }
             }
+            if (listSearch.isEmpty()) {
+                binding.lottieAnimationView.visibility = View.VISIBLE
+                binding.lottieAnimationView.playAnimation()
+            } else {
+                binding.lottieAnimationView.visibility = View.GONE
+            }
             adapter.updateList(listSearch)
         }
         return false

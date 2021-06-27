@@ -89,6 +89,12 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
                     listSearch.add(list)
                 }
             }
+            if (listSearch.isEmpty()) {
+                binding.lottieAnimationView.visibility = View.VISIBLE
+                binding.lottieAnimationView.playAnimation()
+            } else {
+                binding.lottieAnimationView.visibility = View.GONE
+            }
             adapter.updateList(listSearch)
         }
         return false

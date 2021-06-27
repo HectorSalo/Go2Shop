@@ -233,6 +233,12 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
                     listSearch.add(list)
                 }
             }
+            if (listSearch.isEmpty()) {
+                binding.lottieAnimationView.visibility = View.VISIBLE
+                binding.lottieAnimationView.playAnimation()
+            } else {
+                binding.lottieAnimationView.visibility = View.GONE
+            }
             adapter.updateList(listSearch)
         }
         return false
