@@ -16,7 +16,6 @@ import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentProductsBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
-import java.util.*
 
 class ProductsFragment : Fragment(), OnClickList, UpdatedProduct, SearchView.OnQueryTextListener {
     private var _binding: FragmentProductsBinding? = null
@@ -220,11 +219,11 @@ class ProductsFragment : Fragment(), OnClickList, UpdatedProduct, SearchView.OnQ
         if (productsList.isEmpty()) {
             Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
         } else {
-            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            val userInput: String = newText!!.lowercase()
             listSearch.clear()
 
             for (product in productsList) {
-                if (product.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (product.name.lowercase().contains(userInput)) {
                     listSearch.add(product)
                 }
             }

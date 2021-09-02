@@ -16,7 +16,9 @@ object Constants {
     const val STORAGE = "inventario"
     const val PRODUCTS_TO_LIST_WISH = "productsToListWish"
     const val PRODUCTS_TO_LIST_SHOP = "productsToShop"
+
     const val USERS = "users"
+    const val EMAIL = "email"
 
     const val NAME = "name"
     const val UNIT = "unit"

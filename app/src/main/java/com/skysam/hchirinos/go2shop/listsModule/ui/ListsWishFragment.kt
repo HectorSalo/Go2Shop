@@ -18,7 +18,6 @@ import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
-import java.util.*
 
 class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.OnQueryTextListener {
 
@@ -159,7 +158,7 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
             mode: androidx.appcompat.view.ActionMode?,
             menu: Menu?
         ): Boolean {
-            requireActivity().menuInflater.inflate(R.menu.contextual_action_bar_products, menu)
+            requireActivity().menuInflater.inflate(R.menu.contextual_action_bar_lists, menu)
             return true
         }
 
@@ -203,6 +202,9 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
                     }, 4500)
                     true
                 }
+                R.id.action_share -> {
+                    true
+                }
                 else -> false
             }
         }
@@ -225,11 +227,11 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
         if (listsWish.isEmpty()) {
             Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
         } else {
-            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            val userInput: String = newText!!.lowercase()
             listSearch.clear()
 
             for (list in listsWish) {
-                if (list.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (list.name.lowercase().contains(userInput)) {
                     listSearch.add(list)
                 }
             }
