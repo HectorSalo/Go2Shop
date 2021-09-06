@@ -102,6 +102,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/layout_new_shop_item"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

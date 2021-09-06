@@ -16,6 +16,7 @@ object Constants {
     const val STORAGE = "inventario"
     const val PRODUCTS_TO_LIST_WISH = "productsToListWish"
     const val PRODUCTS_TO_LIST_SHOP = "productsToShop"
+    const val LISTS_SHARED = "listsShared"
 
     const val USERS = "users"
     const val EMAIL = "email"
@@ -30,6 +31,8 @@ object Constants {
     const val DATE_LAST_EDITED = "dateLastEdited"
     const val RATE_CHANGE = "rateChange"
     const val QUANTITY_REMAINING = "quantityRemaining"
+    const val IS_SHARE = "isShare"
+    const val NAME_USER_SENDING = "nameUserSending"
 
     const val TOTAL_LIST_WISH = "totalListWish"
 }

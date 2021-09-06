@@ -63,4 +63,11 @@ class MainViewModel: ViewModel() {
         )
         UsersRepository.addUser(user)
     }
+
+    fun shareLists(user: User, lists: MutableList<ListWish>) {
+        for (list in lists) {
+            list.userId = user.id
+        }
+        ListWishRepository.addListWishSahre(lists)
+    }
 }

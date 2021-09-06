@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
@@ -31,6 +32,7 @@ class AddProductDialog(private val name: String?, private val productSaveFromLis
         val listUnits = listOf(*resources.getStringArray(R.array.units))
         val adapterUnits = ArrayAdapter(requireContext(), R.layout.layout_spinner, listUnits)
         binding.spinner.adapter = adapterUnits
+        binding.etName.doAfterTextChanged { binding.tfName.error = null }
 
         if (!name.isNullOrEmpty()) binding.etName.setText(name)
 

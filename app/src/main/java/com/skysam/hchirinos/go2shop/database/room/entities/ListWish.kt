@@ -14,10 +14,12 @@ import com.skysam.hchirinos.go2shop.database.room.ProductsConverter
 data class ListWish(
     @PrimaryKey val id: String,
     val name: String,
-    val userId: String,
+    var userId: String,
     @TypeConverters(ProductsConverter::class)
     val listProducts: MutableList<ProductsToListModel>,
     val total: Double,
     val dateCreated: Long,
-    val lastEdited: Long
+    val lastEdited: Long,
+    var isShare: Boolean = false,
+    var nameUserShared: String? = null
 )
