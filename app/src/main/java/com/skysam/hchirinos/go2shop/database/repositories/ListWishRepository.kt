@@ -63,7 +63,12 @@ object ListWishRepository {
                                         productsThisList.add(product)
                                     }
                                 }
-
+                                var isShare = false
+                                var nameShare: String? = null
+                                if (doc.getBoolean(Constants.IS_SHARE) != null) {
+                                    isShare = true
+                                    nameShare = doc.getString(Constants.NAME_USER_SENDING)!!
+                                }
                                 val dateCreated = doc.getDate(Constants.DATE_CREATED)!!.time
                                 val dateEdited = doc.getDate(Constants.DATE_LAST_EDITED)!!.time
                                 val listWish = ListWish(
@@ -73,7 +78,9 @@ object ListWishRepository {
                                     productsThisList,
                                     doc.getDouble(Constants.TOTAL_LIST_WISH)!!,
                                     dateCreated,
-                                    dateEdited
+                                    dateEdited,
+                                    isShare,
+                                    nameShare
                                 )
                                 listsWish.add(listWish)
                             }
@@ -236,6 +243,26 @@ object ListWishRepository {
             getInstance()
                 .document(list.id)
                 .delete()
+        }
+    }
+
+    fun addListWishSahre(lists: MutableList<ListWish>) {
+        for (list in lists) {
+            val date = Date(list.dateCreated)
+            val data = hashMapOf(
+                Constants.NAME to list.name,
+                Constants.USER_ID to list.userId,
+                Constants.TOTAL_LIST_WISH to list.total,
+                Constants.DATE_CREATED to date,
+                Constants.DATE_LAST_EDITED to date,
+                Constants.IS_SHARE to true,
+                Constants.NAME_USER_SENDING to AuthAPI.getCurrenUser()?.displayName
+            )
+            getInstance()
+                .add(data)
+                .addOnSuccessListener { doc ->
+                    saveProductsInList(list, doc.id)
+                }
         }
     }
 }

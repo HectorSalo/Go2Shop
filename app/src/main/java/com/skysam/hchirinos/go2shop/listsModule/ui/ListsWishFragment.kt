@@ -1,10 +1,12 @@
 package com.skysam.hchirinos.go2shop.listsModule.ui
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -14,11 +16,12 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedListWish
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.common.models.User
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
-import java.util.*
 
 class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.OnQueryTextListener {
 
@@ -30,8 +33,10 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
     private var listsWish: MutableList<ListWish> = mutableListOf()
     private var listToDelete: MutableList<ListWish> = mutableListOf()
     private var listToRestored: MutableList<ListWish> = mutableListOf()
+    private var listToSend = mutableListOf<ListWish>()
     private var listSearch: MutableList<ListWish> = mutableListOf()
     private var positionsToDelete: MutableList<Int> = mutableListOf()
+    private val users = mutableListOf<User>()
     var actionMode: androidx.appcompat.view.ActionMode? = null
     private var deleting = false
     var actionModeActived = false
@@ -93,6 +98,12 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
                     binding.rvList.visibility = View.GONE
                 }
                 binding.progressBar.visibility = View.GONE
+            }
+        })
+        viewModel.users.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                users.clear()
+                users.addAll(it)
             }
         })
     }
@@ -159,7 +170,7 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
             mode: androidx.appcompat.view.ActionMode?,
             menu: Menu?
         ): Boolean {
-            requireActivity().menuInflater.inflate(R.menu.contextual_action_bar_products, menu)
+            requireActivity().menuInflater.inflate(R.menu.contextual_action_bar_lists, menu)
             return true
         }
 
@@ -203,6 +214,11 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
                     }, 4500)
                     true
                 }
+                R.id.action_share -> {
+                    listToSend.addAll(listToDelete)
+                    selectUserToShare()
+                    true
+                }
                 else -> false
             }
         }
@@ -225,11 +241,11 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
         if (listsWish.isEmpty()) {
             Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
         } else {
-            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            val userInput: String = newText!!.lowercase()
             listSearch.clear()
 
             for (list in listsWish) {
-                if (list.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (list.name.lowercase().contains(userInput)) {
                     listSearch.add(list)
                 }
             }
@@ -242,5 +258,37 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
             adapter.updateList(listSearch)
         }
         return false
+    }
+
+    private fun selectUserToShare() {
+        val arrayEmails = mutableListOf<String>()
+        for (user in users) {
+            if (user.id != AuthAPI.getCurrenUser()?.uid) {
+                arrayEmails.add(user.email)
+            }
+        }
+        var userSelected: User? = null
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(getString(R.string.title_dialog_share))
+            .setSingleChoiceItems(arrayEmails.toTypedArray(), -1) { _, i ->
+                userSelected = users[i]
+            }
+            .setPositiveButton(R.string.btn_share, null)
+            .setNegativeButton(R.string.btn_cancel, null)
+
+        val dialog = builder.create()
+        dialog.show()
+        val buttonPositive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        buttonPositive.setOnClickListener {
+            if (userSelected != null) {
+                viewModel.shareLists(userSelected!!, listToSend)
+                listToSend.clear()
+                Toast.makeText(requireContext(), getString(R.string.text_sharing_list), Toast.LENGTH_LONG).show()
+                actionMode?.finish()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.error_user_share_null), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

@@ -27,6 +27,7 @@
     <string name="msg_list_empty">Lista vacía</string>
     <string name="text_list_empty">No hay ítems en esta lista</string>
     <string name="btn_delete">Eliminar</string>
+    <string name="btn_share">Compartir</string>
     <string name="btn_undo">Deshacer</string>
     <string name="text_deleting">Eliminando&#8230;</string>
 
@@ -64,6 +65,10 @@
     <!--Fragment Listas-->
     <string name="nav_lists">Listas de compras</string>
     <string name="text_item_in_list">Ítem(s): %1$s</string>
+    <string name="title_dialog_share">Seleccione usuarios</string>
+    <string name="error_user_share_null">Debe seleccionar un usuario</string>
+    <string name="text_sharing_list">Enviando lista…</string>
+    <string name="text_shared_from">Enviado por: %1$s</string>
 
     <!--Dialog Add ListWish-->
     <string name="btn_add_product">Agregar producto</string>

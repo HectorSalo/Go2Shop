@@ -13,7 +13,6 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.databinding.FragmentStorageBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
-import java.util.*
 
 class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemoveQuantity {
     private var _binding: FragmentStorageBinding? = null
@@ -87,11 +86,11 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemov
         if (products.isEmpty()) {
             Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
         } else {
-            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            val userInput: String = newText!!.lowercase()
             listSearch.clear()
 
             for (product in products) {
-                if (product.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (product.name.lowercase().contains(userInput)) {
                     listSearch.add(product)
                 }
             }

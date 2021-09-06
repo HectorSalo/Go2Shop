@@ -110,6 +110,13 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
                 products.addAll(it)
             }
         })
+        viewModel.users.observe(viewLifecycleOwner, {
+            var isExists = false
+            for (user in it) {
+                if (user.id == AuthAPI.getCurrenUser()?.uid) isExists = true
+            }
+            if (!isExists) viewModel.addUser(AuthAPI.getCurrenUser()!!)
+        })
     }
 
     private fun signOut() {

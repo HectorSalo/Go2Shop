@@ -12,7 +12,6 @@ import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentHistoryBinding
 import com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopDetailsDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
-import java.util.*
 
 class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
 
@@ -81,11 +80,11 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
         if (listsShop.isEmpty()) {
             Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
         } else {
-            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            val userInput: String = newText!!.lowercase()
             listSearch.clear()
 
             for (list in listsShop) {
-                if (list.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (list.name.lowercase().contains(userInput)) {
                     listSearch.add(list)
                 }
             }
