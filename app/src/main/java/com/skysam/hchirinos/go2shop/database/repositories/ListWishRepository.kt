@@ -66,8 +66,8 @@ object ListWishRepository {
                                 var isShare = false
                                 var nameShare: String? = null
                                 if (doc.getBoolean(Constants.IS_SHARE) != null) {
-                                    isShare = true
-                                    nameShare = doc.getString(Constants.NAME_USER_SENDING)!!
+                                    isShare = doc.getBoolean(Constants.IS_SHARE)!!
+                                    nameShare = doc.getString(Constants.NAME_USER_SENDING)
                                 }
                                 val dateCreated = doc.getDate(Constants.DATE_CREATED)!!.time
                                 val dateEdited = doc.getDate(Constants.DATE_LAST_EDITED)!!.time
@@ -190,7 +190,7 @@ object ListWishRepository {
             val data = hashMapOf(
                 Constants.NAME to list.listProducts[i].name,
                 Constants.UNIT to list.listProducts[i].unit,
-                Constants.USER_ID to list.listProducts[i].userId,
+                Constants.USER_ID to list.userId,
                 Constants.LIST_ID to id,
                 Constants.PRICE to list.listProducts[i].price,
                 Constants.QUANTITY to list.listProducts[i].quantity
@@ -220,7 +220,9 @@ object ListWishRepository {
             Constants.USER_ID to list.userId,
             Constants.TOTAL_LIST_WISH to list.total,
             Constants.DATE_CREATED to dateCreated,
-            Constants.DATE_LAST_EDITED to dateEdited
+            Constants.DATE_LAST_EDITED to dateEdited,
+            Constants.IS_SHARE to list.isShare,
+            Constants.NAME_USER_SENDING to list.nameUserShared
         )
 
         getInstance().document(list.id)
@@ -246,12 +248,12 @@ object ListWishRepository {
         }
     }
 
-    fun addListWishSahre(lists: MutableList<ListWish>) {
+    fun addListWishSahre(userId: String, lists: MutableList<ListWish>) {
         for (list in lists) {
             val date = Date(list.dateCreated)
             val data = hashMapOf(
                 Constants.NAME to list.name,
-                Constants.USER_ID to list.userId,
+                Constants.USER_ID to userId,
                 Constants.TOTAL_LIST_WISH to list.total,
                 Constants.DATE_CREATED to date,
                 Constants.DATE_LAST_EDITED to date,
@@ -261,6 +263,7 @@ object ListWishRepository {
             getInstance()
                 .add(data)
                 .addOnSuccessListener { doc ->
+                    list.userId = userId
                     saveProductsInList(list, doc.id)
                 }
         }

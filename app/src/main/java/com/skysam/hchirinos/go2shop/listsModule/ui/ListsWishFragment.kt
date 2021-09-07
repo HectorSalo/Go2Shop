@@ -103,7 +103,11 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
         viewModel.users.observe(viewLifecycleOwner, {
             if (_binding != null) {
                 users.clear()
-                users.addAll(it)
+                for (user in it) {
+                    if (user.id != AuthAPI.getCurrenUser()?.uid) {
+                        users.add(user)
+                    }
+                }
             }
         })
     }
@@ -263,9 +267,7 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
     private fun selectUserToShare() {
         val arrayEmails = mutableListOf<String>()
         for (user in users) {
-            if (user.id != AuthAPI.getCurrenUser()?.uid) {
-                arrayEmails.add(user.email)
-            }
+            arrayEmails.add(user.email)
         }
         var userSelected: User? = null
         val builder = AlertDialog.Builder(requireActivity())

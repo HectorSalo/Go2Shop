@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,6 +16,7 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
@@ -62,6 +64,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.etNameList.setText(listWish.name)
+        binding.etNameList.doAfterTextChanged { binding.tfNameList.error = null }
         binding.tfSearchProducts.setStartIconOnClickListener {
             val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
             addProduct.show(requireActivity().supportFragmentManager, tag)
@@ -173,11 +176,13 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         listToSend = ListWish(
             listWish.id,
             nameList,
-            listWish.userId,
+            AuthAPI.getCurrenUser()!!.uid,
             listFinal,
             total,
             listWish.dateCreated,
-            dateCurrent
+            dateCurrent,
+            listWish.isShare,
+            listWish.nameUserShared
         )
         updatedListWish.updatedListWish(position, listToSend, listToSave, listToUpdate, listToDelete)
         dismiss()

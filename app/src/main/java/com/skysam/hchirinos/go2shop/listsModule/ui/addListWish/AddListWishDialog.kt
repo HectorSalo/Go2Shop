@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -57,6 +58,7 @@ class AddListWishDialog : DialogFragment(),
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        binding.etNameList.doAfterTextChanged { binding.tfNameList.error = null }
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.tfSearchProducts.setStartIconOnClickListener {
             val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)

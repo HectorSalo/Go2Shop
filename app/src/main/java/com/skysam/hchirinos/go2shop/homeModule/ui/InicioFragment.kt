@@ -53,6 +53,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        syncServer()
         binding.btnNewShop.setOnClickListener {
            requireActivity().startActivity(Intent(requireContext(),
                AddShopActivity::class.java))
