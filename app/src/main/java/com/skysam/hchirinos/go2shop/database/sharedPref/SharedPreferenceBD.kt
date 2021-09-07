@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.GoToShop
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 
 /**
  * Created by Hector Chirinos on 10/03/2021.

@@ -1,7 +1,7 @@
 package com.skysam.hchirinos.go2shop.homeModule.interactor
 
 import android.util.Log
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
 import kotlinx.coroutines.*

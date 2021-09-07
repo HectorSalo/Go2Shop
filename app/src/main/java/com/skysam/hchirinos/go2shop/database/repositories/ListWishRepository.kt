@@ -5,12 +5,16 @@ import android.util.Log
 import com.google.firebase.firestore.*
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.common.models.User
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.EventErrorTypeListener
+import com.skysam.hchirinos.go2shop.comunicationAPI.NotificationAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.*
+import kotlin.math.E
 
 /**
  * Created by Hector Chirinos on 30/04/2021.
@@ -248,12 +252,12 @@ object ListWishRepository {
         }
     }
 
-    fun addListWishSahre(userId: String, lists: MutableList<ListWish>) {
+    fun addListWishSahre(user: User, lists: MutableList<ListWish>) {
         for (list in lists) {
             val date = Date(list.dateCreated)
             val data = hashMapOf(
                 Constants.NAME to list.name,
-                Constants.USER_ID to userId,
+                Constants.USER_ID to user.id,
                 Constants.TOTAL_LIST_WISH to list.total,
                 Constants.DATE_CREATED to date,
                 Constants.DATE_LAST_EDITED to date,
@@ -263,8 +267,20 @@ object ListWishRepository {
             getInstance()
                 .add(data)
                 .addOnSuccessListener { doc ->
-                    list.userId = userId
+                    list.userId = user.id
                     saveProductsInList(list, doc.id)
+                    NotificationAPI.sendNotification(
+                        AuthAPI.getCurrenUser()?.displayName!!,
+                        "Te he enviado una lista",
+                        user.email,
+                        AuthAPI.getCurrenUser()?.uid!!,
+                        AuthAPI.getCurrenUser()?.email!!,
+                        object : EventErrorTypeListener {
+                            override fun onError(typeEvent: Int, reaMsg: Int) {
+
+                            }
+                        }
+                    )
                 }
         }
     }

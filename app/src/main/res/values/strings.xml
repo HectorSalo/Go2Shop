@@ -30,6 +30,8 @@
     <string name="btn_share">Compartir</string>
     <string name="btn_undo">Deshacer</string>
     <string name="text_deleting">Eliminando&#8230;</string>
+    <string name="common_error_server">Ha ocurrido un problema en el servidor, intente más tarde.</string>
+    <string name="method_not_exist">Error. Método no existe</string>
 
     <!--Fragment Inicio-->
     <string name="nav_inicio">Inicio</string>

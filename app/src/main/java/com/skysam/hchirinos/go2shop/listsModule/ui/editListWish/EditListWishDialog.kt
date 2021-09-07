@@ -16,7 +16,7 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
@@ -252,7 +252,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
     }
 
     override fun updatedProduct(position: Int, product: Product) {
-        val oldPrice = productsToAdd[position].price
+        val oldPrice = productsToAdd[position].price * productsToAdd[position].quantity
         productsToAdd[position] = product
         val subtotal = (product.quantity * product.price) - oldPrice
         sumTotal(subtotal)

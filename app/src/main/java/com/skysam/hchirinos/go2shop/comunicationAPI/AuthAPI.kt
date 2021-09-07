@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.go2shop.database.firebase
+package com.skysam.hchirinos.go2shop.comunicationAPI
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

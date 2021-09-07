@@ -35,4 +35,15 @@ object Constants {
     const val NAME_USER_SENDING = "nameUserSending"
 
     const val TOTAL_LIST_WISH = "totalListWish"
+
+    const val METHOD = "method"
+    const val TITLE = "title"
+    const val MESSAGE = "message"
+    const val TOPIC = "topic"
+    const val SUCCESS = "success"
+    const val SEND_NOTIFICATION_SUCCESS = 3
+    const val ERROR_SERVER = 100
+    const val ERROR_VOLLEY = 102
+    const val ERROR_PROCESS_DATA = 103
+    const val ERROR_METHOD_NOT_EXIST = 104
 }

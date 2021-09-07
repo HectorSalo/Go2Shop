@@ -13,7 +13,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.CloudMessaging
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
@@ -121,6 +122,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
     }
 
     private fun signOut() {
+        CloudMessaging.unsubscribeToMyTopic()
         val provider = AuthAPI.getCurrenUser()!!.providerId
         AuthUI.getInstance().signOut(requireContext())
             .addOnSuccessListener {

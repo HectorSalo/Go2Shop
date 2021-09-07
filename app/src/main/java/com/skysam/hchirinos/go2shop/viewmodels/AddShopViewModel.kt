@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.repositories.ListWishRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ProductsRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ShopRepository

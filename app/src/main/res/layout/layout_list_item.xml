@@ -52,7 +52,8 @@
             tools:text="@string/text_unit"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?android:attr/textColorSecondary"
-            app:drawableStartCompat="@drawable/ic_archive_24" />
+            app:drawableStartCompat="@drawable/ic_archive_24"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -18,7 +18,7 @@ import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentAddListShopBinding

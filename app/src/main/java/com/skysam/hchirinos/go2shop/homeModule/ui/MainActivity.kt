@@ -15,7 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 
 class MainActivity : AppCompatActivity() {
 

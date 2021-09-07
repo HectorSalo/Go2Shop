@@ -65,6 +65,6 @@ class MainViewModel: ViewModel() {
     }
 
     fun shareLists(user: User, lists: MutableList<ListWish>) {
-        ListWishRepository.addListWishSahre(user.id, lists)
+        ListWishRepository.addListWishSahre(user, lists)
     }
 }
