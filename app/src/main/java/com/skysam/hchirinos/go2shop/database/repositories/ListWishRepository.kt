@@ -272,7 +272,6 @@ object ListWishRepository {
                     NotificationAPI.sendNotification(
                         AuthAPI.getCurrenUser()?.displayName!!,
                         "Te he enviado una lista",
-                        user.email,
                         AuthAPI.getCurrenUser()?.uid!!,
                         AuthAPI.getCurrenUser()?.email!!,
                         object : EventErrorTypeListener {

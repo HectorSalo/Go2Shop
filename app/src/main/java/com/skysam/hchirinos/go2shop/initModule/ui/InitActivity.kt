@@ -29,6 +29,7 @@ class InitActivity : AppCompatActivity() {
         if (AuthAPI.getCurrenUser() == null) {
             startAuthUI()
         } else {
+            CloudMessaging.subscribeToMyTopic()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
