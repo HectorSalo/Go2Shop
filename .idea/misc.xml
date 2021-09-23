@@ -8,9 +8,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/fragment_about.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/fragment_config_new_shop.xml" value="0.17249240121580547" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/fragment_products.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/layout_list_item.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/layout_new_shop_item.xml" value="0.17249240121580547" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/settings_activity.xml" value="0.17249240121580547" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/activity_main_drawer.xml" value="0.34923076923076923" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/main.xml" value="0.34923076923076923" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/xml/root_preferences.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/hchirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/activity_init.xml" value="0.1601775956284153" />
         <entry key="..\:/Users/hchirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/dialog_share.xml" value="0.1601775956284153" />
         <entry key="..\:/Users/hchirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/fragment_add_list_shop.xml" value="0.1601775956284153" />

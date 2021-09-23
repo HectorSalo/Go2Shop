@@ -267,7 +267,7 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
     private fun selectUserToShare() {
         val arrayEmails = mutableListOf<String>()
         for (user in users) {
-            arrayEmails.add(user.email)
+            if (!user.email.contains("test")) arrayEmails.add(user.email)
         }
         var userSelected: User? = null
         val builder = AlertDialog.Builder(requireActivity())
