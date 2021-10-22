@@ -13,5 +13,5 @@ data class StorageModel(
     var quantityFromShop: Double,
     var dateShop: Date,
     var quantityRemaining: Double,
-    var isExpanded: Boolean = false,
+    var price: Double,
 )

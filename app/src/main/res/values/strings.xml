@@ -16,6 +16,7 @@
     <string name="btn_accept">Aceptar</string>
     <string name="btn_save">Guardar</string>
     <string name="btn_edit">Editar</string>
+    <string name="btn_update">Actualizar</string>
     <string name="btn_exit">Salir</string>
     <string name="btn_cancel">Cancelar</string>
     <string name="save_data_ok">Información guardada</string>
@@ -93,10 +94,14 @@
     <string name="error_name_exists">Nombre existente</string>
 
     <!--Fragment Storage-->
+    <string name="title_view_details_storage_dialog">Datos última compra</string>
+    <string name="title_add_quantity_storage_dialog">Agregar cantidad</string>
+    <string name="title_remove_quantity_storage_dialog">Remover cantidad</string>
     <string name="btn_remove">Descontar producto</string>
-    <string name="text_products_remaining">Restante: %1$s %2$s</string>
-    <string name="text_products_from_shop">Última cantidad comprada: %1$s %2$s</string>
-    <string name="text_date_last_shop">Fecha de última compra: %1$s</string>
+    <string name="text_products_remaining">Disponible: %1$s %2$s</string>
+    <string name="text_products_from_shop">Cantidad: %1$s %2$s</string>
+    <string name="text_date_last_shop">Fecha: %1$s</string>
+    <string name="text_price_by_unit">Precio unitario: ($) %1$s</string>
 
     <!--Dialog Edit Products from Lists-->
     <string name="title_edit_producto_dialog">Editar %1$s</string>

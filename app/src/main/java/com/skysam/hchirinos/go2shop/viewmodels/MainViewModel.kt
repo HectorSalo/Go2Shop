@@ -55,8 +55,14 @@ class MainViewModel: ViewModel() {
         ListWishRepository.deleteLists(lists)
     }
 
-    fun removeUnitFromProductToStorage(product: StorageModel) {
-        StorageRepository.removeUnitFromProductToStorage(product)
+    fun addProductToStorage(product: StorageModel) {
+        val list = mutableListOf<StorageModel>()
+        list.add(product)
+        StorageRepository.saveProductsToStorge(list)
+    }
+
+    fun updateUnitFromProductToStorage(product: StorageModel) {
+        StorageRepository.updateUnitFromProductToStorage(product)
     }
 
     fun deleteProductToStorage(product: StorageModel) {

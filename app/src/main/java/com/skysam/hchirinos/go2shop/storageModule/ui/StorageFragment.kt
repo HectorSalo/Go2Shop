@@ -14,7 +14,7 @@ import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.databinding.FragmentStorageBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 
-class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemoveQuantity {
+class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClick {
     private var _binding: FragmentStorageBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: StorageAdapter
@@ -63,11 +63,13 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemov
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        requireActivity().menuInflater.inflate(R.menu.main, menu)
-        val item2 = menu.findItem(R.id.action_sync)
-        item2.isVisible = false
-        val item = menu.findItem(R.id.action_cerrar_sesion)
-        item.isVisible = false
+        requireActivity().menuInflater.inflate(R.menu.storage, menu)
+        val item = menu.findItem(R.id.action_new_storage)
+        item.setOnMenuItemClickListener {
+            val dialogAddProductStorage = DialogAddProductStorage()
+            dialogAddProductStorage.show(requireActivity().supportFragmentManager, tag)
+            true
+        }
         val itemSearch = menu.findItem(R.id.action_search)
         search = itemSearch.actionView as SearchView
         search.setOnQueryTextListener(this)
@@ -105,12 +107,19 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemov
         return false
     }
 
+    override fun viewDetails(product: StorageModel) {
+        val dialogViewDetails = DialogViewDetails(product)
+        dialogViewDetails.show(requireActivity().supportFragmentManager, tag)
+    }
+
     override fun remove(product: StorageModel) {
-        if (product.quantityRemaining > 0) {
-            viewModel.removeUnitFromProductToStorage(product)
-        } else {
-            viewModel.deleteProductToStorage(product)
-        }
+        val dialogUpdateQuantity = DialogUpdateQuantity(false, product)
+        dialogUpdateQuantity.show(requireActivity().supportFragmentManager, tag)
+    }
+
+    override fun add(product: StorageModel) {
+        val dialogUpdateQuantity = DialogUpdateQuantity(true, product)
+        dialogUpdateQuantity.show(requireActivity().supportFragmentManager, tag)
     }
 
 }

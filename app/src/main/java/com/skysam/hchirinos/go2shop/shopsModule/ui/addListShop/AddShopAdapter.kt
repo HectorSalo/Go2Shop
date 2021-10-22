@@ -14,6 +14,7 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
+import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.shopsModule.ui.OnClickToStorage
 import java.text.NumberFormat
 
@@ -21,6 +22,7 @@ import java.text.NumberFormat
  * Created by Hector Chirinos (Home) on 23/3/2021.
  */
 class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
+                     private val storaged: MutableList<StorageModel>,
                      private val listener: OnSwitchChange, private val listenerClickList: OnClickList,
                      private val onClickToStorage: OnClickToStorage):
     RecyclerView.Adapter<AddShopAdapter.ViewHolder>() {
@@ -124,6 +126,24 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         }
 
         holder.card.setOnClickListener { listenerClickList.onClickEdit(position) }
+
+        var exists = false
+        var quantitySto = ""
+        var unitSto = ""
+        for (sto in storaged) {
+            if (sto.name == item.name && sto.unit == item.unit) {
+                exists = true
+                quantitySto = sto.quantityRemaining.toString()
+                unitSto = sto.unit
+            }
+        }
+        if (exists) {
+            holder.remaining.text = context.getString(R.string.text_products_remaining,
+                quantitySto, unitSto)
+            holder.remaining.visibility = View.VISIBLE
+        } else {
+            holder.remaining.visibility = View.GONE
+        }
     }
 
     override fun getItemCount(): Int = products.size
@@ -132,6 +152,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         val name: TextView = view.findViewById(R.id.tv_name)
         val unit: TextView = view.findViewById(R.id.tv_unit_items)
         val price: TextView = view.findViewById(R.id.tv_price)
+        val remaining: TextView = view.findViewById(R.id.tv_remaining)
         val nameList: TextView = view.findViewById(R.id.tv_name_list)
         val switchShop: SwitchMaterial = view.findViewById(R.id.switch_shop)
         val switchStorage: SwitchMaterial = view.findViewById(R.id.switch_storage)
