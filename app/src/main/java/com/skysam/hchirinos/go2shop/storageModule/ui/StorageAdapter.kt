@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 
@@ -30,6 +32,18 @@ class StorageAdapter(private var products: MutableList<StorageModel>,
         holder.btnDetails.setOnClickListener { onClick.viewDetails(item) }
         holder.btnRemove.setOnClickListener { onClick.remove(item) }
         holder.btnAdd.setOnClickListener { onClick.add(item) }
+        holder.card.setOnClickListener {
+            val popMenu = PopupMenu(context, holder.card)
+            popMenu.inflate(R.menu.item_storage)
+            popMenu.setOnMenuItemClickListener {
+                when(it.itemId) {
+                    R.id.action_edit -> onClick.editProduct(item)
+                    R.id.action_delete -> onClick.deleteProduct(item)
+                }
+                false
+            }
+            popMenu.show()
+        }
     }
 
     override fun getItemCount(): Int = products.size
@@ -40,6 +54,7 @@ class StorageAdapter(private var products: MutableList<StorageModel>,
         val btnDetails: ImageButton = view.findViewById(R.id.ib_details)
         val btnRemove: ImageButton = view.findViewById(R.id.ib_rest_quantity)
         val btnAdd: ImageButton = view.findViewById(R.id.ib_add_quantity)
+        val card: MaterialCardView = view.findViewById(R.id.card)
     }
 
     fun updateList(newList: MutableList<StorageModel>) {

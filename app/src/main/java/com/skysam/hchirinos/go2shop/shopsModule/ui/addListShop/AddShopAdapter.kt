@@ -45,12 +45,6 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.price))
         holder.unit.text = context.getString(R.string.text_quantity_total, item.quantity, item.unit)
 
-        if (item.listId.isEmpty()) {
-            holder.nameList.text = ""
-        } else {
-            holder.nameList.text = context.getString(R.string.text_list_belong, item.listId)
-        }
-
         holder.switchStorage.isChecked = item.isCheckedToStorage
         if (item.isCheckedToStorage) {
             holder.switchStorage.text = context.getString(R.string.text_switch_on_to_storage_product)
@@ -63,12 +57,15 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
             holder.switchShop.text = context.getString(R.string.text_switch_on_shop)
             holder.switchStorage.isEnabled = true
             holder.lottie.progress = 0.5f
+            holder.subtotal.text = context.getString(R.string.text_total_price_item,
+                NumberFormat.getInstance().format(item.price * item.quantity))
         } else {
             holder.switchShop.text = context.getString(R.string.text_switch_off_shop_product)
             holder.switchStorage.isEnabled = false
             holder.lottie.progress = 0.0f
             holder.lottie.cancelAnimation()
             holder.lottie.removeAllUpdateListeners()
+            holder.subtotal.text = context.getString(R.string.text_empty)
         }
 
         holder.switchShop.setOnClickListener {
@@ -81,6 +78,8 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
                     holder.switchShop.text = context.getString(R.string.text_switch_on_shop)
                     item.isCheckedToShop = true
                     holder.switchStorage.isEnabled = true
+                    holder.subtotal.text = context.getString(R.string.text_total_price_item,
+                        NumberFormat.getInstance().format(item.price * item.quantity))
                     holder.lottie.addAnimatorUpdateListener { value->
                         if ((value.animatedValue as Float * 100).toInt() == 50) {
                             holder.lottie.cancelAnimation()
@@ -95,6 +94,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
                 holder.switchStorage.isChecked = false
                 holder.switchStorage.text = context.getString(R.string.text_switch_off_to_storage_product)
                 item.isCheckedToStorage = false
+                holder.subtotal.text = context.getString(R.string.text_empty)
                 holder.lottie.resumeAnimation()
                 holder.lottie.removeAllUpdateListeners()
                 if (listToStorage.contains(item.name)){
@@ -152,8 +152,8 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         val name: TextView = view.findViewById(R.id.tv_name)
         val unit: TextView = view.findViewById(R.id.tv_unit_items)
         val price: TextView = view.findViewById(R.id.tv_price)
+        val subtotal: TextView = view.findViewById(R.id.tv_subtotal)
         val remaining: TextView = view.findViewById(R.id.tv_remaining)
-        val nameList: TextView = view.findViewById(R.id.tv_name_list)
         val switchShop: SwitchMaterial = view.findViewById(R.id.switch_shop)
         val switchStorage: SwitchMaterial = view.findViewById(R.id.switch_storage)
         val card: MaterialCardView = view.findViewById(R.id.card)

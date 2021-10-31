@@ -7,7 +7,7 @@ import java.util.*
  */
 data class StorageModel(
     var id: String,
-    val name: String,
+    var name: String,
     var unit: String,
     val userId: String,
     var quantityFromShop: Double,

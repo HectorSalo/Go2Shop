@@ -1,7 +1,6 @@
 package com.skysam.hchirinos.go2shop.homeModule.interactor
 
 import android.util.Log
-import com.skysam.hchirinos.go2shop.common.ClassesCommon
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
@@ -24,7 +23,7 @@ class InicioInteractorClass(private val inicioPresenter: InicioPresenter): Inici
             var valorCotizacion: Float? = null
             val url = "http://www.bcv.org.ve/"
 
-            withContext(Dispatchers.IO) {
+            withContext(Dispatchers.Default) {
                 try {
                     val doc = Jsoup.connect(url).get()
                     val data = doc.select("div#dolar")

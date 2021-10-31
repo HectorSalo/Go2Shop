@@ -23,7 +23,7 @@ import java.util.*
 /**
  * Created by Hector Chirinos (Home) on 22/10/2021.
  */
-class DialogAddProductStorage: DialogFragment() {
+class AddProductStorageDialog: DialogFragment() {
     private var _binding: DialogAddProductStorageBinding? = null
     private val binding get() = _binding!!
     private lateinit var buttonPositive: Button
@@ -35,6 +35,19 @@ class DialogAddProductStorage: DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogAddProductStorageBinding.inflate(layoutInflater)
+
+        viewModel.products.observe(this.requireActivity(), {
+            if (_binding != null) {
+                val productsName = mutableListOf<String>()
+                productsName.clear()
+                for (i in it.indices) {
+                    productsName.add(i, it[i].name)
+                }
+                val adapterSearchProduct = ArrayAdapter(requireContext(),
+                    R.layout.list_autocomplete_text, productsName.sorted())
+                binding.etName.setAdapter(adapterSearchProduct)
+            }
+        })
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.title_add_producto_dialog))
@@ -50,6 +63,7 @@ class DialogAddProductStorage: DialogFragment() {
         binding.spinner.adapter = adapterUnits
 
         binding.etName.doAfterTextChanged { binding.tfName.error = null }
+
         binding.etQuantity.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty()) {
                 if (text.toString().toDouble() > 0) {

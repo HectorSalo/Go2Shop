@@ -65,6 +65,10 @@ class MainViewModel: ViewModel() {
         StorageRepository.updateUnitFromProductToStorage(product)
     }
 
+    fun editProductToStorage(product: StorageModel) {
+        StorageRepository.editProductToStorage(product)
+    }
+
     fun deleteProductToStorage(product: StorageModel) {
         StorageRepository.deleteProductToStorage(product)
     }

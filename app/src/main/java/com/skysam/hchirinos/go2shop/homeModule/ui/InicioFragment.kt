@@ -103,7 +103,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
                 return@observe
             }
             binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
-            binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
+            binding.textHomeSecondLine.text = getString(R.string.text_empty)
         })
         viewModel.products.observe(viewLifecycleOwner, {
             if (_binding != null) {

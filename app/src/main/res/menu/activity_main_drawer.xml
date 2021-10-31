@@ -21,7 +21,7 @@
             android:icon="@drawable/ic_products_24"
             android:title="@string/nav_products" />
 
-        <item android:title="@string/texto_vacio">
+        <item android:title="@string/text_empty">
             <menu>
 
                 <item

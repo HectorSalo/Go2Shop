@@ -94,9 +94,18 @@ object StorageRepository {
             .update(Constants.QUANTITY_REMAINING, product.quantityRemaining)
     }
 
-    fun deleteProductToStorage(product: StorageModel) {
+    fun editProductToStorage(product: StorageModel) {
+        val data: Map<String, Any> = hashMapOf(
+            Constants.NAME to product.name,
+            Constants.UNIT to product.unit
+        )
         getInstance()
             .document(product.id)
+            .update(data)
+    }
+
+    fun deleteProductToStorage(product: StorageModel) {
+        getInstance().document(product.id)
             .delete()
     }
 }

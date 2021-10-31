@@ -14,7 +14,7 @@ import java.text.DateFormat
 /**
  * Created by Hector Chirinos (Home) on 21/10/2021.
  */
-class DialogViewDetails(private val product: StorageModel): DialogFragment() {
+class ViewDetailsDialog(private val product: StorageModel): DialogFragment() {
     private var _binding: DialogViewDetailsStorageBinding? = null
     private val binding get() = _binding!!
     private lateinit var buttonNegative: Button

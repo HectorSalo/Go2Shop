@@ -11,7 +11,7 @@
     <string name="action_save">Save</string>
 
     <!--Generales-->
-    <string name="texto_vacio"> </string>
+    <string name="text_empty"> </string>
     <string name="error_field_empty">Campo vacío</string>
     <string name="btn_accept">Aceptar</string>
     <string name="btn_save">Guardar</string>
@@ -102,6 +102,7 @@
     <string name="text_products_from_shop">Cantidad: %1$s %2$s</string>
     <string name="text_date_last_shop">Fecha: %1$s</string>
     <string name="text_price_by_unit">Precio unitario: ($) %1$s</string>
+    <string name="error_quantity_negative">No puede remover una cantidad mayor a la existente</string>
 
     <!--Dialog Edit Products from Lists-->
     <string name="title_edit_producto_dialog">Editar %1$s</string>
@@ -118,6 +119,9 @@
     <!--Dialog Shop-->
     <string name="msg_shop_dialog">Una vez totalizada la compra, no podrá editarla.\n¿Desea completar la compra?</string>
     <string name="btn_shop">Comprar</string>
+
+    <!--Dialog Shop-->
+    <string name="title_delete_dialog">¿Desea eliminar este ítem?</string>
 
     <!--Ajustes-->
     <string name="nav_ajustes">Ajustes</string>
