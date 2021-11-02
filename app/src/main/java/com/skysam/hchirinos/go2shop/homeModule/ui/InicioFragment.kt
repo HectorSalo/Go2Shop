@@ -54,9 +54,8 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        syncServer()
         binding.btnNewShop.setOnClickListener {
-           requireActivity().startActivity(Intent(requireContext(),
+            requireActivity().startActivity(Intent(requireContext(),
                AddShopActivity::class.java))
         }
         binding.btnNewList.setOnClickListener {
@@ -104,7 +103,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
                 return@observe
             }
             binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
-            binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
+            binding.textHomeSecondLine.text = getString(R.string.text_empty)
         })
         viewModel.products.observe(viewLifecycleOwner, {
             if (_binding != null) {
@@ -118,6 +117,9 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
                 if (user.id == AuthAPI.getCurrenUser()?.uid) isExists = true
             }
             if (!isExists) viewModel.addUser(AuthAPI.getCurrenUser()!!)
+        })
+        viewModel.syncReady.observe(viewLifecycleOwner, {
+            if (!it) syncServer()
         })
     }
 
@@ -154,6 +156,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
             } else {
                 getString(R.string.msg_sync_error)
             }
+            viewModel.syncReadyTrue()
             binding.progressBar.visibility = View.GONE
             snackbar = Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT)
             snackbar.show()

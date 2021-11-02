@@ -3,6 +3,7 @@ package com.skysam.hchirinos.go2shop.storageModule.ui
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -14,7 +15,7 @@ import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.databinding.FragmentStorageBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 
-class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemoveQuantity {
+class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClick {
     private var _binding: FragmentStorageBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: StorageAdapter
@@ -63,11 +64,13 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemov
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        requireActivity().menuInflater.inflate(R.menu.main, menu)
-        val item2 = menu.findItem(R.id.action_sync)
-        item2.isVisible = false
-        val item = menu.findItem(R.id.action_cerrar_sesion)
-        item.isVisible = false
+        requireActivity().menuInflater.inflate(R.menu.storage, menu)
+        val item = menu.findItem(R.id.action_new_storage)
+        item.setOnMenuItemClickListener {
+            val dialogAddProductStorage = AddProductStorageDialog()
+            dialogAddProductStorage.show(requireActivity().supportFragmentManager, tag)
+            true
+        }
         val itemSearch = menu.findItem(R.id.action_search)
         search = itemSearch.actionView as SearchView
         search.setOnQueryTextListener(this)
@@ -105,12 +108,37 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClickRemov
         return false
     }
 
+    override fun viewDetails(product: StorageModel) {
+        val dialogViewDetails = ViewDetailsDialog(product)
+        dialogViewDetails.show(requireActivity().supportFragmentManager, tag)
+    }
+
     override fun remove(product: StorageModel) {
-        if (product.quantityRemaining > 0) {
-            viewModel.removeUnitFromProductToStorage(product)
-        } else {
-            viewModel.deleteProductToStorage(product)
-        }
+        val dialogUpdateQuantity = UpdateQuantityDialog(false, product)
+        dialogUpdateQuantity.show(requireActivity().supportFragmentManager, tag)
+    }
+
+    override fun add(product: StorageModel) {
+        val dialogUpdateQuantity = UpdateQuantityDialog(true, product)
+        dialogUpdateQuantity.show(requireActivity().supportFragmentManager, tag)
+    }
+
+    override fun editProduct(product: StorageModel) {
+        val editProductStorageDialog = EditProductStorageDialog(product, products)
+        editProductStorageDialog.show(requireActivity().supportFragmentManager, tag)
+    }
+
+    override fun deleteProduct(product: StorageModel) {
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(getString(R.string.title_delete_dialog))
+            .setPositiveButton(R.string.btn_delete) { _, _ ->
+                Toast.makeText(requireContext(), R.string.text_deleting, Toast.LENGTH_SHORT).show()
+                viewModel.deleteProductToStorage(product)
+            }
+            .setNegativeButton(R.string.btn_cancel, null)
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
 }

@@ -7,11 +7,11 @@ import java.util.*
  */
 data class StorageModel(
     var id: String,
-    val name: String,
+    var name: String,
     var unit: String,
     val userId: String,
     var quantityFromShop: Double,
     var dateShop: Date,
     var quantityRemaining: Double,
-    var isExpanded: Boolean = false,
+    var price: Double,
 )

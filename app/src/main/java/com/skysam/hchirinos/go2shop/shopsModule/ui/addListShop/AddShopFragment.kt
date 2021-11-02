@@ -66,7 +66,7 @@ class AddShopFragment : Fragment(),
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         toolbar = requireActivity().findViewById(R.id.toolbar)
         binding.rvList.setHasFixedSize(true)
-        addShopAdapter = AddShopAdapter(productsToAdd, this, this, this)
+        addShopAdapter = AddShopAdapter(productsToAdd, productsStoraged,this, this, this)
         binding.rvList.adapter = addShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
@@ -112,6 +112,7 @@ class AddShopFragment : Fragment(),
             if (it.isNotEmpty()) {
                 productsStoraged.clear()
                 productsStoraged.addAll(it)
+                addShopAdapter.updateList(productsToAdd)
             }
         })
         viewModel.allProducts.observe(viewLifecycleOwner, {
@@ -293,7 +294,8 @@ class AddShopFragment : Fragment(),
             productSelected.listId,
             product.price,
             product.quantity,
-            productSelected.isCheckedToShop
+            productSelected.isCheckedToShop,
+            productSelected.isCheckedToStorage
         )
         viewModel.updateProductToList(productModel, position)
         if (productSelected.isCheckedToShop) {
@@ -354,7 +356,8 @@ class AddShopFragment : Fragment(),
             product.userId,
             product.quantity,
             calendar.time,
-            product.quantity
+            product.quantity,
+            product.price
         )
         productsToStorage.add(productToStorage)
     }

@@ -25,6 +25,9 @@
             app:title="@string/about_title"
             app:icon="@drawable/ic_code_24"/>
 
+        <PreferenceScreen
+            app:key="name_version"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

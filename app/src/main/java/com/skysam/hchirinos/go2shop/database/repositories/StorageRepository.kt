@@ -35,6 +35,10 @@ object StorageRepository {
                     }
 
                     for (doc in value!!) {
+                        var price = 0.0
+                        if (doc.getDouble(Constants.PRICE) != null){
+                            price = doc.getDouble(Constants.PRICE)!!
+                        }
                         val product = StorageModel(
                             doc.id,
                             doc.getString(Constants.NAME)!!,
@@ -42,7 +46,8 @@ object StorageRepository {
                             doc.getString(Constants.USER_ID)!!,
                             doc.getDouble(Constants.QUANTITY)!!,
                             doc.getDate(Constants.DATE_CREATED)!!,
-                            doc.getDouble(Constants.QUANTITY_REMAINING)!!
+                            doc.getDouble(Constants.QUANTITY_REMAINING)!!,
+                            price
                         )
                         products.add(product)
                     }
@@ -60,7 +65,8 @@ object StorageRepository {
                 Constants.USER_ID to product.userId,
                 Constants.QUANTITY to product.quantityFromShop,
                 Constants.DATE_CREATED to product.dateShop,
-                Constants.QUANTITY_REMAINING to product.quantityRemaining
+                Constants.QUANTITY_REMAINING to product.quantityRemaining,
+                Constants.PRICE to product.price
             )
             getInstance()
                 .add(data)
@@ -73,7 +79,8 @@ object StorageRepository {
                 Constants.UNIT to product.unit,
                 Constants.QUANTITY to product.quantityFromShop,
                 Constants.DATE_CREATED to product.dateShop,
-                Constants.QUANTITY_REMAINING to product.quantityRemaining
+                Constants.QUANTITY_REMAINING to product.quantityRemaining,
+                Constants.PRICE to product.price
             )
             getInstance()
                 .document(product.id)
@@ -81,15 +88,24 @@ object StorageRepository {
         }
     }
 
-    fun removeUnitFromProductToStorage(product: StorageModel) {
+    fun updateUnitFromProductToStorage(product: StorageModel) {
         getInstance()
             .document(product.id)
             .update(Constants.QUANTITY_REMAINING, product.quantityRemaining)
     }
 
-    fun deleteProductToStorage(product: StorageModel) {
+    fun editProductToStorage(product: StorageModel) {
+        val data: Map<String, Any> = hashMapOf(
+            Constants.NAME to product.name,
+            Constants.UNIT to product.unit
+        )
         getInstance()
             .document(product.id)
+            .update(data)
+    }
+
+    fun deleteProductToStorage(product: StorageModel) {
+        getInstance().document(product.id)
             .delete()
     }
 }

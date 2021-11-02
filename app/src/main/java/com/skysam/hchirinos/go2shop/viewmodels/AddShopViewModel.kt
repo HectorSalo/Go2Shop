@@ -109,7 +109,7 @@ class AddShopViewModel: ViewModel() {
         for (productToStorage in products) {
             var exists = false
             for (product in productsStoraged.value!!) {
-                if (productToStorage.name == product.name) {
+                if (productToStorage.name == product.name && productToStorage.unit == product.unit) {
                     exists = true
                     productToStorage.id = product.id
                     val quantity = productToStorage.quantityFromShop + product.quantityRemaining

@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import com.skysam.hchirinos.go2shop.BuildConfig
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
@@ -68,6 +69,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 .navigate(R.id.action_settingsFragment_to_aboutFragment)
             true
         }
+
+        val versionPreferenceScreen = findPreference<PreferenceScreen>("name_version")
+        versionPreferenceScreen?.title = getString(R.string.version_name, BuildConfig.VERSION_NAME)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/card">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="start"
             android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/tv_remaining"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/text_product" />
@@ -27,15 +28,40 @@
             android:id="@+id/tv_remaining"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="start"
             android:paddingBottom="8dp"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_product_name"
             tools:text="@string/text_quantity" />
 
+        <ImageButton
+            android:id="@+id/ib_add_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintEnd_toStartOf="@+id/ib_rest_quantity"
+            app:layout_constraintTop_toBottomOf="@id/tv_remaining"
+            app:srcCompat="@drawable/ic_sum_1_24" />
+
+        <ImageButton
+            android:id="@+id/ib_rest_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintEnd_toStartOf="@+id/ib_details"
+            app:layout_constraintTop_toBottomOf="@id/tv_remaining"
+            app:srcCompat="@drawable/ic_remove_1_24" />
 
         <ImageButton
             android:id="@+id/ib_details"
@@ -43,59 +69,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/app_name"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_remaining"
             app:srcCompat="@drawable/ic_view_details_24" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/expandable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ib_details">
-
-            <TextView
-                android:id="@+id/tv_quantity_shop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="start"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/text_quantity" />
-
-            <TextView
-                android:id="@+id/tv_date_shop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="start"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_quantity_shop"
-                tools:text="@string/text_product" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_remove"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/btn_remove"
-                android:textColor="@android:color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_date_shop" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

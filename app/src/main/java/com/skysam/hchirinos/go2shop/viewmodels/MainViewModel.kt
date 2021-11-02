@@ -1,6 +1,7 @@
 package com.skysam.hchirinos.go2shop.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.google.firebase.auth.FirebaseUser
@@ -21,6 +22,13 @@ class MainViewModel: ViewModel() {
     val shops: LiveData<List<Shop>> = ShopRepository.getShops().asLiveData()
     val productsFromStorage: LiveData<List<StorageModel>> = StorageRepository.getProductsFromStorage().asLiveData()
     val users: LiveData<List<User>> = UsersRepository.getUsers().asLiveData()
+
+    private val _syncReady = MutableLiveData<Boolean>().apply { value = false }
+    val syncReady: LiveData<Boolean> get() = _syncReady
+
+    fun syncReadyTrue() {
+        _syncReady.value = true
+    }
 
     fun addProduct(product: Product) {
         ProductsRepository.addProduct(product)
@@ -47,8 +55,18 @@ class MainViewModel: ViewModel() {
         ListWishRepository.deleteLists(lists)
     }
 
-    fun removeUnitFromProductToStorage(product: StorageModel) {
-        StorageRepository.removeUnitFromProductToStorage(product)
+    fun addProductToStorage(product: StorageModel) {
+        val list = mutableListOf<StorageModel>()
+        list.add(product)
+        StorageRepository.saveProductsToStorge(list)
+    }
+
+    fun updateUnitFromProductToStorage(product: StorageModel) {
+        StorageRepository.updateUnitFromProductToStorage(product)
+    }
+
+    fun editProductToStorage(product: StorageModel) {
+        StorageRepository.editProductToStorage(product)
     }
 
     fun deleteProductToStorage(product: StorageModel) {
