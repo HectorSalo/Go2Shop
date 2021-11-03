@@ -124,7 +124,7 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
     }
 
     private fun signOut() {
-        CloudMessaging.unsubscribeToMyTopic()
+        CloudMessaging.unsubscribeTopicMessagingForUser()
         val provider = AuthAPI.getCurrenUser()!!.providerId
         AuthUI.getInstance().signOut(requireContext())
             .addOnSuccessListener {

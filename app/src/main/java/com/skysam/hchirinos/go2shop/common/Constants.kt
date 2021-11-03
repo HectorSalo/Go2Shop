@@ -17,6 +17,7 @@ object Constants {
     const val PRODUCTS_TO_LIST_WISH = "productsToListWish"
     const val PRODUCTS_TO_LIST_SHOP = "productsToShop"
     const val LISTS_SHARED = "listsShared"
+    const val MESSAGING_FOR_ALL = "messagingForAll"
 
     const val USERS = "users"
     const val EMAIL = "email"

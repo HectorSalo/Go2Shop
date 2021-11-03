@@ -15,7 +15,7 @@ class InitActivity : AppCompatActivity() {
 
     private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            CloudMessaging.subscribeToMyTopic()
+            CloudMessaging.subscribeTopicMessagingForUser()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -29,7 +29,7 @@ class InitActivity : AppCompatActivity() {
         if (AuthAPI.getCurrenUser() == null) {
             startAuthUI()
         } else {
-            CloudMessaging.subscribeToMyTopic()
+            CloudMessaging.subscribeTopicMessagingForUser()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
