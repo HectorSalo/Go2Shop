@@ -266,15 +266,17 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
 
     private fun selectUserToShare() {
         val arrayEmails = mutableListOf<String>()
+        val usersAvailable = mutableListOf<User>()
         for (user in users) {
             //if (!user.email.contains("test")) arrayEmails.add(user.email)
             arrayEmails.add(user.email)
+            usersAvailable.add(user)
         }
         var userSelected: User? = null
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.title_dialog_share))
             .setSingleChoiceItems(arrayEmails.toTypedArray(), -1) { _, i ->
-                userSelected = users[i]
+                userSelected = usersAvailable[i]
             }
             .setPositiveButton(R.string.btn_share, null)
             .setNegativeButton(R.string.btn_cancel, null)

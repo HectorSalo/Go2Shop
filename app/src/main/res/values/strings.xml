@@ -137,4 +137,7 @@
     <string name="title_new_features">¡Próximamente!</string>
     <string name="msg_new_features">Esta opción estará disponible en la próxima versión</string>
 
+    <!--Notifiacion-->
+    <string name="topic_notification_user_id">idReceiver:%1$s</string>
+
 </resources>

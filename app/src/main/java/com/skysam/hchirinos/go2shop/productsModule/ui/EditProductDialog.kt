@@ -32,7 +32,7 @@ class EditProductDialog(
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
     private lateinit var productResult: Product
-    private var quantityTotal: Double = 1.0
+    private var quantityTotal: Double = 0.0
     private var priceTotal: Double = 1.0
     private lateinit var unit: String
     private lateinit var name: String
@@ -66,8 +66,19 @@ class EditProductDialog(
         }
         binding.etQuantity.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty()) {
-                if (text.toString().toDouble() > 0) {
-                    quantityTotal = text.toString().toDouble()
+                var quantity = text.toString()
+                if (quantity.contains(".")) {
+                    quantity = quantity.replace(".", ",")
+                    binding.etQuantity.setText(quantity)
+                    return@doAfterTextChanged
+                }
+                quantity = quantity.replace(",", ".")
+                try {
+                    if (quantity.toDouble() > 0) {
+                        quantityTotal = quantity.toDouble()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
                 }
             }
         }
