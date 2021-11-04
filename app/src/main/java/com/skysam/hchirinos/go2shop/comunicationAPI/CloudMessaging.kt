@@ -31,6 +31,7 @@ object CloudMessaging {
             .addOnSuccessListener {
                 Log.e("MSG OK", "subscribe")
             }
+            .addOnFailureListener { Log.e("MSG FAILED", it.message!!) }
     }
 
     fun unsubscribeTopicMessagingForUser() {

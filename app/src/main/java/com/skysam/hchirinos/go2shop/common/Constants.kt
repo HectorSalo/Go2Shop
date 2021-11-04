@@ -34,6 +34,7 @@ object Constants {
     const val QUANTITY_REMAINING = "quantityRemaining"
     const val IS_SHARE = "isShare"
     const val NAME_USER_SENDING = "nameUserSending"
+    const val USER_OWNER = "userOwner"
 
     const val TOTAL_LIST_WISH = "totalListWish"
 

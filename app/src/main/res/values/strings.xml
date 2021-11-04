@@ -66,7 +66,7 @@
     <string name="text_cotizacion_from_shop">Cotización del día de la compra: Bs.%1$s</string>
 
     <!--Fragment Listas-->
-    <string name="nav_lists">Listas de compras</string>
+    <string name="nav_lists">Mis listas de compras</string>
     <string name="text_item_in_list">Ítem(s): %1$s</string>
     <string name="title_dialog_share">Seleccione usuarios</string>
     <string name="error_user_share_null">Debe seleccionar un usuario</string>
@@ -82,6 +82,10 @@
     <string name="text_quantity">Cantidad</string>
     <string name="text_unit">Unidad</string>
     <string name="product_added">Producto ya estaba en la lista</string>
+
+    <!--Fragment ListsShared-->
+    <string name="nav_lists_shared">Listas compartidas</string>
+    <string name="btn_add_user">Agregar usuario</string>
 
 
     <!--Fragment Products-->
@@ -138,6 +142,6 @@
     <string name="msg_new_features">Esta opción estará disponible en la próxima versión</string>
 
     <!--Notifiacion-->
-    <string name="topic_notification_user_id">idReceiver:%1$s</string>
+    <string name="topic_notification_user_id">idReceiver_%1$s</string>
 
 </resources>

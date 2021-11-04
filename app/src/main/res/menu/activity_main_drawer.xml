@@ -17,6 +17,10 @@
             android:icon="@drawable/ic_lists_shopping_24"
             android:title="@string/nav_lists" />
         <item
+            android:id="@+id/nav_lists_shared"
+            android:icon="@drawable/ic_groups_24"
+            android:title="@string/nav_lists_shared" />
+        <item
             android:id="@+id/nav_products"
             android:icon="@drawable/ic_products_24"
             android:title="@string/nav_products" />
