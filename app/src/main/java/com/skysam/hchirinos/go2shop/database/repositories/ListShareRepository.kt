@@ -49,7 +49,7 @@ object ListShareRepository {
                                     Constants.LIST_ID,
                                     prod[Constants.NAME].toString(),
                                     prod[Constants.UNIT].toString(),
-                                    Constants.USER_ID,
+                                    AuthAPI.getCurrenUser()!!.uid,
                                     doc.id,
                                     prod[Constants.PRICE].toString().toDouble(),
                                     prod[Constants.QUANTITY].toString().toDouble()

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.ExitDialog
 import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
@@ -30,6 +31,8 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     private val viewModel: AddShopViewModel by activityViewModels()
     private lateinit var adapter: ConfigNewShopAdapter
     private val lists: MutableList<ListWish> = mutableListOf()
+    private val myLists: MutableList<ListWish> = mutableListOf()
+    private val listsShared: MutableList<ListWish> = mutableListOf()
     private val listsProducts: MutableList<ProductsToListModel> = mutableListOf()
 
     override fun onCreateView(
@@ -86,22 +89,54 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     private fun loadViewModels() {
         viewModel.lists.observe(viewLifecycleOwner, {
             if (_binding != null) {
+                myLists.clear()
                 if (it.isNotEmpty()) {
-                    adapter.updateList(it.toMutableList())
-                    binding.rvLists.visibility = View.VISIBLE
-                    binding.tvListEmpty.visibility = View.GONE
-                } else {
-                    binding.rvLists.visibility = View.GONE
-                    binding.tvListEmpty.visibility = View.VISIBLE
+                    myLists.addAll(it)
+                    showList()
                 }
-                binding.progressBar.visibility = View.GONE
             }
         })
+        viewModel.listsShared.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                listsShared.clear()
+                if (it.isNotEmpty()) {
+                    for (list in it) {
+                        val listToShow = ListWish(
+                            list.id,
+                            list.name,
+                            Constants.USER_ID,
+                            list.listProducts,
+                            list.total,
+                            list.dateCreated,
+                            list.dateCreated
+                        )
+                        listsShared.add(listToShow)
+                    }
+                    showList()
+                }
+            }
+        })
+        viewModel
         viewModel.rateChange.observe(viewLifecycleOwner, {
             if (_binding != null) {
                 binding.etCotizacion.setText(NumberFormat.getInstance().format(it))
             }
         })
+    }
+
+    private fun showList() {
+        lists.clear()
+        lists.addAll(listsShared)
+        lists.addAll(myLists)
+        if (lists.isNotEmpty()) {
+            adapter.updateList(lists)
+            binding.rvLists.visibility = View.VISIBLE
+            binding.tvListEmpty.visibility = View.GONE
+        } else {
+            binding.rvLists.visibility = View.GONE
+            binding.tvListEmpty.visibility = View.VISIBLE
+        }
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun validateData() {

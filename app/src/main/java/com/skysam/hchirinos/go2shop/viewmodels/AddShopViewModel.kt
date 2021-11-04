@@ -1,14 +1,12 @@
 package com.skysam.hchirinos.go2shop.viewmodels
 
 import androidx.lifecycle.*
+import com.skysam.hchirinos.go2shop.common.models.ListShared
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.database.repositories.ListWishRepository
-import com.skysam.hchirinos.go2shop.database.repositories.ProductsRepository
-import com.skysam.hchirinos.go2shop.database.repositories.ShopRepository
-import com.skysam.hchirinos.go2shop.database.repositories.StorageRepository
+import com.skysam.hchirinos.go2shop.database.repositories.*
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.room.entities.Shop
@@ -21,6 +19,7 @@ import kotlinx.coroutines.launch
 class AddShopViewModel: ViewModel() {
     //ConfigShop
     val lists: LiveData<List<ListWish>> = ListWishRepository.getListsWish().asLiveData()
+    val listsShared: LiveData<List<ListShared>> = ListShareRepository.getListsShared().asLiveData()
 
     private val _rateChange = MutableLiveData<Double>().apply {
         viewModelScope.launch {
