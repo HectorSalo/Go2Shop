@@ -10,6 +10,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.ClassesCommon
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 
 class StorageAdapter(private var products: MutableList<StorageModel>,
@@ -27,7 +28,7 @@ class StorageAdapter(private var products: MutableList<StorageModel>,
        val item = products[position]
         holder.name.text = item.name
         holder.remaining.text = context.getString(R.string.text_products_remaining,
-            item.quantityRemaining.toString(), item.unit)
+            ClassesCommon.convertDoubleToString(item.quantityRemaining), item.unit)
 
         holder.btnDetails.setOnClickListener { onClick.viewDetails(item) }
         holder.btnRemove.setOnClickListener { onClick.remove(item) }
