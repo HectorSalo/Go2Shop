@@ -1,11 +1,8 @@
 package com.skysam.hchirinos.go2shop.homeModule.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
@@ -15,24 +12,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
-import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
+import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
+import com.skysam.hchirinos.go2shop.comunicationAPI.CloudMessaging
+import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.databinding.FragmentInicioBinding
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
 import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
 import com.skysam.hchirinos.go2shop.initModule.ui.InitActivity
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddListWishDialog
-import com.skysam.hchirinos.go2shop.shopsModule.ui.AddListShopActivity
+import com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddShopActivity
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.*
 
-class InicioFragment : Fragment(), InicioView {
+class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
 
     private var _binding: FragmentInicioBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
+    private var products: MutableList<Product> = mutableListOf()
     private lateinit var inicioPresenter: InicioPresenter
     private lateinit var snackbar: Snackbar
 
@@ -53,45 +54,23 @@ class InicioFragment : Fragment(), InicioView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val state = SharedPreferenceBD.getSyncState(AuthAPI.getCurrenUser()!!.uid)
-        if (AuthAPI.getCurrenUser() != null && state) {
-            syncServer()
-            SharedPreferenceBD.saveSyncState(AuthAPI.getCurrenUser()!!.uid, false)
-        }
-        homeViewModel.listFlow.observe(viewLifecycleOwner, {shop->
-            if (!shop.isNullOrEmpty()) {
-                val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
-                val ammount = NumberFormat.getInstance().format(shop[0].total)
-                binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
-                binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
-                return@observe
-            }
-            binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
-            binding.textHomeSecondLine.text = getString(R.string.texto_vacio)
-        })
         binding.btnNewShop.setOnClickListener {
-           requireActivity().startActivity(Intent(requireContext(),
-               AddListShopActivity::class.java))
+            requireActivity().startActivity(Intent(requireContext(),
+               AddShopActivity::class.java))
         }
         binding.btnNewList.setOnClickListener {
             val addListWishDialog = AddListWishDialog()
             addListWishDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnNewProduct.setOnClickListener {
-            val addProductDialog = AddProductDialog(null, null)
+            val addProductDialog = AddProductDialog(null, this, products)
             addProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
         binding.btnInventory.setOnClickListener {
-            val builder = AlertDialog.Builder(requireActivity())
-            builder.setTitle(getString(R.string.title_new_features))
-                    .setMessage(getString(R.string.msg_new_features))
-                    .setIcon(R.drawable.ic_new_features_24)
-                    .setPositiveButton(R.string.btn_accept) { _, _ ->
-                    }
-                    .show()
-            /*NavHostFragment.findNavController(this)
-                .navigate(R.id.action_nav_home_to_storageFragment)*/
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.action_nav_home_to_storageFragment)
         }
+        loadViewModels()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -109,7 +88,43 @@ class InicioFragment : Fragment(), InicioView {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun loadViewModels() {
+        viewModel.shops.observe(viewLifecycleOwner, { shop->
+            if (!shop.isNullOrEmpty()) {
+                val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
+                val ammount = NumberFormat.getInstance().format(shop[0].total)
+                binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
+                binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
+                return@observe
+            }
+            binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
+            binding.textHomeSecondLine.text = getString(R.string.text_empty)
+        })
+        viewModel.products.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                products.clear()
+                products.addAll(it)
+            }
+        })
+        viewModel.users.observe(viewLifecycleOwner, {
+            var isExists = false
+            for (user in it) {
+                if (user.id == AuthAPI.getCurrenUser()?.uid) isExists = true
+            }
+            if (!isExists) viewModel.addUser(AuthAPI.getCurrenUser()!!)
+        })
+        viewModel.syncReady.observe(viewLifecycleOwner, {
+            if (!it) syncServer()
+        })
+    }
+
     private fun signOut() {
+        CloudMessaging.unsubscribeTopicMessagingForUser()
         val provider = AuthAPI.getCurrenUser()!!.providerId
         AuthUI.getInstance().signOut(requireContext())
             .addOnSuccessListener {
@@ -129,15 +144,9 @@ class InicioFragment : Fragment(), InicioView {
 
     private fun syncServer() {
         inicioPresenter.getValueWeb()
-        inicioPresenter.getProductsFromFirestore()
         binding.progressBar.visibility = View.VISIBLE
         snackbar = Snackbar.make(binding.root, R.string.msg_sync, Snackbar.LENGTH_SHORT)
         snackbar.show()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun resultSync(statusOk: Boolean) {
@@ -147,9 +156,14 @@ class InicioFragment : Fragment(), InicioView {
             } else {
                 getString(R.string.msg_sync_error)
             }
+            viewModel.syncReadyTrue()
             binding.progressBar.visibility = View.GONE
             snackbar = Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT)
             snackbar.show()
         }
+    }
+
+    override fun productSave(product: Product) {
+        viewModel.addProduct(product)
     }
 }

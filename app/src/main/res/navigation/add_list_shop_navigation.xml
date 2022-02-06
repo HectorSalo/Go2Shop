@@ -15,5 +15,5 @@
     </fragment>
     <fragment
         android:id="@+id/addListShopFragment"
-        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddListShopFragment" />
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop.AddShopFragment" />
 </navigation>

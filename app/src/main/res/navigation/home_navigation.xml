@@ -46,10 +46,14 @@
         tools:layout="@layout/fragment_products" />
     <fragment
         android:id="@+id/viewShopItem"
-        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopItem"
+        android:name="com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopDetailsDialog"
         android:label="ViewShopItem" />
     <activity
         android:id="@+id/nav_settings"
         android:name="com.skysam.hchirinos.go2shop.settingsModule.SettingsActivity"
         android:label="SettingsActivity" />
+    <fragment
+        android:id="@+id/nav_lists_shared"
+        android:name="com.skysam.hchirinos.go2shop.listsShared.ListsSharedFragment"
+        android:label="@string/nav_lists_shared" />
 </navigation>

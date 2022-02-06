@@ -15,10 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.database.firebase.AuthAPI
-import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
-import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenter
-import com.skysam.hchirinos.go2shop.homeModule.presenter.InicioPresenterClass
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home, R.id.nav_history, R.id.nav_lists, R.id.nav_products,
-            R.id.nav_settings), drawerLayout)
+            R.id.nav_home, R.id.nav_history, R.id.nav_lists, R.id.nav_lists_shared,
+            R.id.nav_products, R.id.nav_settings), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -50,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         if (user != null) {
             tvNameUser.text = user.displayName
             tvEmailUser.text = user.email
-            SharedPreferenceBD.saveSyncState(AuthAPI.getCurrenUser()!!.uid, true)
             if (user.photoUrl != null) {
                 Glide.with(this).load(user.photoUrl)
                     .circleCrop().into(ivUser)

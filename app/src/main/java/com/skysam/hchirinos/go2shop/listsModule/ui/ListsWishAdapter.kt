@@ -33,6 +33,13 @@ class ListsWishAdapter(private var lists: MutableList<ListWish>, private val onC
 
         holder.card.isChecked = listToDeleted.contains(position)
 
+        if (item.isShare) {
+            holder.shareFrom.text = context.getString(R.string.text_shared_from, item.nameUserShared)
+            holder.shareFrom.visibility = View.VISIBLE
+        } else {
+            holder.shareFrom.visibility = View.GONE
+        }
+
         holder.card.setOnLongClickListener {
             holder.card.isChecked = !holder.card.isChecked
             onClickList.onClickDelete(position)
@@ -56,6 +63,7 @@ class ListsWishAdapter(private var lists: MutableList<ListWish>, private val onC
         val name: TextView = view.findViewById(R.id.tv_name)
         val price: TextView = view.findViewById(R.id.tv_price)
         val listItems: TextView = view.findViewById(R.id.tv_items)
+        val shareFrom: TextView = view.findViewById(R.id.tv_share)
         val card: MaterialCardView = view.findViewById(R.id.card)
     }
 

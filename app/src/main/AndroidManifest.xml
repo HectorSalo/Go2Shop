@@ -19,7 +19,8 @@
             android:theme="@style/Theme.Go2Shop.NoActionBar"
             android:label="@string/nav_ajustes"/>
         <activity android:name=".initModule.ui.InitActivity"
-            android:theme="@style/Splash">
+            android:theme="@style/Splash"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,13 +28,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".shopsModule.ui.AddListShopActivity"
+            android:name=".shopsModule.ui.addListShop.AddShopActivity"
             android:label="@string/title_activity_add_list_shop"
             android:theme="@style/Theme.Go2Shop.NoActionBar" />
         <activity
             android:name=".homeModule.ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Go2Shop.NoActionBar" />
+            android:theme="@style/Theme.Go2Shop.NoActionBar"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="OPEN_APP"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

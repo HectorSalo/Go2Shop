@@ -5,10 +5,12 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.ExitDialog
 import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
@@ -17,8 +19,7 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentConfigNewShopBinding
-import com.skysam.hchirinos.go2shop.shopsModule.viewModel.ConfigNewShopViewModel
-import com.skysam.hchirinos.go2shop.shopsModule.viewModel.SharedViewModel
+import com.skysam.hchirinos.go2shop.viewmodels.AddShopViewModel
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 
@@ -27,10 +28,11 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
 
     private var _binding: FragmentConfigNewShopBinding? = null
     private val binding get() = _binding!!
-    private val configNewShopViewModel: ConfigNewShopViewModel by activityViewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val viewModel: AddShopViewModel by activityViewModels()
     private lateinit var adapter: ConfigNewShopAdapter
     private val lists: MutableList<ListWish> = mutableListOf()
+    private val myLists: MutableList<ListWish> = mutableListOf()
+    private val listsShared: MutableList<ListWish> = mutableListOf()
     private val listsProducts: MutableList<ProductsToListModel> = mutableListOf()
 
     override fun onCreateView(
@@ -57,6 +59,7 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
         adapter = ConfigNewShopAdapter(lists, this)
         binding.rvLists.setHasFixedSize(true)
         binding.rvLists.adapter = adapter
+        binding.etNameList.doAfterTextChanged { binding.tfNameList.error = null }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -84,12 +87,56 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     }
 
     private fun loadViewModels() {
-        configNewShopViewModel.lists.observe(viewLifecycleOwner, {
-            adapter.updateList(it)
+        viewModel.lists.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                myLists.clear()
+                if (it.isNotEmpty()) {
+                    myLists.addAll(it)
+                    showList()
+                }
+            }
         })
-        configNewShopViewModel.rateChange.observe(viewLifecycleOwner, {
-            binding.etCotizacion.setText(NumberFormat.getInstance().format(it))
+        viewModel.listsShared.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                listsShared.clear()
+                if (it.isNotEmpty()) {
+                    for (list in it) {
+                        val listToShow = ListWish(
+                            list.id,
+                            list.name,
+                            Constants.USER_ID,
+                            list.listProducts,
+                            list.total,
+                            list.dateCreated,
+                            list.dateCreated
+                        )
+                        listsShared.add(listToShow)
+                    }
+                    showList()
+                }
+            }
         })
+        viewModel
+        viewModel.rateChange.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                binding.etCotizacion.setText(NumberFormat.getInstance().format(it))
+            }
+        })
+    }
+
+    private fun showList() {
+        lists.clear()
+        lists.addAll(listsShared)
+        lists.addAll(myLists)
+        if (lists.isNotEmpty()) {
+            adapter.updateList(lists)
+            binding.rvLists.visibility = View.VISIBLE
+            binding.tvListEmpty.visibility = View.GONE
+        } else {
+            binding.rvLists.visibility = View.GONE
+            binding.tvListEmpty.visibility = View.VISIBLE
+        }
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun validateData() {
@@ -128,7 +175,7 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
             binding.tfCotizacion.error = getString(R.string.error_field_zero)
             return
         }
-        sharedViewModel.sharedData(binding.etNameList.text.toString(), rateChange, listsProducts)
+        viewModel.sharedData(binding.etNameList.text.toString(), rateChange, listsProducts)
         NavHostFragment.findNavController(this)
             .navigate(R.id.action_configNewShopFragment_to_addListShopFragment)
     }

@@ -7,26 +7,23 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
-import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenter
-import com.skysam.hchirinos.go2shop.listsModule.presenter.EditListWishPresenterClass
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
-import com.skysam.hchirinos.go2shop.productsModule.ui.ProductsView
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.text.NumberFormat
 import java.util.*
 
@@ -34,12 +31,11 @@ import java.util.*
  * Created by Hector Chirinos on 16/03/2021.
  */
 class EditListWishDialog(private val listWish: ListWish, private val position: Int, private val updatedListWish: UpdatedListWish):
-        DialogFragment(), OnClickExit, ProductsView,
-        OnClickList, UpdatedProduct, ProductSaveFromList, EditListWishView {
+        DialogFragment(), OnClickExit,
+        OnClickList, UpdatedProduct, ProductSaveFromList {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var productsPresenter: ProductsPresenter
-    private lateinit var editListWishPresenter: EditListWishPresenter
+    private val viewModel: MainViewModel by activityViewModels()
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<Product> = mutableListOf()
     private var productsOriginal: MutableList<ProductsToListModel> = mutableListOf()
@@ -59,40 +55,62 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogAddWishListBinding.inflate(inflater, container, false)
-        productsPresenter = ProductsPresenterClass(this)
-        editListWishPresenter = EditListWishPresenterClass(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        productsPresenter.getProducts()
         addWishListAdapter = AddWishListAdapter(productsToAdd, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.etNameList.setText(listWish.name)
-        sumTotal(listWish.total)
-        loadProducts()
-
+        binding.etNameList.doAfterTextChanged { binding.tfNameList.error = null }
         binding.tfSearchProducts.setStartIconOnClickListener {
-            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this)
+            val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
             addProduct.show(requireActivity().supportFragmentManager, tag)
         }
         binding.etSarchProduct.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             Keyboard.close(binding.root)
-            var positionSelected = 0
+            var product: Product? = null
             val nameSelected = parent.getItemAtPosition(position)
-
             for (i in productsName.indices) {
-                positionSelected = productsName.indexOf(nameSelected)
+                val positionSelected = productsName.indexOf(nameSelected)
+                product = productsFromDB[positionSelected]
             }
-            addProductToList(positionSelected)
+            addProductToList(product!!)
         }
         binding.fabSave.setOnClickListener { validateToSave() }
         binding.fabCancel.setOnClickListener {
             val exitDialog = ExitDialog(this)
             exitDialog.show(requireActivity().supportFragmentManager, tag)
         }
+        loadViewModels()
+        sumTotal(listWish.total)
+        loadProducts()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun loadViewModels() {
+        viewModel.products.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                productsFromDB.clear()
+                productsFromDB.addAll(it)
+                fillListProductsDB(productsFromDB)
+            }
+        })
+    }
+
+    private fun fillListProductsDB(list: MutableList<Product>){
+        productsName.clear()
+        for (i in list.indices) {
+            productsName.add(i, list[i].name)
+        }
+        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName.sorted())
+        binding.etSarchProduct.setAdapter(adapterSearchProduct)
     }
 
     private fun validateToSave() {
@@ -158,40 +176,36 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         listToSend = ListWish(
             listWish.id,
             nameList,
-            listWish.userId,
+            AuthAPI.getCurrenUser()!!.uid,
             listFinal,
             total,
             listWish.dateCreated,
-            dateCurrent
+            dateCurrent,
+            listWish.isShare,
+            listWish.nameUserShared
         )
-        editListWishPresenter.editListWish(listToSend, listToSave, listToUpdate, listToDelete)
+        updatedListWish.updatedListWish(position, listToSend, listToSave, listToUpdate, listToDelete)
+        dismiss()
     }
 
-    private fun addProductToList(position: Int) {
-        var positionInList = -1
-        var add = true
-        val productSelected = productsFromDB[position]
-        if (productsToAdd.contains(productSelected)) {
-            Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
-            return
-        }
+    private fun addProductToList(product: Product) {
+        var exist = false
         for (i in productsToAdd.indices) {
-            if (productsToAdd[i].name == productSelected.name) {
-                add = false
-                positionInList = i
+            if (productsToAdd[i].name == product.name) {
+                exist = true
             }
         }
-        if (add) {
-            productsToAdd.add(productSelected)
-            addWishListAdapter.updateList(productsToAdd)
-            binding.etSarchProduct.setText("")
-
-            val subtotal = productSelected.quantity * productSelected.price
-            sumTotal(subtotal)
-        } else {
+        if (exist) {
             Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
-            binding.rvList.scrollToPosition(positionInList)
+            binding.rvList.scrollToPosition(productsToAdd.indexOf(product))
+            return
         }
+        productsToAdd.add(product)
+        addWishListAdapter.updateList(productsToAdd)
+        binding.etSarchProduct.setText("")
+
+        val subtotal = product.quantity * product.price
+        sumTotal(subtotal)
     }
 
     private fun sumTotal(subtotal: Double) {
@@ -215,26 +229,8 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
         addWishListAdapter.updateList(productsToAdd)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onClickExit() {
         dialog!!.dismiss()
-    }
-
-    override fun resultGetProducts(products: MutableList<Product>) {
-        productsFromDB.addAll(products)
-        fillListProductsDB(products)
-    }
-
-    private fun fillListProductsDB(list: MutableList<Product>){
-        for (i in list.indices) {
-            productsName.add(i, list[i].name)
-        }
-        val adapterSearchProduct = ArrayAdapter(requireContext(), R.layout.list_autocomplete_text, productsName)
-        binding.etSarchProduct.setAdapter(adapterSearchProduct)
     }
 
     override fun onClickDelete(position: Int) {
@@ -256,7 +252,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
     }
 
     override fun updatedProduct(position: Int, product: Product) {
-        val oldPrice = productsToAdd[position].price
+        val oldPrice = productsToAdd[position].price * productsToAdd[position].quantity
         productsToAdd[position] = product
         val subtotal = (product.quantity * product.price) - oldPrice
         sumTotal(subtotal)
@@ -264,26 +260,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
     }
 
     override fun productSave(product: Product) {
-        productsFromDB.add(product)
-        fillListProductsDB(productsFromDB)
-        addProductToList(productsFromDB.size - 1)
-    }
-
-    override fun resultEditListWishFirestore(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            if (statusOk) {
-                updatedListWish.updatedListWish(position, listToSend)
-                Toast.makeText(requireContext(), getString(R.string.update_data_ok), Toast.LENGTH_SHORT).show()
-                dialog!!.dismiss()
-            } else {
-                binding.progressBar.visibility = View.GONE
-                binding.fabSave.isEnabled = true
-                binding.fabCancel.isEnabled = true
-                binding.tfNameList.isEnabled = true
-                binding.tfSearchProducts.isEnabled = true
-                actived = true
-                Toast.makeText(requireContext(), getString(R.string.update_data_error), Toast.LENGTH_SHORT).show()
-            }
-        }
+        viewModel.addProduct(product)
+        addProductToList(product)
     }
 }

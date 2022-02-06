@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -33,6 +34,7 @@ class ConfigNewShopAdapter(private var lists: MutableList<ListWish>, private val
         holder.name.text = item.name
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.total))
         holder.unit.text = context.getString(R.string.text_item_in_list, item.listProducts.size.toString())
+        holder.linear.visibility = View.GONE
 
         if (holder.switch.isChecked) {
             holder.switch.text = context.getString(R.string.text_switch_on_shop)
@@ -57,6 +59,7 @@ class ConfigNewShopAdapter(private var lists: MutableList<ListWish>, private val
         val unit: TextView = view.findViewById(R.id.tv_unit_items)
         val price: TextView = view.findViewById(R.id.tv_price)
         val switch: SwitchMaterial = view.findViewById(R.id.switch_shop)
+        val linear: LinearLayout = view.findViewById(R.id.linearShop)
     }
 
     fun updateList(newList: MutableList<ListWish>) {

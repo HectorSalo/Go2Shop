@@ -8,23 +8,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.FragmentProductsBinding
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductFragmentPresenterClass
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenter
-import com.skysam.hchirinos.go2shop.productsModule.presenter.ProductsPresenterClass
-import java.util.*
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 
-class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickList, UpdatedProduct, SearchView.OnQueryTextListener {
+class ProductsFragment : Fragment(), OnClickList, UpdatedProduct, SearchView.OnQueryTextListener {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var productsPresenter: ProductsPresenter
-    private lateinit var productFragmentPresenter: ProductFragmentPresenter
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var adapterProduct: ProductAdapter
     private lateinit var search: SearchView
     private var productsList: MutableList<Product> = mutableListOf()
@@ -32,9 +28,11 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
     private var productsToRestored: MutableList<Product> = mutableListOf()
     private var listSearch: MutableList<Product> = mutableListOf()
     private var listPositionsToDelete: MutableList<Int> = mutableListOf()
-    var actionModeActived = false
-    var actionMode: androidx.appcompat.view.ActionMode? = null
-    var firstPositionToDelete = 0
+    private var actionModeActived = false
+    private var deleting = false
+    private var actionMode: androidx.appcompat.view.ActionMode? = null
+    private var positionEdit = 0
+    private var firstPositionToDelete = 0
 
 
     override fun onCreateView(
@@ -43,17 +41,15 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
     ): View {
         _binding = FragmentProductsBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        productFragmentPresenter = ProductFragmentPresenterClass(this)
-        productsPresenter = ProductsPresenterClass(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        productsPresenter.getProducts()
         binding.rvProducts.setHasFixedSize(true)
         adapterProduct = ProductAdapter(productsList, this)
         binding.rvProducts.adapter = adapterProduct
+        loadViewModels()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -65,7 +61,6 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         val itemSearch = menu.findItem(R.id.action_search)
         search = itemSearch.actionView as SearchView
         search.setOnQueryTextListener(this)
-
     }
 
     override fun onDestroyView() {
@@ -73,27 +68,29 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         _binding = null
     }
 
-    override fun resultGetProducts(products: MutableList<Product>) {
-        binding.progressBar.visibility = View.GONE
-        if (products.isNullOrEmpty()) {
-            binding.tvListEmpty.visibility = View.VISIBLE
-        } else {
-            productsList = products
-            adapterProduct.updateList(products)
-            binding.rvProducts.visibility = View.VISIBLE
-        }
-    }
-
-    override fun resultDeleteProducts(statusOk: Boolean, msg: String) {
-        if (_binding != null) {
-            if (!statusOk) {
-                for (i in productsToRestored.indices) {
-                    productsList.add(listPositionsToDelete[i], productsToRestored[i])
+    private fun loadViewModels() {
+        viewModel.products.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                if (it.isNotEmpty()) {
+                    if (!deleting) {
+                        productsList.clear()
+                        productsList.addAll(it)
+                        adapterProduct.updateList(productsList)
+                        binding.rvProducts.visibility = View.VISIBLE
+                        binding.tvListEmpty.visibility = View.GONE
+                        if (listSearch.isNotEmpty()) {
+                            binding.rvProducts.scrollToPosition(positionEdit)
+                            listSearch.clear()
+                        }
+                    }
+                    deleting = false
+                } else {
+                    binding.rvProducts.visibility = View.GONE
+                    binding.tvListEmpty.visibility = View.VISIBLE
                 }
-                adapterProduct.updateList(productsList)
-                binding.rvProducts.scrollToPosition(firstPositionToDelete)
+                binding.progressBar.visibility = View.GONE
             }
-        }
+        })
     }
 
     override fun onClickDelete(position: Int) {
@@ -136,26 +133,14 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         } else {
             listSearch[position]
         }
+        positionEdit = productsList.indexOf(productSelected)
         val editProductDialog = EditProductDialog(productSelected, position, false, this, null)
         editProductDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
     override fun updatedProduct(position: Int, product: Product) {
-        if (listSearch.isEmpty()) {
-            productsList[position] = product
-            adapterProduct.updateList(productsList)
-        } else {
-            var positionOriginal = -1
-            for (i in productsList.indices) {
-                if (productsList[i].id == product.id) {
-                    positionOriginal = i
-                }
-            }
-            productsList[positionOriginal] = product
-            listSearch[position] = product
-            adapterProduct.updateList(listSearch)
-        }
-        binding.rvProducts.scrollToPosition(position)
+        viewModel.editProduct(product)
+        search.onActionViewCollapsed()
     }
 
     private val callback = object : androidx.appcompat.view.ActionMode.Callback {
@@ -204,7 +189,8 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (productsToRestored.isNotEmpty()) {
-                            productFragmentPresenter.deleteProducts(productsToRestored)
+                            deleting = true
+                            viewModel.deleteProducts(productsToRestored)
                             productsToRestored.clear()
                             listPositionsToDelete.clear()
                         }
@@ -233,13 +219,19 @@ class ProductsFragment : Fragment(), ProductsView, ProductFragmentView, OnClickL
         if (productsList.isEmpty()) {
             Toast.makeText(context, getString(R.string.text_list_empty), Toast.LENGTH_SHORT).show()
         } else {
-            val userInput: String = newText!!.toLowerCase(Locale.ROOT)
+            val userInput: String = newText!!.lowercase()
             listSearch.clear()
 
             for (product in productsList) {
-                if (product.name.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (product.name.lowercase().contains(userInput)) {
                     listSearch.add(product)
                 }
+            }
+            if (listSearch.isEmpty()) {
+                binding.lottieAnimationView.visibility = View.VISIBLE
+                binding.lottieAnimationView.playAnimation()
+            } else {
+                binding.lottieAnimationView.visibility = View.GONE
             }
             adapterProduct.updateList(listSearch)
         }
