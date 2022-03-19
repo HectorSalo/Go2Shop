@@ -1,13 +1,12 @@
 package com.skysam.hchirinos.go2shop.settingsModule
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.skysam.hchirinos.go2shop.R
 

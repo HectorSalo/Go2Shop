@@ -41,7 +41,7 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClick {
         binding.rvProducts.adapter = adapter
         binding.rvProducts.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
 
-        viewModel.productsFromStorage.observe(viewLifecycleOwner, {
+        viewModel.productsFromStorage.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
                     products.clear()
@@ -55,7 +55,7 @@ class StorageFragment : Fragment(), SearchView.OnQueryTextListener, OnClick {
                 }
                 binding.progressBar.visibility = View.GONE
             }
-        })
+        }
     }
 
     override fun onDestroyView() {

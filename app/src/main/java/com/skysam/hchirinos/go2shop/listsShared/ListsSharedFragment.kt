@@ -84,7 +84,7 @@ class ListsSharedFragment : Fragment(), OnClick, SearchView.OnQueryTextListener 
     }
 
     private fun loadViewModels() {
-        viewModel.listsShared.observe(viewLifecycleOwner, {
+        viewModel.listsShared.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
                     lists.clear()
@@ -102,8 +102,8 @@ class ListsSharedFragment : Fragment(), OnClick, SearchView.OnQueryTextListener 
                 }
                 binding.progressBar.visibility = View.GONE
             }
-        })
-        viewModel.users.observe(viewLifecycleOwner, {
+        }
+        viewModel.users.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 users.clear()
                 for (user in it) {
@@ -112,7 +112,7 @@ class ListsSharedFragment : Fragment(), OnClick, SearchView.OnQueryTextListener 
                     }
                 }
             }
-        })
+        }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

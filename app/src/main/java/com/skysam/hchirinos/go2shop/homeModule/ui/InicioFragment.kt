@@ -94,33 +94,35 @@ class InicioFragment : Fragment(), InicioView, ProductSaveFromList {
     }
 
     private fun loadViewModels() {
-        viewModel.shops.observe(viewLifecycleOwner, { shop->
+        viewModel.shops.observe(viewLifecycleOwner) { shop ->
             if (!shop.isNullOrEmpty()) {
                 val date = DateFormat.getDateInstance().format(Date(shop[0].dateCreated))
                 val ammount = NumberFormat.getInstance().format(shop[0].total)
-                binding.textHomeFirstLine.text = getString(R.string.text_last_shopping_first_line, date)
-                binding.textHomeSecondLine.text = getString(R.string.text_last_shopping_second_line, ammount)
+                binding.textHomeFirstLine.text =
+                    getString(R.string.text_last_shopping_first_line, date)
+                binding.textHomeSecondLine.text =
+                    getString(R.string.text_last_shopping_second_line, ammount)
                 return@observe
             }
             binding.textHomeFirstLine.text = getString(R.string.text_no_shopping)
             binding.textHomeSecondLine.text = getString(R.string.text_empty)
-        })
-        viewModel.products.observe(viewLifecycleOwner, {
+        }
+        viewModel.products.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 products.clear()
                 products.addAll(it)
             }
-        })
-        viewModel.users.observe(viewLifecycleOwner, {
+        }
+        viewModel.users.observe(viewLifecycleOwner) {
             var isExists = false
             for (user in it) {
                 if (user.id == AuthAPI.getCurrenUser()?.uid) isExists = true
             }
             if (!isExists) viewModel.addUser(AuthAPI.getCurrenUser()!!)
-        })
-        viewModel.syncReady.observe(viewLifecycleOwner, {
+        }
+        viewModel.syncReady.observe(viewLifecycleOwner) {
             if (!it) syncServer()
-        })
+        }
     }
 
     private fun signOut() {

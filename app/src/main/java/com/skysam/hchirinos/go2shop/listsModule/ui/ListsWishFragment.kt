@@ -78,7 +78,7 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
     }
 
     private fun loadViewModels() {
-        viewModel.listsWish.observe(viewLifecycleOwner, {
+        viewModel.listsWish.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
                     if (!deleting) {
@@ -99,8 +99,8 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
                 }
                 binding.progressBar.visibility = View.GONE
             }
-        })
-        viewModel.users.observe(viewLifecycleOwner, {
+        }
+        viewModel.users.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 users.clear()
                 for (user in it) {
@@ -109,7 +109,7 @@ class ListsWishFragment : Fragment(), OnClickList, UpdatedListWish, SearchView.O
                     }
                 }
             }
-        })
+        }
     }
 
     override fun onClickDelete(position: Int) {

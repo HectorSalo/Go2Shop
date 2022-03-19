@@ -88,34 +88,34 @@ class AddShopFragment : Fragment(),
     }
 
     private fun loadViewModels() {
-        viewModel.nameShop.observe(viewLifecycleOwner, {
+        viewModel.nameShop.observe(viewLifecycleOwner) {
             nameList = it
             toolbar.title = it
             toolbar.setNavigationIcon(R.drawable.ic_close_24)
-        })
-        viewModel.productsShared.observe(viewLifecycleOwner, { list ->
+        }
+        viewModel.productsShared.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
                 viewModel.fillListFirst(list)
             }
-        })
-        viewModel.rateChange.observe(viewLifecycleOwner, {
+        }
+        viewModel.rateChange.observe(viewLifecycleOwner) {
             rateChange = it
-        })
-        viewModel.allProductsCreated.observe(viewLifecycleOwner, {
+        }
+        viewModel.allProductsCreated.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 productsFromDB.clear()
                 productsFromDB.addAll(it)
                 fillListProductsDB(productsFromDB)
             }
-        })
-        viewModel.productsStoraged.observe(viewLifecycleOwner, {
+        }
+        viewModel.productsStoraged.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 productsStoraged.clear()
                 productsStoraged.addAll(it)
                 addShopAdapter.updateList(productsToAdd)
             }
-        })
-        viewModel.allProducts.observe(viewLifecycleOwner, {
+        }
+        viewModel.allProducts.observe(viewLifecycleOwner) {
             productsToAdd.clear()
             productsToAdd.addAll(it)
             addShopAdapter.updateList(productsToAdd)
@@ -123,11 +123,12 @@ class AddShopFragment : Fragment(),
                 binding.rvList.scrollToPosition(productsToAdd.indexOf(productAdded))
                 productAdded = null
             }
-        })
-        viewModel.totalPrice.observe(viewLifecycleOwner, {
+        }
+        viewModel.totalPrice.observe(viewLifecycleOwner) {
             total = it
-            binding.tvTotal.text = getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
-        })
+            binding.tvTotal.text =
+                getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

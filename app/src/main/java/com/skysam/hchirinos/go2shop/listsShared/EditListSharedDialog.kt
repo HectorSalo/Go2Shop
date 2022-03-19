@@ -90,13 +90,13 @@ class EditListSharedDialog(private val listShared: ListShared): DialogFragment()
     }
 
     private fun loadViewModels() {
-        viewModel.products.observe(viewLifecycleOwner, {
+        viewModel.products.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 productsFromDB.clear()
                 productsFromDB.addAll(it)
                 fillListProductsDB(productsFromDB)
             }
-        })
+        }
     }
 
     private fun fillListProductsDB(list: MutableList<Product>){

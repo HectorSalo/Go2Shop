@@ -92,13 +92,13 @@ class AddListSharedDialog(private val users: MutableList<String>): DialogFragmen
 
 
     private fun loadViewModels() {
-        viewModel.products.observe(viewLifecycleOwner, {
+        viewModel.products.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 productsFromDB.clear()
                 productsFromDB.addAll(it)
                 fillListProductsDB(productsFromDB)
             }
-        })
+        }
     }
 
     private fun fillListProductsDB(list: MutableList<Product>){

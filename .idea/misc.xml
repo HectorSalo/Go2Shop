@@ -31,8 +31,10 @@
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/layout_new_shop_item.xml" value="0.25" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/layout_product_list.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/layout_product_storage.xml" value="0.25" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/list_autocomplete_text.xml" value="0.3546875" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/layout/settings_activity.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/activity_main_drawer.xml" value="0.34923076923076923" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/contextual_action_bar_products.xml" value="0.3546875" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/item_list_shared.xml" value="0.3546875" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/item_storage.xml" value="0.3546875" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/Go2Shop/app/src/main/res/menu/main.xml" value="0.34923076923076923" />
@@ -49,7 +51,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

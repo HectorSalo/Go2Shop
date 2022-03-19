@@ -39,7 +39,7 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
         binding.rvList.setHasFixedSize(true)
         binding.rvList.adapter = adapter
 
-        viewModel.shops.observe(viewLifecycleOwner, {shop->
+        viewModel.shops.observe(viewLifecycleOwner) { shop ->
             if (_binding != null) {
                 if (shop.isNotEmpty()) {
                     listsShop.clear()
@@ -53,7 +53,7 @@ class ShopFragment : Fragment(), SearchView.OnQueryTextListener, OnClickList {
                 }
                 binding.progressBar.visibility = View.GONE
             }
-        })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

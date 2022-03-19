@@ -87,7 +87,7 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     }
 
     private fun loadViewModels() {
-        viewModel.lists.observe(viewLifecycleOwner, {
+        viewModel.lists.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 myLists.clear()
                 if (it.isNotEmpty()) {
@@ -95,8 +95,8 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
                     showList()
                 }
             }
-        })
-        viewModel.listsShared.observe(viewLifecycleOwner, {
+        }
+        viewModel.listsShared.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 listsShared.clear()
                 if (it.isNotEmpty()) {
@@ -115,13 +115,13 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
                     showList()
                 }
             }
-        })
+        }
         viewModel
-        viewModel.rateChange.observe(viewLifecycleOwner, {
+        viewModel.rateChange.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 binding.etCotizacion.setText(NumberFormat.getInstance().format(it))
             }
-        })
+        }
     }
 
     private fun showList() {

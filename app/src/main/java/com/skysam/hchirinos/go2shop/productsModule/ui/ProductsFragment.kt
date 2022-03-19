@@ -69,7 +69,7 @@ class ProductsFragment : Fragment(), OnClickList, UpdatedProduct, SearchView.OnQ
     }
 
     private fun loadViewModels() {
-        viewModel.products.observe(viewLifecycleOwner, {
+        viewModel.products.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
                     if (!deleting) {
@@ -90,7 +90,7 @@ class ProductsFragment : Fragment(), OnClickList, UpdatedProduct, SearchView.OnQ
                 }
                 binding.progressBar.visibility = View.GONE
             }
-        })
+        }
     }
 
     override fun onClickDelete(position: Int) {
