@@ -11,10 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
+import com.skysam.hchirinos.go2shop.common.models.Deparment
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
@@ -37,11 +39,16 @@ class AddShopFragment : Fragment(),
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<ProductsToShopModel> = mutableListOf()
     private var productsToShop: MutableList<ProductsToListModel> = mutableListOf()
+    private var productsShared: MutableList<ProductsToListModel> = mutableListOf()
     private var productsToStorage: MutableList<StorageModel> = mutableListOf()
     private var productsStoraged: MutableList<StorageModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
+    private var deparments = mutableListOf<Deparment>()
+    private var deparmentsToShow = mutableListOf<Deparment>()
     private lateinit var addShopAdapter: AddShopAdapter
+    private lateinit var deparmentShopAdapter: DeparmentShopAdapter
     private lateinit var nameList: String
+    private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
     private var rateChange: Double = 0.0
     private var total: Double = 0.0
     private var priceBeforeUpdated: Double = 0.0
@@ -66,9 +73,13 @@ class AddShopFragment : Fragment(),
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         toolbar = requireActivity().findViewById(R.id.toolbar)
         binding.rvList.setHasFixedSize(true)
+        wrapContentLinearLayoutManager = WrapContentLinearLayoutManager(requireContext(),
+            RecyclerView.VERTICAL, false)
         addShopAdapter = AddShopAdapter(productsToAdd, productsStoraged,this, this, this)
-        binding.rvList.adapter = addShopAdapter
+        deparmentShopAdapter = DeparmentShopAdapter(deparmentsToShow)
+        binding.rvList.adapter = deparmentShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        binding.rvList.layoutManager = wrapContentLinearLayoutManager
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.tfSearchProducts.setStartIconOnClickListener {
             val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
@@ -88,6 +99,15 @@ class AddShopFragment : Fragment(),
     }
 
     private fun loadViewModels() {
+        viewModel.deparments.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                if (it.isNotEmpty()) {
+                    deparments.clear()
+                    deparments.addAll(it)
+                    loadDeparmentsToShow()
+                }
+            }
+        }
         viewModel.nameShop.observe(viewLifecycleOwner) {
             nameList = it
             toolbar.title = it
@@ -95,7 +115,10 @@ class AddShopFragment : Fragment(),
         }
         viewModel.productsShared.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
-                viewModel.fillListFirst(list)
+                productsShared.clear()
+                productsShared.addAll(list)
+                loadDeparmentsToShow()
+                //viewModel.fillListFirst(list)
             }
         }
         viewModel.rateChange.observe(viewLifecycleOwner) {
@@ -373,5 +396,18 @@ class AddShopFragment : Fragment(),
         if (position > 0) {
             productsToStorage.remove(productsToStorage[position])
         }
+    }
+
+    private fun loadDeparmentsToShow() {
+        deparmentsToShow.clear()
+        for (dep in deparments) {
+            for (pro in productsShared) {
+                if (dep.name == pro.deparment && !deparmentsToShow.contains(dep))
+                    deparmentsToShow.add(dep)
+            }
+        }
+        val noDep = Deparment("", "Otros productos", "")
+        deparmentsToShow.add(noDep)
+        deparmentShopAdapter.notifyItemRangeInserted(0, deparmentsToShow.size)
     }
 }

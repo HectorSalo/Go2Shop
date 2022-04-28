@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,9 @@ class DeparmentAdapter(private var deparments: MutableList<Deparment>, private v
  }
 
  override fun onBindViewHolder(holder: DeparmentAdapter.ViewHolder, position: Int) {
+  holder.arrow.visibility = View.GONE
+  holder.list.visibility = View.GONE
+
   val item = deparments[position]
   holder.name.text = item.name
 
@@ -48,6 +52,8 @@ class DeparmentAdapter(private var deparments: MutableList<Deparment>, private v
 
  inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
   val name: TextView = view.findViewById(R.id.tv_name)
+  val arrow: ImageButton = view.findViewById(R.id.ib_arrow)
+  val list: RecyclerView = view.findViewById(R.id.rv_list)
   val card: MaterialCardView = view.findViewById(R.id.card)
  }
 

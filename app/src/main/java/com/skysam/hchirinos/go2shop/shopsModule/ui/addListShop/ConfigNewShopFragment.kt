@@ -203,7 +203,8 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
                 list[i].userId,
                 nameList!!,
                 list[i].price,
-                list[i].quantity
+                list[i].quantity,
+                list[i].deparment
             )
             if (isChecked) {
                 listsProducts.add(productToShop)
