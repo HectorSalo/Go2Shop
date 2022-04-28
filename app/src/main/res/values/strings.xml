@@ -127,6 +127,12 @@
     <!--Dialog Shop-->
     <string name="title_delete_dialog">¿Desea eliminar este ítem?</string>
 
+    <!--Fragment Deparments-->
+    <string name="nav_deparments">Departamentos</string>
+    <string name="text_deparment">Departamento</string>
+    <string name="title_add_deparment_dialog">Crear departamento</string>
+    <string name="title_edit_deparment_dialog">Editar departamento</string>
+
     <!--Ajustes-->
     <string name="nav_ajustes">Ajustes</string>
     <string name="title_profile">Personal</string>
@@ -143,5 +149,7 @@
 
     <!--Notifiacion-->
     <string name="topic_notification_user_id">idReceiver_%1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

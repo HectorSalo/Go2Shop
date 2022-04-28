@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.google.firebase.auth.FirebaseUser
+import com.skysam.hchirinos.go2shop.common.models.Deparment
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.common.models.User
@@ -22,6 +23,7 @@ class MainViewModel: ViewModel() {
     val shops: LiveData<List<Shop>> = ShopRepository.getShops().asLiveData()
     val productsFromStorage: LiveData<List<StorageModel>> = StorageRepository.getProductsFromStorage().asLiveData()
     val users: LiveData<List<User>> = UsersRepository.getUsers().asLiveData()
+    val deparments: LiveData<List<Deparment>> = DeparmentsRepository.getDeparments().asLiveData()
 
     private val _syncReady = MutableLiveData<Boolean>().apply { value = false }
     val syncReady: LiveData<Boolean> get() = _syncReady
@@ -29,6 +31,9 @@ class MainViewModel: ViewModel() {
     fun syncReadyTrue() {
         _syncReady.value = true
     }
+
+    private val _deparmentToEdit = MutableLiveData<Deparment>()
+    val deparmentToEdit: LiveData<Deparment> get() = _deparmentToEdit
 
     fun addProduct(product: Product) {
         ProductsRepository.addProduct(product)
@@ -83,6 +88,22 @@ class MainViewModel: ViewModel() {
     }
 
     fun shareLists(user: User, lists: MutableList<ListWish>) {
-        ListWishRepository.addListWishSahre(user, lists)
+        ListWishRepository.addListWishShare(user, lists)
+    }
+
+    fun addDeparment(deparment: Deparment) {
+        DeparmentsRepository.addDeparment(deparment)
+    }
+
+    fun editDeparment(deparment: Deparment) {
+        DeparmentsRepository.editDeparment(deparment)
+    }
+
+    fun departmentToEdit(deparment: Deparment) {
+        _deparmentToEdit.value = deparment
+    }
+
+    fun deleteDeparment(deparment: Deparment) {
+        DeparmentsRepository.deleteDeparment(deparment)
     }
 }

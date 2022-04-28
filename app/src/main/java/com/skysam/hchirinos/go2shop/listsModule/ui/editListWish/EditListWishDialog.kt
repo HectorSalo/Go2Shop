@@ -145,7 +145,8 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
                 listWish.listProducts[0].userId,
                 listWish.listProducts[0].listId,
                 productsToAdd[i].price,
-                productsToAdd[i].quantity
+                productsToAdd[i].quantity,
+                productsToAdd[i].deparment
             )
             listFinal.add(prod)
         }
@@ -222,7 +223,8 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
                 listWish.listProducts[i].unit,
                 listWish.listProducts[i].userId,
                 listWish.listProducts[i].price,
-                listWish.listProducts[i].quantity
+                listWish.listProducts[i].quantity,
+                listWish.listProducts[i].deparment
             )
             productsToAdd.add(product)
         }

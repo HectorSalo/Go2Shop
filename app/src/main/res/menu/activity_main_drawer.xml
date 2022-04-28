@@ -24,6 +24,10 @@
             android:id="@+id/nav_products"
             android:icon="@drawable/ic_products_24"
             android:title="@string/nav_products" />
+        <item
+            android:id="@+id/nav_deparments"
+            android:icon="@drawable/ic_deparments_24"
+            android:title="@string/nav_deparments" />
 
         <item android:title="@string/text_empty">
             <menu>

@@ -19,6 +19,8 @@ object Constants {
     const val LISTS_SHARED = "listsShared"
     const val MESSAGING_FOR_ALL = "messagingForAll"
 
+    const val DEPARMENTS = "deparments"
+
     const val USERS = "users"
     const val EMAIL = "email"
 

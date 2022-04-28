@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
@@ -17,6 +18,7 @@ import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
+import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 
@@ -29,6 +31,7 @@ class EditProductDialog(
     DialogFragment() {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var buttonPositive: Button
     private lateinit var buttonNegative: Button
     private lateinit var productResult: Product
@@ -36,6 +39,8 @@ class EditProductDialog(
     private var priceTotal: Double = 1.0
     private lateinit var unit: String
     private lateinit var name: String
+    private lateinit var deparment: String
+    private val listDepar = mutableListOf<String>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogEditProductBinding.inflate(layoutInflater)
@@ -43,11 +48,24 @@ class EditProductDialog(
         val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
         NumberFormat.getInstance().isGroupingUsed = true
 
+        viewModel.deparments.observe(this.requireActivity()) {
+            if (_binding != null) {
+                listDepar.clear()
+                listDepar.add("Sin departamento")
+                for (dep in it) {
+                    listDepar.add(dep.name)
+                }
+                val depNames = ArrayAdapter(requireContext(), R.layout.layout_spinner, listDepar)
+                binding.spinnerDeparment.adapter = depNames
+            }
+        }
+
         if (!fromList) {
             binding.tfName.visibility = View.VISIBLE
             binding.tfQuantity.visibility = View.GONE
             binding.ibAddQuantity.visibility = View.GONE
             binding.ibRestQuantity.visibility = View.GONE
+            binding.spinnerDeparment.visibility = View.GONE
         }
 
         val builder = AlertDialog.Builder(requireActivity())
@@ -113,6 +131,11 @@ class EditProductDialog(
             binding.etPrice.clearFocus()
             false
         }
+        binding.spinnerDeparment.setOnTouchListener { v, _ ->
+            v.performClick()
+            binding.etPrice.clearFocus()
+            false
+        }
         binding.rgMoneda.setOnCheckedChangeListener { _, _ -> binding.etPrice.clearFocus() }
         binding.ibAddQuantity.setOnClickListener { addQuantity() }
         binding.ibRestQuantity.setOnClickListener { restQuantity() }
@@ -145,6 +168,9 @@ class EditProductDialog(
         binding.etPrice.setText(NumberFormat.getInstance().format(product.price))
         binding.etQuantity.setText(product.quantity.toString())
         binding.spinner.setSelection(listUnits.indexOf(product.unit))
+        if (product.deparment.isNotEmpty()) {
+            binding.spinnerDeparment.setSelection(listDepar.indexOf(product.deparment))
+        }
     }
 
     private fun restQuantity() {
@@ -166,6 +192,9 @@ class EditProductDialog(
         if (binding.spinner.selectedItemPosition > 0) {
             unit = binding.spinner.selectedItem.toString()
         }
+        deparment = if (binding.spinnerDeparment.selectedItemPosition > 0) {
+            binding.spinnerDeparment.selectedItem.toString()
+        } else ""
         if (binding.rbBolivar.isChecked) {
             val value: Double =
                 rateChange ?: SharedPreferenceBD.getValue(AuthAPI.getCurrenUser()!!.uid).toDouble()
@@ -177,7 +206,8 @@ class EditProductDialog(
             unit,
             product.userId,
             priceTotal,
-            quantityTotal
+            quantityTotal,
+            deparment
         )
         Keyboard.close(binding.root)
         updatedProduct.updatedProduct(position, productResult)

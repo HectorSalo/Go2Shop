@@ -26,4 +26,10 @@
     <style name="Theme.Go2Shop.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Go2Shop.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/g2s_logo_test</item>
+        <item name="postSplashScreenTheme">@style/Theme.Go2Shop</item>
+    </style>
 </resources>

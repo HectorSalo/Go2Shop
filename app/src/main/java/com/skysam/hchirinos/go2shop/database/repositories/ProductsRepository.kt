@@ -44,7 +44,7 @@ object ProductsRepository {
                         )
                         products.add(product)
                     }
-                    offer(products)
+                    trySend(products)
                 }
             awaitClose { request.remove() }
         }

@@ -45,6 +45,10 @@ object ListWishRepository {
                         .get()
                         .addOnSuccessListener { result ->
                             for (document in result) {
+                                var deparment = ""
+                                if (document.getString(Constants.DEPARMENTS) != null) {
+                                    deparment = document.getString(Constants.DEPARMENTS)!!
+                                }
                                 val product = ProductsToListModel(
                                     document.id,
                                     document.getString(Constants.NAME)!!,
@@ -52,7 +56,8 @@ object ListWishRepository {
                                     document.getString(Constants.USER_ID)!!,
                                     document.getString(Constants.LIST_ID)!!,
                                     document.getDouble(Constants.PRICE)!!,
-                                    document.getDouble(Constants.QUANTITY)!!
+                                    document.getDouble(Constants.QUANTITY)!!,
+                                    deparment
                                 )
                                 allProductsListsWish.add(product)
                             }
@@ -110,7 +115,8 @@ object ListWishRepository {
                     Constants.USER_ID to productsToSave[i].userId,
                     Constants.LIST_ID to list.id,
                     Constants.PRICE to productsToSave[i].price,
-                    Constants.QUANTITY to productsToSave[i].quantity
+                    Constants.QUANTITY to productsToSave[i].quantity,
+                    Constants.DEPARMENTS to list.listProducts[i].deparment
                 )
 
                 getInstanceProductsListsWish()
@@ -132,18 +138,19 @@ object ListWishRepository {
     ) {
         if (productsToUpdate.isNotEmpty()) {
             for (i in productsToUpdate.indices) {
-                val data = hashMapOf(
+                val data: Map<String, Any> = hashMapOf(
                     Constants.NAME to productsToUpdate[i].name,
                     Constants.UNIT to productsToUpdate[i].unit,
                     Constants.USER_ID to productsToUpdate[i].userId,
                     Constants.LIST_ID to list.id,
                     Constants.PRICE to productsToUpdate[i].price,
-                    Constants.QUANTITY to productsToUpdate[i].quantity
+                    Constants.QUANTITY to productsToUpdate[i].quantity,
+                    Constants.DEPARMENTS to list.listProducts[i].deparment
                 )
 
                 getInstanceProductsListsWish()
                     .document(productsToUpdate[i].id)
-                    .set(data)
+                    .update(data)
                     .addOnSuccessListener {
                         if (i == productsToUpdate.lastIndex) {
                             deleteProducts(list, productsToDelete)
@@ -196,7 +203,8 @@ object ListWishRepository {
                 Constants.USER_ID to list.userId,
                 Constants.LIST_ID to id,
                 Constants.PRICE to list.listProducts[i].price,
-                Constants.QUANTITY to list.listProducts[i].quantity
+                Constants.QUANTITY to list.listProducts[i].quantity,
+                Constants.DEPARMENTS to list.listProducts[i].deparment
             )
             getInstanceProductsListsWish()
                 .add(data)
@@ -251,7 +259,7 @@ object ListWishRepository {
         }
     }
 
-    fun addListWishSahre(userToSend: User, lists: MutableList<ListWish>) {
+    fun addListWishShare(userToSend: User, lists: MutableList<ListWish>) {
         for (list in lists) {
             val date = Date(list.dateCreated)
             val data = hashMapOf(

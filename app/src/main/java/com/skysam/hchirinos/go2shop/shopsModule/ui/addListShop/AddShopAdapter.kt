@@ -11,6 +11,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.ClassesCommon
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
@@ -128,18 +129,18 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         holder.card.setOnClickListener { listenerClickList.onClickEdit(position) }
 
         var exists = false
-        var quantitySto = ""
+        var quantitySto = 0.0
         var unitSto = ""
         for (sto in storaged) {
             if (sto.name == item.name && sto.unit == item.unit) {
                 exists = true
-                quantitySto = sto.quantityRemaining.toString()
+                quantitySto = sto.quantityRemaining
                 unitSto = sto.unit
             }
         }
         if (exists) {
             holder.remaining.text = context.getString(R.string.text_products_remaining,
-                quantitySto, unitSto)
+                ClassesCommon.convertDoubleToString(quantitySto), unitSto)
             holder.remaining.visibility = View.VISIBLE
         } else {
             holder.remaining.visibility = View.GONE

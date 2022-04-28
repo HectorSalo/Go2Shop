@@ -56,4 +56,9 @@
         android:id="@+id/nav_lists_shared"
         android:name="com.skysam.hchirinos.go2shop.listsShared.ListsSharedFragment"
         android:label="@string/nav_lists_shared" />
+    <fragment
+        android:id="@+id/nav_deparments"
+        android:name="com.skysam.hchirinos.go2shop.deparments.DeparmentsFragment"
+        android:label="@string/nav_deparments"
+        tools:layout="@layout/fragment_deparments" />
 </navigation>

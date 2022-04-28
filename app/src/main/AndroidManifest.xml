@@ -19,7 +19,7 @@
             android:theme="@style/Theme.Go2Shop.NoActionBar"
             android:label="@string/nav_ajustes"/>
         <activity android:name=".initModule.ui.InitActivity"
-            android:theme="@style/Splash"
+            android:theme="@style/Theme.App.Starting"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

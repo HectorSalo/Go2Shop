@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.firebase.ui.auth.AuthUI
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
@@ -24,7 +25,7 @@ class InitActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.Theme_Go2Shop)
+        installSplashScreen()
         setContentView(R.layout.activity_init)
         if (AuthAPI.getCurrenUser() == null) {
             startAuthUI()

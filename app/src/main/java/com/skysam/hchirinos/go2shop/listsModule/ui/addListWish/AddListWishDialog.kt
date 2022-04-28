@@ -21,6 +21,7 @@ import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
 import com.skysam.hchirinos.go2shop.database.room.entities.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
+import com.skysam.hchirinos.go2shop.deparments.AddDeparmentDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
@@ -79,6 +80,10 @@ class AddListWishDialog : DialogFragment(),
             val exitDialog = ExitDialog(this)
             exitDialog.show(requireActivity().supportFragmentManager, tag)
         }
+        binding.fabAddDeparment.setOnClickListener {
+            val addDeparmentDialog = AddDeparmentDialog()
+            addDeparmentDialog.show(requireActivity().supportFragmentManager, tag)
+        }
         loadViewModels()
     }
 
@@ -136,7 +141,8 @@ class AddListWishDialog : DialogFragment(),
                 productsToAdd[i].userId,
                 Constants.USERS,
                 productsToAdd[i].price,
-                productsToAdd[i].quantity
+                productsToAdd[i].quantity,
+                productsToAdd[i].deparment
             )
             listFinal.add(prod)
         }
