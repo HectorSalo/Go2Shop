@@ -7,6 +7,5 @@ package com.skysam.hchirinos.go2shop.common.models
 data class Deparment(
     val id: String,
     var name: String,
-    var userId: String,
-    var isExtended: Boolean = false
+    var userId: String
 )

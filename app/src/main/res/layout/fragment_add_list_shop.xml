@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tf_search_products"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -14,10 +26,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:startIconDrawable="@drawable/ic_add_product_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/chip_group"
+        app:startIconDrawable="@drawable/ic_add_product_24">
 
         <AutoCompleteTextView
             android:id="@+id/et_sarch_product"
@@ -59,7 +71,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar"
         tools:context=".listsModule.ui.addListWish.AddListWishDialog"
-        tools:listitem="@layout/layout_deparment_item" />
+        tools:listitem="@layout/layout_new_shop_item" />
 
     <TextView
         android:id="@+id/tv_total"

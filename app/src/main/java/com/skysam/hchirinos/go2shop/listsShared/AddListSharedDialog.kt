@@ -196,7 +196,7 @@ class AddListSharedDialog(private val users: MutableList<String>): DialogFragmen
     override fun onClickEdit(position: Int) {
         if (actived) {
             val productSelected = productsToAdd[position]
-            val editProductDialog = EditProductDialog(productSelected, position, true, this, null)
+            val editProductDialog = EditProductDialog(productSelected, position, true, this, null, false)
             editProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
     }

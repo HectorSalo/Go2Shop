@@ -84,7 +84,8 @@ class AddShopViewModel: ViewModel() {
                 products[i].userId,
                 products[i].listId,
                 products[i].price,
-                products[i].quantity
+                products[i].quantity,
+                deparment = products[i].deparment
             )
             list.add(productToModel)
         }

@@ -1,6 +1,7 @@
 package com.skysam.hchirinos.go2shop.shopsModule.ui.addListShop
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -12,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
@@ -38,6 +40,7 @@ class AddShopFragment : Fragment(),
     private val binding get() = _binding!!
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<ProductsToShopModel> = mutableListOf()
+    private val productsFiltered = mutableListOf<ProductsToShopModel>()
     private var productsToShop: MutableList<ProductsToListModel> = mutableListOf()
     private var productsShared: MutableList<ProductsToListModel> = mutableListOf()
     private var productsToStorage: MutableList<StorageModel> = mutableListOf()
@@ -45,8 +48,8 @@ class AddShopFragment : Fragment(),
     private var productsName = mutableListOf<String>()
     private var deparments = mutableListOf<Deparment>()
     private var deparmentsToShow = mutableListOf<Deparment>()
+    private var deparmentsFilter = mutableListOf<Deparment>()
     private lateinit var addShopAdapter: AddShopAdapter
-    private lateinit var deparmentShopAdapter: DeparmentShopAdapter
     private lateinit var nameList: String
     private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
     private var rateChange: Double = 0.0
@@ -54,6 +57,7 @@ class AddShopFragment : Fragment(),
     private var priceBeforeUpdated: Double = 0.0
     private var productAdded: ProductsToShopModel? = null
     private var actived = true
+    private var editing = false
     private lateinit var toolbar: Toolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -76,10 +80,8 @@ class AddShopFragment : Fragment(),
         wrapContentLinearLayoutManager = WrapContentLinearLayoutManager(requireContext(),
             RecyclerView.VERTICAL, false)
         addShopAdapter = AddShopAdapter(productsToAdd, productsStoraged,this, this, this)
-        deparmentShopAdapter = DeparmentShopAdapter(deparmentsToShow)
-        binding.rvList.adapter = deparmentShopAdapter
+        binding.rvList.adapter = addShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        binding.rvList.layoutManager = wrapContentLinearLayoutManager
         binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.tfSearchProducts.setStartIconOnClickListener {
             val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
@@ -118,7 +120,7 @@ class AddShopFragment : Fragment(),
                 productsShared.clear()
                 productsShared.addAll(list)
                 loadDeparmentsToShow()
-                //viewModel.fillListFirst(list)
+                viewModel.fillListFirst(list)
             }
         }
         viewModel.rateChange.observe(viewLifecycleOwner) {
@@ -139,12 +141,21 @@ class AddShopFragment : Fragment(),
             }
         }
         viewModel.allProducts.observe(viewLifecycleOwner) {
-            productsToAdd.clear()
-            productsToAdd.addAll(it)
-            addShopAdapter.updateList(productsToAdd)
-            if (productAdded != null) {
-                binding.rvList.scrollToPosition(productsToAdd.indexOf(productAdded))
-                productAdded = null
+            if (!editing) {
+                productsFiltered.clear()
+                deparmentsFilter.clear()
+                binding.chipGroup.clearCheck()
+                productsToAdd.clear()
+                productsToAdd.addAll(it)
+                addShopAdapter.updateList(productsToAdd)
+                if (productAdded != null) {
+                    binding.rvList.scrollToPosition(productsToAdd.indexOf(productAdded))
+                    productAdded = null
+                }
+            } else {
+                editing = false
+                productsToAdd.clear()
+                productsToAdd.addAll(it)
             }
         }
         viewModel.totalPrice.observe(viewLifecycleOwner) {
@@ -195,7 +206,7 @@ class AddShopFragment : Fragment(),
         }
         if (exist) {
             Toast.makeText(requireContext(), getString(R.string.product_added), Toast.LENGTH_SHORT).show()
-            binding.rvList.scrollToPosition(position)
+            if(productsFiltered.isEmpty()) binding.rvList.scrollToPosition(position)
             return
         }
         val productModelSelected = ProductsToShopModel(
@@ -227,7 +238,11 @@ class AddShopFragment : Fragment(),
 
     override fun onClickEdit(position: Int) {
         if (actived) {
-            val productSelected = productsToAdd[position]
+            val productSelected = if (productsFiltered.isEmpty()) {
+                productsToAdd[position]
+            } else {
+                productsFiltered[position]
+            }
             priceBeforeUpdated = productSelected.price * productSelected.quantity
             val productToUpdated = Product(
                 productSelected.id,
@@ -237,7 +252,7 @@ class AddShopFragment : Fragment(),
                 productSelected.price,
                 productSelected.quantity
             )
-            val editProductDialog = EditProductDialog(productToUpdated, position, true, this, rateChange)
+            val editProductDialog = EditProductDialog(productToUpdated, position, true, this, rateChange, true)
             editProductDialog.show(requireActivity().supportFragmentManager, tag)
         }
     }
@@ -309,7 +324,11 @@ class AddShopFragment : Fragment(),
     }
 
     override fun updatedProduct(position: Int, product: Product) {
-        val productSelected = productsToAdd[position]
+        val productSelected = if (productsFiltered.isEmpty()) {
+            productsToAdd[position]
+        } else {
+            productsFiltered[position]
+        }
         val productModel = ProductsToShopModel(
             product.id,
             product.name,
@@ -319,9 +338,21 @@ class AddShopFragment : Fragment(),
             product.price,
             product.quantity,
             productSelected.isCheckedToShop,
-            productSelected.isCheckedToStorage
+            productSelected.isCheckedToStorage,
+            productSelected.deparment
         )
-        viewModel.updateProductToList(productModel, position)
+        if (productsFiltered.isEmpty()) {
+            viewModel.updateProductToList(productModel, position)
+        } else {
+            editing = true
+            productsFiltered[position] = productModel
+            addShopAdapter.notifyItemChanged(position)
+            var positionEdit = -1
+            for (pro in productsToAdd) {
+                if (pro.id == productModel.id) positionEdit = productsToAdd.indexOf(pro)
+            }
+            if (positionEdit > 0) viewModel.updateProductToList(productModel, positionEdit)
+        }
         if (productSelected.isCheckedToShop) {
             val priceNew = product.price * product.quantity
             viewModel.updatedPrice(priceBeforeUpdated, priceNew)
@@ -399,15 +430,46 @@ class AddShopFragment : Fragment(),
     }
 
     private fun loadDeparmentsToShow() {
+        binding.chipGroup.removeAllViews()
         deparmentsToShow.clear()
         for (dep in deparments) {
             for (pro in productsShared) {
-                if (dep.name == pro.deparment && !deparmentsToShow.contains(dep))
+                if (dep.name == pro.deparment && !deparmentsToShow.contains(dep)) {
                     deparmentsToShow.add(dep)
+                    val chip = Chip(requireContext())
+                    chip.text = dep.name
+                    chip.isCheckable = true
+                    chip.isClickable = true
+                    chip.setChipBackgroundColorResource(getColorPrimary())
+                    chip.setOnClickListener {
+                        if (chip.isChecked) {
+                            deparmentsFilter.add(dep)
+                        } else {
+                            deparmentsFilter.remove(dep)
+                        }
+                        filterDep()
+                    }
+
+                    binding.chipGroup.addView(chip)
+                }
             }
         }
-        val noDep = Deparment("", "Otros productos", "")
-        deparmentsToShow.add(noDep)
-        deparmentShopAdapter.notifyItemRangeInserted(0, deparmentsToShow.size)
+    }
+
+    private fun filterDep() {
+        productsFiltered.clear()
+        for (dep in deparmentsFilter) {
+            for (pro in productsToAdd) {
+                if (pro.deparment == dep.name && !productsFiltered.contains(pro)) productsFiltered.add(pro)
+            }
+        }
+        if (deparmentsFilter.isEmpty()) addShopAdapter.updateList(productsToAdd)
+        else addShopAdapter.updateList(productsFiltered)
+    }
+
+    private fun getColorPrimary(): Int {
+        val typedValue = TypedValue()
+        requireActivity().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+        return typedValue.resourceId
     }
 }

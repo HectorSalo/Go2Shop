@@ -27,7 +27,7 @@ import java.text.NumberFormat
  */
 class EditProductDialog(
     var product: Product, private val position: Int, private val fromList: Boolean,
-    private val updatedProduct: UpdatedProduct, private val rateChange: Double?):
+    private val updatedProduct: UpdatedProduct, private val rateChange: Double?, private val shop: Boolean):
     DialogFragment() {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
@@ -67,6 +67,7 @@ class EditProductDialog(
             binding.ibRestQuantity.visibility = View.GONE
             binding.spinnerDeparment.visibility = View.GONE
         }
+        if (shop) binding.spinnerDeparment.visibility = View.GONE
 
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.title_edit_producto_dialog, product.name))
