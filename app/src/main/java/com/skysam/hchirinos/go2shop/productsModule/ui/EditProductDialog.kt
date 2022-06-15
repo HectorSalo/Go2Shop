@@ -15,7 +15,7 @@ import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.common.models.Product
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel

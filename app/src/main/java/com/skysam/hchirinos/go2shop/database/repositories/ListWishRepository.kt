@@ -9,7 +9,8 @@ import com.skysam.hchirinos.go2shop.common.models.User
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.comunicationAPI.EventErrorTypeListener
 import com.skysam.hchirinos.go2shop.comunicationAPI.NotificationAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
+import com.skysam.hchirinos.go2shop.common.models.ListWish
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,6 +19,8 @@ import java.util.*
 /**
  * Created by Hector Chirinos on 30/04/2021.
  */
+
+@OptIn(ExperimentalCoroutinesApi::class)
 object ListWishRepository {
     private fun getInstance(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(Constants.LIST_WISH)
@@ -92,7 +95,7 @@ object ListWishRepository {
                                 )
                                 listsWish.add(listWish)
                             }
-                            offer(listsWish)
+                            trySend(listsWish)
                         }
                 }
             awaitClose { request.remove() }

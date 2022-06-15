@@ -10,9 +10,9 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.common.models.User
 import com.skysam.hchirinos.go2shop.database.repositories.*
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
-import com.skysam.hchirinos.go2shop.database.room.entities.Shop
+import com.skysam.hchirinos.go2shop.common.models.ListWish
+import com.skysam.hchirinos.go2shop.common.models.Product
+import com.skysam.hchirinos.go2shop.common.models.Shop
 
 /**
  * Created by Hector Chirinos (Home) on 29/4/2021.

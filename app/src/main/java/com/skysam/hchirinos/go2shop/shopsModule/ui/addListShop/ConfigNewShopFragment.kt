@@ -17,7 +17,7 @@ import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
 import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
+import com.skysam.hchirinos.go2shop.common.models.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentConfigNewShopBinding
 import com.skysam.hchirinos.go2shop.viewmodels.AddShopViewModel
 import java.text.DecimalFormatSymbols

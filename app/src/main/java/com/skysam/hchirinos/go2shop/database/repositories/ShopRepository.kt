@@ -9,7 +9,8 @@ import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.Shop
+import com.skysam.hchirinos.go2shop.common.models.Shop
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,6 +19,8 @@ import java.util.*
 /**
  * Created by Hector Chirinos (Home) on 2/5/2021.
  */
+
+@OptIn(ExperimentalCoroutinesApi::class)
 object ShopRepository {
     private fun getInstance(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(Constants.SHOP)
@@ -77,7 +80,7 @@ object ShopRepository {
                                )
                                shops.add(shop)
                            }
-                           offer(shops)
+                           trySend(shops)
                        }
                }
            awaitClose { request.remove() }

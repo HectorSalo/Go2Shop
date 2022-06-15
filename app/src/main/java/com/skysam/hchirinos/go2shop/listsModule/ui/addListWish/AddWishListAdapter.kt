@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.common.models.Product
 import java.text.NumberFormat
 
 

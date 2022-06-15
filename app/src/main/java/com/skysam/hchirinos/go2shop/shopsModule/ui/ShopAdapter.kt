@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
-import com.skysam.hchirinos.go2shop.database.room.entities.Shop
+import com.skysam.hchirinos.go2shop.common.models.Shop
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.*

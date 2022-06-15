@@ -4,9 +4,9 @@ import androidx.lifecycle.*
 import com.skysam.hchirinos.go2shop.common.models.*
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.repositories.*
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
-import com.skysam.hchirinos.go2shop.database.room.entities.Shop
+import com.skysam.hchirinos.go2shop.common.models.ListWish
+import com.skysam.hchirinos.go2shop.common.models.Product
+import com.skysam.hchirinos.go2shop.common.models.Shop
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import kotlinx.coroutines.launch
 

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
+import com.skysam.hchirinos.go2shop.common.models.ListWish
 import java.text.NumberFormat
 
 /**

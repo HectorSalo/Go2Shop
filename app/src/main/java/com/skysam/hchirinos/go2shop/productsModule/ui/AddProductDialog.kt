@@ -14,7 +14,7 @@ import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.ProductSaveFromList
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.common.models.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddProductBinding
 
 class AddProductDialog(private val name: String?, private val productSaveFromList: ProductSaveFromList,

@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
-import com.skysam.hchirinos.go2shop.database.room.entities.Shop
+import com.skysam.hchirinos.go2shop.common.models.Shop
 import com.skysam.hchirinos.go2shop.databinding.FragmentHistoryBinding
 import com.skysam.hchirinos.go2shop.shopsModule.ui.viewShop.ViewShopDetailsDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel

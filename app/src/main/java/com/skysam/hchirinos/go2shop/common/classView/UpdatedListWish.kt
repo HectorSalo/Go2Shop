@@ -1,7 +1,7 @@
 package com.skysam.hchirinos.go2shop.common.classView
 
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
+import com.skysam.hchirinos.go2shop.common.models.ListWish
 
 /**
  * Created by Hector Chirinos on 18/03/2021.

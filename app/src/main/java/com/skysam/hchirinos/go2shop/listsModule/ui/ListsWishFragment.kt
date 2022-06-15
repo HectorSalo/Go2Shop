@@ -18,7 +18,7 @@ import com.skysam.hchirinos.go2shop.common.classView.UpdatedListWish
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.User
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
+import com.skysam.hchirinos.go2shop.common.models.ListWish
 import com.skysam.hchirinos.go2shop.databinding.FragmentListsBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.editListWish.EditListWishDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel

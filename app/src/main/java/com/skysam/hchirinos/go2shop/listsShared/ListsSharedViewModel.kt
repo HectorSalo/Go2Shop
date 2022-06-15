@@ -8,7 +8,7 @@ import com.skysam.hchirinos.go2shop.common.models.User
 import com.skysam.hchirinos.go2shop.database.repositories.ListShareRepository
 import com.skysam.hchirinos.go2shop.database.repositories.ProductsRepository
 import com.skysam.hchirinos.go2shop.database.repositories.UsersRepository
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.common.models.Product
 
 class ListsSharedViewModel : ViewModel() {
     val listsShared: LiveData<List<ListShared>> = ListShareRepository.getListsShared().asLiveData()

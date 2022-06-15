@@ -17,8 +17,8 @@ import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.database.room.entities.ListWish
-import com.skysam.hchirinos.go2shop.database.room.entities.Product
+import com.skysam.hchirinos.go2shop.common.models.ListWish
+import com.skysam.hchirinos.go2shop.common.models.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
