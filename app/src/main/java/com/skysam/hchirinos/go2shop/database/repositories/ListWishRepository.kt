@@ -2,15 +2,17 @@ package com.skysam.hchirinos.go2shop.database.repositories
 
 import android.content.ContentValues
 import android.util.Log
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
+import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.models.ListWish
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.User
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.comunicationAPI.EventErrorTypeListener
 import com.skysam.hchirinos.go2shop.comunicationAPI.NotificationAPI
-import com.skysam.hchirinos.go2shop.common.models.ListWish
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,7 +22,6 @@ import java.util.*
  * Created by Hector Chirinos on 30/04/2021.
  */
 
-@OptIn(ExperimentalCoroutinesApi::class)
 object ListWishRepository {
     private fun getInstance(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(Constants.LIST_WISH)

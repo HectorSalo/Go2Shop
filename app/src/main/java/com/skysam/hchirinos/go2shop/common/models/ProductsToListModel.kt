@@ -1,7 +1,5 @@
 package com.skysam.hchirinos.go2shop.common.models
 
-import androidx.room.PrimaryKey
-
 /**
  * Created by Hector Chirinos on 16/03/2021.
  */

@@ -9,10 +9,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.go2shop.R
-import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.models.Deparment
-import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.databinding.DialogAddDeparmentBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 
@@ -84,8 +82,13 @@ class EditDeparmentDialog: DialogFragment() {
   }
   Keyboard.close(binding.root)
 
-  deparment.name = name
-  viewModel.editDeparment(deparment)
+  val departmentUpdate = Deparment(
+   deparment.id,
+   name,
+   deparment.userId
+  )
+
+  viewModel.editDeparment(departmentUpdate)
   dialog?.dismiss()
  }
 }

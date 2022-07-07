@@ -6,7 +6,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.models.User
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.callbackFlow
  * Created by Hector Chirinos on 02/09/2021.
  */
 
-@OptIn(ExperimentalCoroutinesApi::class)
 object UsersRepository {
     private fun getInstance(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(Constants.USERS)

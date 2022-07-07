@@ -45,6 +45,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         holder.name.text = item.name
         holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.price))
         holder.unit.text = context.getString(R.string.text_quantity_total, item.quantity, item.unit)
+        holder.deparment.text = item.deparment
 
         holder.switchStorage.isChecked = item.isCheckedToStorage
         if (item.isCheckedToStorage) {
@@ -155,6 +156,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         val price: TextView = view.findViewById(R.id.tv_price)
         val subtotal: TextView = view.findViewById(R.id.tv_subtotal)
         val remaining: TextView = view.findViewById(R.id.tv_remaining)
+        val deparment: TextView = view.findViewById(R.id.tv_deparment)
         val switchShop: SwitchMaterial = view.findViewById(R.id.switch_shop)
         val switchStorage: SwitchMaterial = view.findViewById(R.id.switch_storage)
         val card: MaterialCardView = view.findViewById(R.id.card)

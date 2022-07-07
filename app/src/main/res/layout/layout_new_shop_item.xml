@@ -101,13 +101,13 @@
 
 
             <TextView
-                android:id="@+id/tv_field"
+                android:id="@+id/tv_deparment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_weight="1.4"
                 android:gravity="end"
-                tools:text="@string/text_unit"
+                tools:text="@string/text_deparment"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary" />
         </LinearLayout>

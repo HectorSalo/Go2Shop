@@ -1,7 +1,5 @@
 package com.skysam.hchirinos.go2shop.common.models
 
-import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
-
 /**
  * Created by Hector Chirinos on 04/03/2021.
  */

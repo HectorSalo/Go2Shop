@@ -12,19 +12,15 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.comunicationAPI.EventErrorTypeListener
 import com.skysam.hchirinos.go2shop.comunicationAPI.NotificationAPI
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.channels.awaitClose
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * Created by Hector Chirinos on 06/09/2021.
  */
 
-@OptIn(ExperimentalCoroutinesApi::class)
 object ListShareRepository {
     private fun getInstance(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(Constants.LISTS_SHARED)

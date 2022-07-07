@@ -7,9 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.go2shop.common.Constants
-import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.common.models.Product
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.callbackFlow
  * Created by Hector Chirinos on 29/04/2021.
  */
 
-@OptIn(ExperimentalCoroutinesApi::class)
 object ProductsRepository {
     private fun getInstance(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(Constants.PRODUCTOS)
