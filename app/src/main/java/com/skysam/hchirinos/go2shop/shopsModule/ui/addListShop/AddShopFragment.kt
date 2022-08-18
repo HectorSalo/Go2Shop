@@ -190,6 +190,11 @@ class AddShopFragment : Fragment(),
         _binding = null
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.updateCurrentShop(productsToAdd, total)
+    }
+
     private fun getOut() {
         val exitDialog = ExitDialog(this)
         exitDialog.show(requireActivity().supportFragmentManager, tag)
@@ -274,6 +279,7 @@ class AddShopFragment : Fragment(),
     }
 
     override fun onClickExit() {
+        viewModel.deleteCurrentShop()
         requireActivity().finish()
     }
 
@@ -396,6 +402,7 @@ class AddShopFragment : Fragment(),
                 dateCurrent,
                 rateChange
         )
+        viewModel.deleteCurrentShop()
         viewModel.saveShop(listToSend)
         viewModel.saveProductsToStorage(productsToStorage)
         Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()

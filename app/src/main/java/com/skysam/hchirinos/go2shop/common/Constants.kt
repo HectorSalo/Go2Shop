@@ -40,6 +40,9 @@ object Constants {
 
     const val TOTAL_LIST_WISH = "totalListWish"
 
+    const val CURRENT_SHOP = "currentShop"
+    const val TOTAL = "total"
+
     const val METHOD = "method"
     const val TITLE = "title"
     const val MESSAGE = "message"

@@ -7,29 +7,75 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.go2shop.common.Constants
+import com.skysam.hchirinos.go2shop.common.models.CurrentShop
 import com.skysam.hchirinos.go2shop.common.models.ListShared
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
+import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
-import com.skysam.hchirinos.go2shop.comunicationAPI.EventErrorTypeListener
-import com.skysam.hchirinos.go2shop.comunicationAPI.NotificationAPI
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.*
 
 /**
- * Created by Hector Chirinos on 06/09/2021.
+ * Created by Hector Chirinos on 17/08/2022.
  */
 
-object ListShareRepository {
+object CurrentShopRepository {
     private fun getInstance(): CollectionReference {
-        return FirebaseFirestore.getInstance().collection(Constants.LISTS_SHARED)
+        return FirebaseFirestore.getInstance().collection(Constants.CURRENT_SHOP)
     }
 
-    fun getListsShared(): Flow<List<ListShared>> {
+    fun saveCurrentShop(currentShop: CurrentShop) {
+        val data = hashMapOf(
+            Constants.NAME to currentShop.name,
+            Constants.USER_ID to AuthAPI.getCurrenUser()!!.uid,
+            Constants.PRODUCTOS to currentShop.listProducts,
+            Constants.TOTAL to currentShop.total,
+            Constants.DATE_CREATED to currentShop.dateCreated,
+            Constants.RATE_CHANGE to currentShop.rateChange
+        )
+        getInstance()
+            .document(AuthAPI.getCurrenUser()!!.uid)
+            .set(data)
+    }
+
+    fun updateCurrentShop(products: MutableList<ProductsToShopModel>, total: Double) {
+        getInstance().document(AuthAPI.getCurrenUser()!!.uid)
+            .update(Constants.PRODUCTOS, products, Constants.TOTAL, total)
+    }
+
+    fun deleteCurrentShop() {
+        getInstance().document(AuthAPI.getCurrenUser()!!.uid)
+            .delete()
+    }
+
+    /*fun getCurrentShop(): Flow<CurrentShop> {
         return callbackFlow {
             val request = getInstance()
-                .whereArrayContains(Constants.USERS, AuthAPI.getCurrenUser()!!.uid)
+                .document(AuthAPI.getCurrenUser()!!.uid)
+                .get()
+                .addOnSuccessListener {
+                    val listProducts: MutableList<ProductsToShopModel> = mutableListOf()
+                    if (it.get(Constants.PRODUCTOS) != null) {
+                        @Suppress("UNCHECKED_CAST")
+                        val products = it.data?.getValue(Constants.PRODUCTOS) as ArrayList<HashMap<String, Any>>
+                        for (prod in products) {
+                            val product = ProductsToShopModel(
+                                Constants.LIST_ID,
+                                prod[Constants.NAME].toString(),
+                                prod[Constants.UNIT].toString(),
+                                AuthAPI.getCurrenUser()!!.uid,
+                                prod[Constants.LIST_ID].toString(),
+                                prod[Constants.PRICE].toString().toDouble(),
+                                prod[Constants.QUANTITY].toString().toDouble(),
+                                prod[Constants.IS]
+                            )
+                            listProducts.add(product)
+                        }
+                    }
+                }
+                .whereEqualTo(Constants.USERS, AuthAPI.getCurrenUser()!!.uid)
                 .orderBy(Constants.DATE_CREATED, Query.Direction.DESCENDING)
                 .addSnapshotListener(MetadataChanges.INCLUDE) { value, error ->
                     if (error != null) {
@@ -79,54 +125,5 @@ object ListShareRepository {
                 }
             awaitClose { request.remove() }
         }
-    }
-
-    fun addListShared(list: ListShared) {
-        val date = Date(list.dateCreated)
-        val data = hashMapOf(
-            Constants.NAME to list.name,
-            Constants.USERS to list.usersId,
-            Constants.PRODUCTOS to list.listProducts,
-            Constants.TOTAL_LIST_WISH to list.total,
-            Constants.DATE_CREATED to date,
-            Constants.USER_OWNER to list.userOwner
-        )
-        getInstance()
-            .add(data)
-            .addOnSuccessListener {
-                for (user in list.usersId) {
-                    NotificationAPI.sendNotification(
-                        AuthAPI.getCurrenUser()?.displayName!!,
-                        "Te he enviado una lista",
-                        user,
-                        AuthAPI.getCurrenUser()?.email!!,
-                        object : EventErrorTypeListener {
-                            override fun onError(typeEvent: Int, reaMsg: Int) {
-
-                            }
-                        }
-                    )
-                }
-            }
-    }
-
-    fun updateListShared(list: ListShared) {
-        val date = Date(list.dateCreated)
-        val data = hashMapOf(
-            Constants.NAME to list.name,
-            Constants.USERS to list.usersId,
-            Constants.PRODUCTOS to list.listProducts,
-            Constants.TOTAL_LIST_WISH to list.total,
-            Constants.DATE_CREATED to date,
-            Constants.USER_OWNER to list.userOwner
-        )
-
-        getInstance().document(list.id)
-            .update(data)
-    }
-
-    fun deleteList(list: ListShared) {
-        getInstance().document(list.id)
-            .delete()
-    }
+    }*/
 }

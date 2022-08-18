@@ -175,6 +175,7 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
             binding.tfCotizacion.error = getString(R.string.error_field_zero)
             return
         }
+        viewModel.firstSaveCurrentShop(binding.etNameList.text.toString(), rateChange, listsProducts)
         viewModel.sharedData(binding.etNameList.text.toString(), rateChange, listsProducts)
         NavHostFragment.findNavController(this)
             .navigate(R.id.action_configNewShopFragment_to_addListShopFragment)
