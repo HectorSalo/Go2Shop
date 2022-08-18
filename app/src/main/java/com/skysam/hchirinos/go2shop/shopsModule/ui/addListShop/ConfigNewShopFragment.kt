@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.ExitDialog
 import com.skysam.hchirinos.go2shop.common.classView.OnClickExit
 import com.skysam.hchirinos.go2shop.common.classView.OnSwitchChange
+import com.skysam.hchirinos.go2shop.common.models.CurrentShop
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.common.models.ProductsToShopModel
 import com.skysam.hchirinos.go2shop.common.models.ListWish
@@ -34,6 +36,7 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     private val myLists: MutableList<ListWish> = mutableListOf()
     private val listsShared: MutableList<ListWish> = mutableListOf()
     private val listsProducts: MutableList<ProductsToListModel> = mutableListOf()
+    private lateinit var currentShop: CurrentShop
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,6 +90,14 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
     }
 
     private fun loadViewModels() {
+        viewModel.currentShop.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                if (it != null) {
+                    currentShop = it
+                    showDialogCurrentShop()
+                }
+            }
+        }
         viewModel.lists.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 myLists.clear()
@@ -213,5 +224,23 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
                 listsProducts.remove(productToShop)
             }
         }
+    }
+
+    private fun showDialogCurrentShop() {
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(getString(R.string.title_current_shop_dialog))
+            .setMessage(getString(R.string.msg_current_shop_dialog))
+            .setPositiveButton(R.string.btn_yes_current_shop_dialog) { _, _ ->
+                viewModel.restoreShop(currentShop)
+                NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_configNewShopFragment_to_addListShopFragment)
+            }
+            .setNegativeButton(R.string.btn_not_current_shop_dialog) { _, _ ->
+                viewModel.deleteCurrentShop()
+            }
+
+        val dialog = builder.create()
+        dialog.setCancelable(false)
+        dialog.show()
     }
 }

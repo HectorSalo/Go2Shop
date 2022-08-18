@@ -157,11 +157,13 @@ class AddShopFragment : Fragment(),
                 productsToAdd.clear()
                 productsToAdd.addAll(it)
             }
+            viewModel.updateCurrentShop(productsToAdd, total)
         }
         viewModel.totalPrice.observe(viewLifecycleOwner) {
             total = it
             binding.tvTotal.text =
                 getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
+            viewModel.updateCurrentShop(productsToAdd, total)
         }
     }
 

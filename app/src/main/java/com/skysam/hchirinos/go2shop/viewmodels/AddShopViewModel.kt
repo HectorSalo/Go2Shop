@@ -19,6 +19,7 @@ class AddShopViewModel: ViewModel() {
     val lists: LiveData<List<ListWish>> = ListWishRepository.getListsWish().asLiveData()
     val listsShared: LiveData<List<ListShared>> = ListSharedRepository.getListsShared().asLiveData()
     val deparments: LiveData<List<Deparment>> = DeparmentsRepository.getDeparments().asLiveData()
+    val currentShop: LiveData<CurrentShop?> = CurrentShopRepository.getCurrentShop().asLiveData()
 
     private val _rateChange = MutableLiveData<Double>().apply {
         viewModelScope.launch {
@@ -160,5 +161,13 @@ class AddShopViewModel: ViewModel() {
 
     fun deleteCurrentShop() {
         CurrentShopRepository.deleteCurrentShop()
+    }
+
+    fun restoreShop(currentShop: CurrentShop) {
+        _nameShop.value = currentShop.name
+        _rateChange.value = currentShop.rateChange
+        _totalPrice.value = currentShop.total
+        _allProducts.value = currentShop.listProducts.sortedWith(compareBy { it.name }).toMutableList()
+        _allProducts.value = _allProducts.value
     }
 }

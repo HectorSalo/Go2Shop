@@ -13,8 +13,8 @@ android {
     defaultConfig {
         applicationId "com.skysam.hchirinos.go2shop"
         minSdkVersion 23
-        targetSdkVersion 33
-        versionCode 12
+        targetSdkVersion 32
+        versionCode 13
         versionName "7.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -20,6 +20,7 @@ object Constants {
     const val MESSAGING_FOR_ALL = "messagingForAll"
 
     const val DEPARMENTS = "deparments"
+    const val DEPARMENT = "deparment"
 
     const val USERS = "users"
     const val EMAIL = "email"
@@ -42,6 +43,8 @@ object Constants {
 
     const val CURRENT_SHOP = "currentShop"
     const val TOTAL = "total"
+    const val CHECKED_TO_SHOP = "checkedToShop"
+    const val CHECKED_TO_STORAGE = "checkedToStorage"
 
     const val METHOD = "method"
     const val TITLE = "title"
