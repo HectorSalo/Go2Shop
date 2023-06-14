@@ -89,16 +89,11 @@ object StorageRepository {
         }
     }
 
-    fun updateUnitFromProductToStorage(product: StorageModel) {
-        getInstance()
-            .document(product.id)
-            .update(Constants.QUANTITY_REMAINING, product.quantityRemaining)
-    }
-
     fun editProductToStorage(product: StorageModel) {
         val data: Map<String, Any> = hashMapOf(
             Constants.NAME to product.name,
-            Constants.UNIT to product.unit
+            Constants.UNIT to product.unit,
+            Constants.QUANTITY_REMAINING to product.quantityRemaining
         )
         getInstance()
             .document(product.id)

@@ -66,10 +66,6 @@ class MainViewModel: ViewModel() {
         StorageRepository.saveProductsToStorge(list)
     }
 
-    fun updateUnitFromProductToStorage(product: StorageModel) {
-        StorageRepository.updateUnitFromProductToStorage(product)
-    }
-
     fun editProductToStorage(product: StorageModel) {
         StorageRepository.editProductToStorage(product)
     }

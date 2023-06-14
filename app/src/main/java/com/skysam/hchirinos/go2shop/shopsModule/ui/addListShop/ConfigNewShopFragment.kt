@@ -127,7 +127,6 @@ class ConfigNewShopFragment : Fragment(), OnClickExit, OnSwitchChange {
                 }
             }
         }
-        viewModel
         viewModel.rateChange.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 binding.etCotizacion.setText(NumberFormat.getInstance().format(it))

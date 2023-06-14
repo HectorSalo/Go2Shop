@@ -16,7 +16,8 @@ import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
 /**
  * Created by Hector Chirinos (Home) on 21/10/2021.
  */
-class UpdateQuantityDialog(private val adding: Boolean, private val product: StorageModel):
+class UpdateQuantityDialog(private val adding: Boolean, private val product: StorageModel,
+                           private val onClickResult: OnClickResult):
     DialogFragment() {
     private var _binding: DialogUpdateUnitStorageBinding? = null
     private val binding get() = _binding!!
@@ -78,7 +79,7 @@ class UpdateQuantityDialog(private val adding: Boolean, private val product: Sto
         } else {
             product.quantityRemaining = product.quantityRemaining - quantity
         }
-        viewModel.updateUnitFromProductToStorage(product)
+        onClickResult.resultEdit(product)
         dismiss()
     }
 }

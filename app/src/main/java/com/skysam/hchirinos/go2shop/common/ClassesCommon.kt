@@ -13,4 +13,9 @@ object ClassesCommon {
     fun convertDoubleToString(value: Double): String {
         return String.format(Locale.GERMANY, "%,.2f", value)
     }
+
+    fun convertStringToDouble(value: String): Double {
+        val valueF = value.replace(".", "").replace(",", ".")
+        return valueF.toDouble()
+    }
 }

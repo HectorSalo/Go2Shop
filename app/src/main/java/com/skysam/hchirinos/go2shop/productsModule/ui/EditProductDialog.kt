@@ -3,24 +3,25 @@ package com.skysam.hchirinos.go2shop.productsModule.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.ClassesCommon
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.UpdatedProduct
-import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.common.models.Product
+import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import com.skysam.hchirinos.go2shop.databinding.DialogEditProductBinding
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
-import java.text.DecimalFormatSymbols
-import java.text.NumberFormat
+import java.util.Locale
 
 /**
  * Created by Hector Chirinos (Home) on 9/3/2021.
@@ -28,7 +29,7 @@ import java.text.NumberFormat
 class EditProductDialog(
     var product: Product, private val position: Int, private val fromList: Boolean,
     private val updatedProduct: UpdatedProduct, private val rateChange: Double?, private val shop: Boolean):
-    DialogFragment() {
+    DialogFragment(), TextWatcher {
     private var _binding: DialogEditProductBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -44,9 +45,6 @@ class EditProductDialog(
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogEditProductBinding.inflate(layoutInflater)
-
-        val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
-        NumberFormat.getInstance().isGroupingUsed = true
 
         viewModel.deparments.observe(this.requireActivity()) {
             if (_binding != null) {
@@ -83,61 +81,9 @@ class EditProductDialog(
                 name = text.toString()
             }
         }
-        binding.etQuantity.doAfterTextChanged { text ->
-            if (!text.isNullOrEmpty()) {
-                var quantity = text.toString()
-                if (quantity.contains(".")) {
-                    quantity = quantity.replace(".", ",")
-                    binding.etQuantity.setText(quantity)
-                    return@doAfterTextChanged
-                }
-                quantity = quantity.replace(",", ".")
-                try {
-                    if (quantity.toDouble() > 0) {
-                        quantityTotal = quantity.toDouble()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+        binding.etPrice.addTextChangedListener(this)
+        binding.etQuantity.addTextChangedListener(this)
 
-        binding.etPrice.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                if (!binding.etPrice.text.isNullOrEmpty()) {
-                    var priceString = binding.etPrice.text.toString()
-                    if (decimalSeparator == ",") {
-                        try {
-                            priceString = priceString.replace(".", "").replace(",", ".")
-                            priceTotal = priceString.toDouble()
-                            binding.etPrice.setText(NumberFormat.getInstance().format(priceTotal))
-                        } catch (e: Exception) {
-                            Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        try {
-                            priceString = priceString.replace(",", "")
-                            priceTotal = priceString.toDouble()
-                            binding.etPrice.setText(NumberFormat.getInstance().format(priceTotal))
-                        } catch (e: Exception) {
-                            Toast.makeText(requireContext(), "Error en el número ingresado", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        }
-
-        binding.spinner.setOnTouchListener { v, _ ->
-            v.performClick()
-            binding.etPrice.clearFocus()
-            false
-        }
-        binding.spinnerDeparment.setOnTouchListener { v, _ ->
-            v.performClick()
-            binding.etPrice.clearFocus()
-            false
-        }
-        binding.rgMoneda.setOnCheckedChangeListener { _, _ -> binding.etPrice.clearFocus() }
         binding.ibAddQuantity.setOnClickListener { addQuantity() }
         binding.ibRestQuantity.setOnClickListener { restQuantity() }
 
@@ -166,8 +112,8 @@ class EditProductDialog(
         unit = product.unit
 
         binding.etName.setText(product.name)
-        binding.etPrice.setText(NumberFormat.getInstance().format(product.price))
-        binding.etQuantity.setText(product.quantity.toString())
+        binding.etPrice.setText(ClassesCommon.convertDoubleToString(product.price))
+        binding.etQuantity.setText(ClassesCommon.convertDoubleToString(product.quantity))
         binding.spinner.setSelection(listUnits.indexOf(product.unit))
         if (product.deparment.isNotEmpty()) {
             binding.spinnerDeparment.setSelection(listDepar.indexOf(product.deparment))
@@ -175,21 +121,18 @@ class EditProductDialog(
     }
 
     private fun restQuantity() {
-        binding.etPrice.clearFocus()
         if (quantityTotal > 1) {
             quantityTotal -= 1
-            binding.etQuantity.setText(quantityTotal.toString())
+            binding.etQuantity.setText(ClassesCommon.convertDoubleToString(quantityTotal))
         }
     }
 
     private fun addQuantity() {
-        binding.etPrice.clearFocus()
         quantityTotal += 1
-        binding.etQuantity.setText(quantityTotal.toString())
+        binding.etQuantity.setText(ClassesCommon.convertDoubleToString(quantityTotal))
     }
 
     private fun validateEdit() {
-        binding.etPrice.clearFocus()
         if (binding.spinner.selectedItemPosition > 0) {
             unit = binding.spinner.selectedItem.toString()
         }
@@ -213,5 +156,33 @@ class EditProductDialog(
         Keyboard.close(binding.root)
         updatedProduct.updatedProduct(position, productResult)
         dismiss()
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+    }
+
+    override fun afterTextChanged(s: Editable?) {
+        var cadena = s.toString()
+        cadena = cadena.replace(",", "").replace(".", "")
+        val cantidad: Double = cadena.toDouble() / 100
+        cadena = String.format(Locale.GERMANY, "%,.2f", cantidad)
+
+        if (s.toString() == binding.etPrice.text.toString()) {
+            binding.etPrice.removeTextChangedListener(this)
+            binding.etPrice.setText(cadena)
+            binding.etPrice.setSelection(cadena.length)
+            binding.etPrice.addTextChangedListener(this)
+            priceTotal = ClassesCommon.convertStringToDouble(cadena)
+        }
+        if (s.toString() == binding.etQuantity.text.toString()) {
+            binding.etQuantity.removeTextChangedListener(this)
+            binding.etQuantity.setText(cadena)
+            binding.etQuantity.setSelection(cadena.length)
+            binding.etQuantity.addTextChangedListener(this)
+            quantityTotal = ClassesCommon.convertStringToDouble(cadena)
+        }
     }
 }

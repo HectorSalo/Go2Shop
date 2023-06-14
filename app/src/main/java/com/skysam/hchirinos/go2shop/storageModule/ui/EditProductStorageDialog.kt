@@ -21,7 +21,8 @@ import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
  * Created by Hector Chirinos (Home) on 31/10/2021.
  */
 class EditProductStorageDialog(private val product: StorageModel,
-                               private val productsStoraged: MutableList<StorageModel>): DialogFragment() {
+                               private val productsStoraged: MutableList<StorageModel>,
+                               private val onClickResult: OnClickResult): DialogFragment() {
     private var _binding: DialogAddProductStorageBinding? = null
     private val binding get() = _binding!!
     private lateinit var buttonPositive: Button
@@ -107,7 +108,7 @@ class EditProductStorageDialog(private val product: StorageModel,
         Keyboard.close(binding.root)
         product.name = name
         product.unit = binding.spinner.selectedItem.toString()
-        viewModel.editProductToStorage(product)
+        onClickResult.resultEdit(product)
         dismiss()
     }
 }

@@ -48,7 +48,7 @@ class AddShopFragment : Fragment(),
     private var productsName = mutableListOf<String>()
     private var deparments = mutableListOf<Deparment>()
     private var deparmentsToShow = mutableListOf<Deparment>()
-    private var deparmentsFilter = mutableListOf<Deparment>()
+    private var deparmentsFilter = mutableListOf<String>()
     private lateinit var addShopAdapter: AddShopAdapter
     private lateinit var nameList: String
     private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
@@ -452,9 +452,9 @@ class AddShopFragment : Fragment(),
                     chip.setChipBackgroundColorResource(getColorPrimary())
                     chip.setOnClickListener {
                         if (chip.isChecked) {
-                            deparmentsFilter.add(dep)
+                            deparmentsFilter.add(dep.name)
                         } else {
-                            deparmentsFilter.remove(dep)
+                            deparmentsFilter.remove(dep.name)
                         }
                         filterDep()
                     }
@@ -467,11 +467,16 @@ class AddShopFragment : Fragment(),
 
     private fun filterDep() {
         productsFiltered.clear()
-        for (dep in deparmentsFilter) {
+        productsToAdd.forEach {
+            if (it.deparment.isNotEmpty()) {
+                if (deparmentsFilter.contains(it.deparment)) productsFiltered.add(it)
+            }
+        }
+        /*for (dep in deparmentsFilter) {
             for (pro in productsToAdd) {
                 if (pro.deparment == dep.name && !productsFiltered.contains(pro)) productsFiltered.add(pro)
             }
-        }
+        }*/
         if (deparmentsFilter.isEmpty()) addShopAdapter.updateList(productsToAdd)
         else addShopAdapter.updateList(productsFiltered)
     }
