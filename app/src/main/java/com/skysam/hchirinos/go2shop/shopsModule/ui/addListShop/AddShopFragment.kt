@@ -157,11 +157,13 @@ class AddShopFragment : Fragment(),
                 productsToAdd.clear()
                 productsToAdd.addAll(it)
             }
+            viewModel.updateCurrentShop(productsToAdd, total)
         }
         viewModel.totalPrice.observe(viewLifecycleOwner) {
             total = it
             binding.tvTotal.text =
                 getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
+            viewModel.updateCurrentShop(productsToAdd, total)
         }
     }
 
@@ -188,6 +190,11 @@ class AddShopFragment : Fragment(),
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.updateCurrentShop(productsToAdd, total)
     }
 
     private fun getOut() {
@@ -274,6 +281,7 @@ class AddShopFragment : Fragment(),
     }
 
     override fun onClickExit() {
+        viewModel.deleteCurrentShop()
         requireActivity().finish()
     }
 
@@ -396,6 +404,7 @@ class AddShopFragment : Fragment(),
                 dateCurrent,
                 rateChange
         )
+        viewModel.deleteCurrentShop()
         viewModel.saveShop(listToSend)
         viewModel.saveProductsToStorage(productsToStorage)
         Toast.makeText(requireContext(), getString(R.string.save_data_ok), Toast.LENGTH_SHORT).show()

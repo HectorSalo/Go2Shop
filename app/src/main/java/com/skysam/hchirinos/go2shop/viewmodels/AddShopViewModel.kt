@@ -9,6 +9,7 @@ import com.skysam.hchirinos.go2shop.common.models.Product
 import com.skysam.hchirinos.go2shop.common.models.Shop
 import com.skysam.hchirinos.go2shop.database.sharedPref.SharedPreferenceBD
 import kotlinx.coroutines.launch
+import java.util.*
 
 /**
  * Created by Hector Chirinos on 03/05/2021.
@@ -16,8 +17,9 @@ import kotlinx.coroutines.launch
 class AddShopViewModel: ViewModel() {
     //ConfigShop
     val lists: LiveData<List<ListWish>> = ListWishRepository.getListsWish().asLiveData()
-    val listsShared: LiveData<List<ListShared>> = ListShareRepository.getListsShared().asLiveData()
+    val listsShared: LiveData<List<ListShared>> = ListSharedRepository.getListsShared().asLiveData()
     val deparments: LiveData<List<Deparment>> = DeparmentsRepository.getDeparments().asLiveData()
+    val currentShop: LiveData<CurrentShop?> = CurrentShopRepository.getCurrentShop().asLiveData()
 
     private val _rateChange = MutableLiveData<Double>().apply {
         viewModelScope.launch {
@@ -122,5 +124,50 @@ class AddShopViewModel: ViewModel() {
         }
         StorageRepository.saveProductsToStorge(productsToSave)
         StorageRepository.updateProductsToStorage(productsToUpdate)
+    }
+
+    //SaveCurrentShop
+    fun firstSaveCurrentShop(name: String, rate: Double, products: MutableList<ProductsToListModel>) {
+        val list: MutableList<ProductsToShopModel> = mutableListOf()
+        for (i in products.indices) {
+            val productToModel = ProductsToShopModel(
+                products[i].id,
+                products[i].name,
+                products[i].unit,
+                products[i].userId,
+                products[i].listId,
+                products[i].price,
+                products[i].quantity,
+                deparment = products[i].deparment
+            )
+            list.add(productToModel)
+        }
+
+        val newCurrentShop = CurrentShop(
+            "",
+            name,
+            "",
+            list,
+            0.0,
+            Date(),
+            rate
+        )
+        CurrentShopRepository.saveCurrentShop(newCurrentShop)
+    }
+
+    fun updateCurrentShop(products: MutableList<ProductsToShopModel>, total: Double) {
+        CurrentShopRepository.updateCurrentShop(products, total)
+    }
+
+    fun deleteCurrentShop() {
+        CurrentShopRepository.deleteCurrentShop()
+    }
+
+    fun restoreShop(currentShop: CurrentShop) {
+        _nameShop.value = currentShop.name
+        _rateChange.value = currentShop.rateChange
+        _totalPrice.value = currentShop.total
+        _allProducts.value = currentShop.listProducts.sortedWith(compareBy { it.name }).toMutableList()
+        _allProducts.value = _allProducts.value
     }
 }

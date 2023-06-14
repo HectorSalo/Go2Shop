@@ -127,6 +127,12 @@
     <!--Dialog Shop-->
     <string name="title_delete_dialog">¿Desea eliminar este ítem?</string>
 
+    <!--Dialog Current Shop-->
+    <string name="title_current_shop_dialog">¡Aviso!</string>
+    <string name="msg_current_shop_dialog">Existe una Compra en proceso.\n¿Desea continuar con la Compra ya creada?</string>
+    <string name="btn_yes_current_shop_dialog">Continuar Compra</string>
+    <string name="btn_not_current_shop_dialog">Nueva Compra</string>
+
     <!--Fragment Deparments-->
     <string name="nav_deparments">Departamentos</string>
     <string name="text_deparment">Departamento</string>
