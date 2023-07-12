@@ -148,15 +148,14 @@ class AddShopViewModel: ViewModel() {
             name,
             "",
             list,
-            0.0,
             Date(),
             rate
         )
         CurrentShopRepository.saveCurrentShop(newCurrentShop)
     }
 
-    fun updateCurrentShop(products: MutableList<ProductsToShopModel>, total: Double) {
-        CurrentShopRepository.updateCurrentShop(products, total)
+    fun updateCurrentShop(products: MutableList<ProductsToShopModel>) {
+        CurrentShopRepository.updateCurrentShop(products)
     }
 
     fun deleteCurrentShop() {
@@ -166,7 +165,6 @@ class AddShopViewModel: ViewModel() {
     fun restoreShop(currentShop: CurrentShop) {
         _nameShop.value = currentShop.name
         _rateChange.value = currentShop.rateChange
-        _totalPrice.value = currentShop.total
         _allProducts.value = currentShop.listProducts.sortedWith(compareBy { it.name }).toMutableList()
         _allProducts.value = _allProducts.value
     }

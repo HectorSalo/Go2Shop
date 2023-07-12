@@ -11,7 +11,6 @@ data class CurrentShop(
     val name: String,
     val userId: String,
     val listProducts: MutableList<ProductsToShopModel>,
-    val total: Double,
     val dateCreated: Date,
     val rateChange: Double
 )

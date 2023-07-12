@@ -43,7 +43,8 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         val item = products[position]
 
         holder.name.text = item.name
-        holder.price.text = context.getString(R.string.text_total_price_item, NumberFormat.getInstance().format(item.price))
+        holder.price.text = context.getString(R.string.text_total_price_item,
+            ClassesCommon.convertDoubleToString(item.price))
         holder.unit.text = context.getString(R.string.text_quantity_total, item.quantity, item.unit)
         holder.deparment.text = item.deparment
 
@@ -60,7 +61,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
             holder.switchStorage.isEnabled = true
             holder.lottie.progress = 0.5f
             holder.subtotal.text = context.getString(R.string.text_total_price_item,
-                NumberFormat.getInstance().format(item.price * item.quantity))
+                ClassesCommon.convertDoubleToString(item.price * item.quantity))
         } else {
             holder.switchShop.text = context.getString(R.string.text_switch_off_shop_product)
             holder.switchStorage.isEnabled = false

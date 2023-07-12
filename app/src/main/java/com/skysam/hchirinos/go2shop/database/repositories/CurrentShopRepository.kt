@@ -24,7 +24,6 @@ object CurrentShopRepository {
             Constants.NAME to currentShop.name,
             Constants.USER_ID to AuthAPI.getCurrenUser()!!.uid,
             Constants.PRODUCTOS to currentShop.listProducts,
-            Constants.TOTAL to currentShop.total,
             Constants.DATE_CREATED to currentShop.dateCreated,
             Constants.RATE_CHANGE to currentShop.rateChange
         )
@@ -33,9 +32,9 @@ object CurrentShopRepository {
             .set(data)
     }
 
-    fun updateCurrentShop(products: MutableList<ProductsToShopModel>, total: Double) {
+    fun updateCurrentShop(products: MutableList<ProductsToShopModel>) {
         getInstance().document(AuthAPI.getCurrenUser()!!.uid)
-            .update(Constants.PRODUCTOS, products, Constants.TOTAL, total)
+            .update(Constants.PRODUCTOS, products)
     }
 
     fun deleteCurrentShop() {
@@ -46,8 +45,8 @@ object CurrentShopRepository {
     fun getCurrentShop(): Flow<CurrentShop?> {
         return callbackFlow {
             getInstance()
-                //.document(AuthAPI.getCurrenUser()!!.uid)
-                .document("tVULV16vK2aP3ZMutG8ymLBnBXm1")
+                .document(AuthAPI.getCurrenUser()!!.uid)
+                //.document("tVULV16vK2aP3ZMutG8ymLBnBXm1")
                 .get()
                 .addOnSuccessListener {
                     val listProducts: MutableList<ProductsToShopModel> = mutableListOf()
@@ -76,7 +75,6 @@ object CurrentShopRepository {
                             it.getString(Constants.NAME)!!,
                             it.getString(Constants.USER_ID)!!,
                             listProducts,
-                            it.getDouble(Constants.TOTAL)!!,
                             it.getDate(Constants.DATE_CREATED)!!,
                             it.getDouble(Constants.RATE_CHANGE)!!
                         )

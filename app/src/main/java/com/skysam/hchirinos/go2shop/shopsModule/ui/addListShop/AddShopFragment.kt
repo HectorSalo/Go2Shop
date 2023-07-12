@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.skysam.hchirinos.go2shop.R
+import com.skysam.hchirinos.go2shop.common.ClassesCommon
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
@@ -46,8 +47,8 @@ class AddShopFragment : Fragment(),
     private var productsToStorage: MutableList<StorageModel> = mutableListOf()
     private var productsStoraged: MutableList<StorageModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
-    private var deparments = mutableListOf<Deparment>()
-    private var deparmentsToShow = mutableListOf<Deparment>()
+    private var deparments = mutableListOf<String>()
+    private var deparmentsToShow = mutableListOf<String>()
     private var deparmentsFilter = mutableListOf<String>()
     private lateinit var addShopAdapter: AddShopAdapter
     private lateinit var nameList: String
@@ -58,6 +59,7 @@ class AddShopFragment : Fragment(),
     private var productAdded: ProductsToShopModel? = null
     private var actived = true
     private var editing = false
+    private var firstTotal = true
     private lateinit var toolbar: Toolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -82,7 +84,6 @@ class AddShopFragment : Fragment(),
         addShopAdapter = AddShopAdapter(productsToAdd, productsStoraged,this, this, this)
         binding.rvList.adapter = addShopAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        binding.tvTotal.text = getString(R.string.text_total_list, total.toString())
         binding.tfSearchProducts.setStartIconOnClickListener {
             val addProduct = AddProductDialog(binding.etSarchProduct.text.toString().trim(), this, productsFromDB)
             addProduct.show(requireActivity().supportFragmentManager, tag)
@@ -105,7 +106,7 @@ class AddShopFragment : Fragment(),
             if (_binding != null) {
                 if (it.isNotEmpty()) {
                     deparments.clear()
-                    deparments.addAll(it)
+                    it.forEach { dep -> deparments.add(dep.name) }
                     loadDeparmentsToShow()
                 }
             }
@@ -119,7 +120,6 @@ class AddShopFragment : Fragment(),
             if (list.isNotEmpty()) {
                 productsShared.clear()
                 productsShared.addAll(list)
-                loadDeparmentsToShow()
                 viewModel.fillListFirst(list)
             }
         }
@@ -151,19 +151,27 @@ class AddShopFragment : Fragment(),
                 if (productAdded != null) {
                     binding.rvList.scrollToPosition(productsToAdd.indexOf(productAdded))
                     productAdded = null
-                }
+                } else loadDeparmentsToShow()
             } else {
                 editing = false
                 productsToAdd.clear()
                 productsToAdd.addAll(it)
             }
-            viewModel.updateCurrentShop(productsToAdd, total)
+            if (firstTotal) {
+                productsToAdd.forEach { product ->
+                    if (product.isCheckedToShop) {
+                        viewModel.checkedProduct(product)
+                    }
+                }
+                firstTotal = false
+            }
+            viewModel.updateCurrentShop(productsToAdd)
         }
         viewModel.totalPrice.observe(viewLifecycleOwner) {
             total = it
             binding.tvTotal.text =
-                getString(R.string.text_total_list, NumberFormat.getInstance().format(total))
-            viewModel.updateCurrentShop(productsToAdd, total)
+                getString(R.string.text_total_list, ClassesCommon.convertDoubleToString(total))
+            viewModel.updateCurrentShop(productsToAdd)
         }
     }
 
@@ -194,7 +202,7 @@ class AddShopFragment : Fragment(),
 
     override fun onPause() {
         super.onPause()
-        viewModel.updateCurrentShop(productsToAdd, total)
+        viewModel.updateCurrentShop(productsToAdd)
     }
 
     private fun getOut() {
@@ -439,28 +447,28 @@ class AddShopFragment : Fragment(),
     }
 
     private fun loadDeparmentsToShow() {
-        binding.chipGroup.removeAllViews()
-        deparmentsToShow.clear()
-        for (dep in deparments) {
-            for (pro in productsShared) {
-                if (dep.name == pro.deparment && !deparmentsToShow.contains(dep)) {
-                    deparmentsToShow.add(dep)
-                    val chip = Chip(requireContext())
-                    chip.text = dep.name
-                    chip.isCheckable = true
-                    chip.isClickable = true
-                    chip.setChipBackgroundColorResource(getColorPrimary())
-                    chip.setOnClickListener {
-                        if (chip.isChecked) {
-                            deparmentsFilter.add(dep.name)
-                        } else {
-                            deparmentsFilter.remove(dep.name)
-                        }
-                        filterDep()
+        if (productsToAdd.isNotEmpty() && deparments.isNotEmpty()) {
+            deparmentsToShow.clear()
+            productsToAdd.forEach {
+                if (it.deparment.isNotEmpty() && !deparmentsToShow.contains(it.deparment))
+                    deparmentsToShow.add(it.deparment)
+            }
+            binding.chipGroup.removeAllViews()
+            for (dep in deparmentsToShow) {
+                val chip = Chip(requireContext())
+                chip.text = dep
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setChipBackgroundColorResource(getColorPrimary())
+                chip.setOnClickListener {
+                    if (chip.isChecked) {
+                        deparmentsFilter.add(dep)
+                    } else {
+                        deparmentsFilter.remove(dep)
                     }
-
-                    binding.chipGroup.addView(chip)
+                    filterDep()
                 }
+                binding.chipGroup.addView(chip)
             }
         }
     }
@@ -472,11 +480,6 @@ class AddShopFragment : Fragment(),
                 if (deparmentsFilter.contains(it.deparment)) productsFiltered.add(it)
             }
         }
-        /*for (dep in deparmentsFilter) {
-            for (pro in productsToAdd) {
-                if (pro.deparment == dep.name && !productsFiltered.contains(pro)) productsFiltered.add(pro)
-            }
-        }*/
         if (deparmentsFilter.isEmpty()) addShopAdapter.updateList(productsToAdd)
         else addShopAdapter.updateList(productsFiltered)
     }
