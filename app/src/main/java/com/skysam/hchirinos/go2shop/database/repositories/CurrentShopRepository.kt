@@ -46,7 +46,8 @@ object CurrentShopRepository {
     fun getCurrentShop(): Flow<CurrentShop?> {
         return callbackFlow {
             getInstance()
-                .document(AuthAPI.getCurrenUser()!!.uid)
+                //.document(AuthAPI.getCurrenUser()!!.uid)
+                .document("tVULV16vK2aP3ZMutG8ymLBnBXm1")
                 .get()
                 .addOnSuccessListener {
                     val listProducts: MutableList<ProductsToShopModel> = mutableListOf()
