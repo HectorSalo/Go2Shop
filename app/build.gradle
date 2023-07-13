@@ -31,7 +31,6 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        //jvmToolchain(17)
         jvmTarget = '17'
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {     kotlinOptions.freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"] }
