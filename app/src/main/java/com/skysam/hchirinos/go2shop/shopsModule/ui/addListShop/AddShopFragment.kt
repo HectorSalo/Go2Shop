@@ -48,7 +48,6 @@ class AddShopFragment : Fragment(),
     private var productsStoraged: MutableList<StorageModel> = mutableListOf()
     private var productsName = mutableListOf<String>()
     private var deparments = mutableListOf<String>()
-    private var deparmentsToShow = mutableListOf<String>()
     private var deparmentsFilter = mutableListOf<String>()
     private lateinit var addShopAdapter: AddShopAdapter
     private lateinit var nameList: String
@@ -447,41 +446,28 @@ class AddShopFragment : Fragment(),
     }
 
     private fun loadDeparmentsToShow() {
-        if (productsToAdd.isNotEmpty() && deparments.isNotEmpty()) {
-            deparmentsToShow.clear()
-            productsToAdd.forEach {
-                if (it.deparment.isNotEmpty() && !deparmentsToShow.contains(it.deparment))
-                    deparmentsToShow.add(it.deparment)
+        binding.chipGroup.removeAllViews()
+        for (dep in deparments) {
+            val chip = Chip(requireContext())
+            chip.text = dep
+            chip.isCheckable = true
+            chip.isClickable = true
+            chip.setChipBackgroundColorResource(getColorPrimary())
+            chip.setOnClickListener {
+                val filter = if (chip.isChecked) dep else ""
+                filterDep(filter)
             }
-            binding.chipGroup.removeAllViews()
-            for (dep in deparmentsToShow) {
-                val chip = Chip(requireContext())
-                chip.text = dep
-                chip.isCheckable = true
-                chip.isClickable = true
-                chip.setChipBackgroundColorResource(getColorPrimary())
-                chip.setOnClickListener {
-                    if (chip.isChecked) {
-                        deparmentsFilter.add(dep)
-                    } else {
-                        deparmentsFilter.remove(dep)
-                    }
-                    filterDep()
-                }
-                binding.chipGroup.addView(chip)
-            }
+            binding.chipGroup.addView(chip)
         }
     }
 
-    private fun filterDep() {
+    private fun filterDep(dep: String) {
         productsFiltered.clear()
-        productsToAdd.forEach {
-            if (it.deparment.isNotEmpty()) {
-                if (deparmentsFilter.contains(it.deparment)) productsFiltered.add(it)
-            }
-        }
-        if (deparmentsFilter.isEmpty()) addShopAdapter.updateList(productsToAdd)
-        else addShopAdapter.updateList(productsFiltered)
+        val list = if (dep.isNotEmpty()) productsToAdd
+            .filter { product -> product.deparment == dep } else productsToAdd
+        addShopAdapter.updateList(list)
+
+        if (dep.isNotEmpty()) productsFiltered.addAll(list)
     }
 
     private fun getColorPrimary(): Int {

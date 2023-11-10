@@ -22,7 +22,7 @@ import java.text.NumberFormat
 /**
  * Created by Hector Chirinos (Home) on 23/3/2021.
  */
-class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
+class AddShopAdapter(private var products: List<ProductsToShopModel>,
                      private val storaged: MutableList<StorageModel>,
                      private val listener: OnSwitchChange, private val listenerClickList: OnClickList,
                      private val onClickToStorage: OnClickToStorage):
@@ -164,7 +164,7 @@ class AddShopAdapter(private var products: MutableList<ProductsToShopModel>,
         val lottie: LottieAnimationView = view.findViewById(R.id.lottieAnimationView)
     }
 
-    fun updateList(newList: MutableList<ProductsToShopModel>) {
+    fun updateList(newList: List<ProductsToShopModel>) {
         products = newList
         notifyDataSetChanged()
     }
