@@ -82,6 +82,7 @@
     <string name="text_quantity">Cantidad</string>
     <string name="text_unit">Unidad</string>
     <string name="product_added">Producto ya estaba en la lista</string>
+    <string name="quantity_available">Disp.: %1$s %2$s</string>
 
     <!--Fragment ListsShared-->
     <string name="nav_lists_shared">Listas compartidas</string>
