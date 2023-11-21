@@ -20,6 +20,7 @@ import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.common.models.ListWish
 import com.skysam.hchirinos.go2shop.common.models.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
+import com.skysam.hchirinos.go2shop.listsModule.ui.OnClickToWishListAdapter
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
@@ -32,7 +33,7 @@ import java.util.*
  */
 class EditListWishDialog(private val listWish: ListWish, private val position: Int, private val updatedListWish: UpdatedListWish):
         DialogFragment(), OnClickExit,
-        OnClickList, UpdatedProduct, ProductSaveFromList {
+        OnClickList, UpdatedProduct, ProductSaveFromList, OnClickToWishListAdapter {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -60,7 +61,7 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addWishListAdapter = AddWishListAdapter(productsToAdd, this)
+        addWishListAdapter = AddWishListAdapter(productsToAdd, this, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.etNameList.setText(listWish.name)
@@ -264,5 +265,9 @@ class EditListWishDialog(private val listWish: ListWish, private val position: I
     override fun productSave(product: Product) {
         viewModel.addProduct(product)
         addProductToList(product)
+    }
+
+    override fun consult(product: Product) {
+        
     }
 }

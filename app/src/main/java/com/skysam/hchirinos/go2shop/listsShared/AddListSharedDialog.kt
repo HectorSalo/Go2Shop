@@ -21,6 +21,7 @@ import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.common.models.Product
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
+import com.skysam.hchirinos.go2shop.listsModule.ui.OnClickToWishListAdapter
 import com.skysam.hchirinos.go2shop.listsModule.ui.addListWish.AddWishListAdapter
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
@@ -31,7 +32,7 @@ import java.util.*
  * Created by Hector Chirinos (Home) on 3/11/2021.
  */
 class AddListSharedDialog(private val users: MutableList<String>): DialogFragment(), OnClickList, ProductSaveFromList, OnClickExit,
-    UpdatedProduct {
+    UpdatedProduct, OnClickToWishListAdapter {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ListsSharedViewModel by activityViewModels()
@@ -58,7 +59,7 @@ class AddListSharedDialog(private val users: MutableList<String>): DialogFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvList.setHasFixedSize(true)
-        addWishListAdapter = AddWishListAdapter(productsToAdd, this)
+        addWishListAdapter = AddWishListAdapter(productsToAdd, this, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.etNameList.doAfterTextChanged { binding.tfNameList.error = null }
@@ -216,5 +217,9 @@ class AddListSharedDialog(private val users: MutableList<String>): DialogFragmen
         val subtotal = (product.quantity * product.price) - oldPrice
         sumTotal(subtotal)
         addWishListAdapter.updateList(productsToAdd)
+    }
+
+    override fun consult(product: Product) {
+
     }
 }

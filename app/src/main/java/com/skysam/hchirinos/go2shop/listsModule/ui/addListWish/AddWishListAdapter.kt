@@ -11,11 +11,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.classView.OnClickList
 import com.skysam.hchirinos.go2shop.common.models.Product
+import com.skysam.hchirinos.go2shop.listsModule.ui.OnClickToWishListAdapter
+import com.skysam.hchirinos.go2shop.listsShared.AddListSharedDialog
 import java.text.NumberFormat
 
 
 class AddWishListAdapter(
-    private var products: MutableList<Product>, private val listener: OnClickList
+    private var products: MutableList<Product>, private val listener: OnClickList,
+    private var onClickToWishListAdapter: OnClickToWishListAdapter
 ) : RecyclerView.Adapter<AddWishListAdapter.ViewHolder>() {
 
     private lateinit var context: Context
@@ -34,6 +37,7 @@ class AddWishListAdapter(
         holder.unit.text = context.getString(R.string.text_quantity_total, item.quantity, item.unit)
         holder.buttonDelete.setOnClickListener { listener.onClickDelete(position) }
         holder.buttonEdit.setOnClickListener { listener.onClickEdit(position) }
+        holder.checkStorage.setOnClickListener { onClickToWishListAdapter.consult(item) }
     }
 
     override fun getItemCount(): Int = products.size
@@ -44,6 +48,7 @@ class AddWishListAdapter(
         val price: TextView = view.findViewById(R.id.tv_price)
         val buttonDelete: ImageButton = view.findViewById(R.id.ib_delete_item)
         val buttonEdit: ConstraintLayout = view.findViewById(R.id.constraint)
+        val checkStorage: ImageButton = view.findViewById(R.id.ib_check_storage)
     }
 
     fun updateList(newList: MutableList<Product>) {

@@ -6,22 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.skysam.hchirinos.go2shop.R
 import com.skysam.hchirinos.go2shop.common.Constants
 import com.skysam.hchirinos.go2shop.common.Keyboard
 import com.skysam.hchirinos.go2shop.common.classView.*
+import com.skysam.hchirinos.go2shop.common.models.AvailabilityDetails
 import com.skysam.hchirinos.go2shop.common.models.ProductsToListModel
 import com.skysam.hchirinos.go2shop.comunicationAPI.AuthAPI
 import com.skysam.hchirinos.go2shop.common.models.ListWish
 import com.skysam.hchirinos.go2shop.common.models.Product
+import com.skysam.hchirinos.go2shop.common.models.StorageModel
 import com.skysam.hchirinos.go2shop.databinding.DialogAddWishListBinding
 import com.skysam.hchirinos.go2shop.deparments.AddDeparmentDialog
+import com.skysam.hchirinos.go2shop.listsModule.ui.AvailabilityDetailsAdapter
+import com.skysam.hchirinos.go2shop.listsModule.ui.OnClickToWishListAdapter
 import com.skysam.hchirinos.go2shop.productsModule.ui.AddProductDialog
 import com.skysam.hchirinos.go2shop.productsModule.ui.EditProductDialog
 import com.skysam.hchirinos.go2shop.viewmodels.MainViewModel
@@ -29,13 +36,14 @@ import java.text.NumberFormat
 import java.util.*
 
 class AddListWishDialog : DialogFragment(),
-    OnClickList, ProductSaveFromList, OnClickExit, UpdatedProduct {
+    OnClickList, ProductSaveFromList, OnClickExit, UpdatedProduct, OnClickToWishListAdapter {
     private var _binding: DialogAddWishListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
     private var productsFromDB: MutableList<Product> = mutableListOf()
     private var productsToAdd: MutableList<Product> = mutableListOf()
     private var productsName = mutableListOf<String>()
+    private var listStorage = listOf<StorageModel>()
     private lateinit var addWishListAdapter: AddWishListAdapter
     private var total: Double = 0.0
     private var actived = true
@@ -56,7 +64,7 @@ class AddListWishDialog : DialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvList.setHasFixedSize(true)
-        addWishListAdapter = AddWishListAdapter(productsToAdd, this)
+        addWishListAdapter = AddWishListAdapter(productsToAdd, this, this)
         binding.rvList.adapter = addWishListAdapter
         binding.rvList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
         binding.etNameList.doAfterTextChanged { binding.tfNameList.error = null }
@@ -101,8 +109,12 @@ class AddListWishDialog : DialogFragment(),
                 fillListProductsDB(productsFromDB)
             }
         }
+        viewModel.productsFromStorage.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                listStorage = it
+            }
+        }
     }
-
     private fun fillListProductsDB(list: MutableList<Product>){
         productsName.clear()
         for (i in list.indices) {
@@ -218,5 +230,36 @@ class AddListWishDialog : DialogFragment(),
         val subtotal = (product.quantity * product.price) - oldPrice
         sumTotal(subtotal)
         addWishListAdapter.updateList(productsToAdd)
+    }
+
+    override fun consult(product: Product) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(R.layout.layout_availability_product)
+        bottomSheetDialog.dismissWithAnimation = true
+        bottomSheetDialog.show()
+
+        val availabilityDetailsAdapter = AvailabilityDetailsAdapter()
+
+        val viewSheet: View? = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+        val title: TextView = viewSheet!!.findViewById(R.id.tv_product_name)
+        val rvAvailability: RecyclerView = viewSheet.findViewById(R.id.rv_available_list)
+
+        title.text = product.name
+        rvAvailability.apply {
+            setHasFixedSize(true)
+            adapter = availabilityDetailsAdapter
+        }
+
+        val listAvailable = mutableListOf<AvailabilityDetails>()
+        listStorage.forEach {productFromStorage ->
+            if (product.name == productFromStorage.name) {
+                val availabilityDetails = AvailabilityDetails(
+                    productFromStorage.unit,
+                    productFromStorage.quantityRemaining
+                )
+                listAvailable.add(availabilityDetails)
+            }
+        }
+        availabilityDetailsAdapter.updateList(listAvailable)
     }
 }
