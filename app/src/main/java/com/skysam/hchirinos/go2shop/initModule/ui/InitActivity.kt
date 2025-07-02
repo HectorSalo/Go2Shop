@@ -47,7 +47,6 @@ class InitActivity : AppCompatActivity() {
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setIsSmartLockEnabled(false)
                 .setLogo(R.drawable.g2s_icon)
                 .setTheme(R.style.Theme_Go2Shop)
                 .build())
